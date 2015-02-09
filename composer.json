@@ -1,0 +1,24 @@
+{
+    "name": "ongr/translations-bundle",
+    "description": "ONGR translations bundle",
+    "type": "symfony-bundle",
+    "homepage": "http://ongr.io",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ONGR team",
+            "homepage": "http://www.nfq.com"
+        }
+    ],
+    "require": {
+        "symfony/symfony": "~2.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.4",
+        "squizlabs/php_codesniffer": "~1.5",
+        "ongr/ongr-strict-standard": "~1.0"
+    },
+    "autoload": {
+        "psr-4": { "ONGR\\TranslationsBundle\\": "" }
+    }
+}
