@@ -1,0 +1,7 @@
+imports:
+    - { resource: parameters_test.yml }
+
+# Framework Configuration
+framework:
+    secret: "TOP-SECRET"
+    test: ~
