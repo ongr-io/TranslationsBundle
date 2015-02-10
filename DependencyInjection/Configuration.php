@@ -27,6 +27,23 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('ongr_translations');
 
+        $rootNode
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('es_manager')
+                    ->defaultValue('default')
+                ->end()
+                ->scalarNode('fallback_locale')
+                    ->defaultValue('en')
+                ->end()
+                ->arrayNode('managed_locales')
+                    ->isRequired()
+                    ->requiresAtleastOneElement()
+                    ->prototype('scalar')->end()
+                ->end()
+            ->end()
+        ->end();
+
         return $treeBuilder;
     }
 }
