@@ -14,6 +14,8 @@ namespace ONGR\TranslationsBundle\Service;
 use ONGR\TranslationsBundle\Storage\StorageInterface;
 use ONGR\TranslationsBundle\Translation\Import\FileImport;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 /**
  * Collects translations.
@@ -113,7 +115,7 @@ class Import
     /**
      * Imports application translation files.
      */
-    protected function importAppTranslationFiles()
+    public function importAppTranslationFiles()
     {
         $finder = $this->findTranslationsFiles(
             $this->kernelDir,
@@ -126,7 +128,7 @@ class Import
     /**
      * Imports translation files form all bundles.
      */
-    protected function importBundlesTranslationFiles()
+    public function importBundlesTranslationFiles()
     {
         foreach ($this->bundles as $bundle) {
             $reflection = new \ReflectionClass($bundle);
@@ -141,7 +143,7 @@ class Import
      *
      * @param string $bundle
      */
-    protected function importBundleTranslationFiles($bundle)
+    public function importBundleTranslationFiles($bundle)
     {
         $finder = $this->findTranslationsFiles($bundle);
         $this->importTranslationFiles($finder);
@@ -150,7 +152,7 @@ class Import
     /**
      * Imports Symfony's components translation files.
      */
-    protected function importComponentTranslationFiles()
+    public function importComponentTranslationFiles()
     {
         $classes = [
             'Symfony\Component\Validator\Validator' => '/Resources/translations',
@@ -234,6 +236,7 @@ class Import
         if ($finder instanceof Finder) {
             foreach ($finder as $file) {
                 $this->translations = array_merge($this->translations, $this->fileImport->import($file));
+//                $this->writeToStorage();
             }
         }
     }
