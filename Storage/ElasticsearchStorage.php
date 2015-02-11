@@ -66,6 +66,8 @@ class ElasticsearchStorage implements StorageInterface
                     $message->setId($id);
                     $message->setLocale($locale);
                     $message->setMessage($trans);
+
+                    $messages[] = $message;
                 }
             }
 

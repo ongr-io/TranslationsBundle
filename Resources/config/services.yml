@@ -1,3 +1,28 @@
 parameters:
+  ongr_translations.file_import.class: ONGR\TranslationsBundle\Translation\Import\FileImport
+  ongr_translations.import.class: ONGR\TranslationsBundle\Service\Import
+  ongr_translations.storage.elasticsearch.class: ONGR\TranslationsBundle\Storage\ElasticsearchStorage
 
 services:
+
+  ongr_translations.storage.elasticsearch:
+    class: %ongr_translations.storage.elasticsearch.class%
+    arguments:
+      - @es.manager.default
+
+  ongr_translations.file_import:
+    class: %ongr_translations.file_import.class%
+    arguments:
+    - [ [] ]
+
+  ongr_translations.import:
+    class: %ongr_translations.import.class%
+    arguments:
+      - @ongr_translations.file_import
+      - @ongr_translations.storage.elasticsearch
+      - %kernel.root_dir%
+      - %kernel.bundles%
+    calls:
+      - [ setLocales, [ %ongr_translations.managed_locales% ] ]
+      - [ setDomains, [ [] ]]
+      - [ setFormats, [ ['yml', 'xlf'] ] ]

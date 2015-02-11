@@ -11,6 +11,8 @@
 
 namespace ONGR\TranslationsBundle;
 
+use ONGR\TranslationsBundle\DependencyInjection\Compiler\TranslatorPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -18,4 +20,12 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class ONGRTranslationsBundle extends Bundle
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+        $container->addCompilerPass(new TranslatorPass());
+    }
 }
