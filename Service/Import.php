@@ -236,7 +236,6 @@ class Import
         if ($finder instanceof Finder) {
             foreach ($finder as $file) {
                 $this->translations = array_merge($this->translations, $this->fileImport->import($file));
-//                $this->writeToStorage();
             }
         }
     }
