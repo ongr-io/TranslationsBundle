@@ -5,20 +5,25 @@ imports:
 framework:
     secret: "TOP-SECRET"
     test: ~
+    templating:
+        engines: ['twig']
+    router:
+        resource: "%kernel.root_dir%/config/routing_test.yml"
+        strict_requirements: %kernel.debug%
     
 ongr_elasticsearch:
     connections:
         default:
             hosts:
                 - { host: "%database.elastic_search.host%" }
-            index_name: "%database.elastic_search.index_name%"
+            index_name: "%database.elastic_search.index%"
     managers:
         default:
             connection: default
             mappings:
                 - ONGRTranslationsBundle
     
-ongr_traslations:
+ongr_translations:
     es_manager: "default"
     fallback_locale: "en"
     managed_locales: ["lt", "de", "en"]
