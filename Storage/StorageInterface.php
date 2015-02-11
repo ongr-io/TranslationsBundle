@@ -19,17 +19,14 @@ interface StorageInterface
     /**
      * Returns translations from storage.
      *
-     * @param string $domain From which domain return translations.
-     *
      * @return array
      */
-    public function read($domain);
+    public function read();
 
     /**
      * Writes translations into storage.
      *
-     * @param string $domain       Domain translations belong to.
-     * @param array  $translations Translations from domain.
+     * @param array $translations Translations from domain.
      */
-    public function write($domain, array $translations);
+    public function write(array $translations);
 }
