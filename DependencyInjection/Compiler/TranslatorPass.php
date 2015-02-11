@@ -25,12 +25,20 @@ class TranslatorPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $loaders = [];
         $loadersReferences = [];
 
+        $formats = $container->getParameter('ongr_translations.formats');
+
         foreach ($container->findTaggedServiceIds('translation.loader') as $id => $attributes) {
-            $loaders[$id][] = $attributes[0]['alias'];
-            $loadersReferences[$attributes[0]['alias']] = new Reference($id);
+            if (!empty($formats)) {
+                if (array_intersect($attributes[0], $formats)) {
+                    $loadersReferences[$attributes[0]['alias']] = new Reference($id);
+                } else {
+                    continue;
+                }
+            } else {
+                $loadersReferences[$attributes[0]['alias']] = new Reference($id);
+            }
         }
 
         if ($container->hasDefinition('ongr_translations.file_import')) {

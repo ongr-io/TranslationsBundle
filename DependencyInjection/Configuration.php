@@ -41,6 +41,16 @@ class Configuration implements ConfigurationInterface
                     ->requiresAtleastOneElement()
                     ->prototype('scalar')->end()
                 ->end()
+                ->arrayNode('formats')
+                    ->prototype('scalar')
+                        ->defaultValue([])
+                    ->end()
+                ->end()
+                ->arrayNode('domains')
+                    ->prototype('scalar')
+                        ->defaultValue([])
+                    ->end()
+                ->end()
             ->end()
         ->end();
 

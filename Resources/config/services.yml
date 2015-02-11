@@ -17,5 +17,5 @@ services:
       - %kernel.bundles%
     calls:
       - [ setLocales, [ %ongr_translations.managed_locales% ] ]
-      - [ setDomains, [ [] ]]
-      - [ setFormats, [ ['yml', 'xlf'] ] ]
+      - [ setDomains, [ %ongr_translations.domains% ] ]
+      - [ setFormats, [ %ongr_translations.formats% ] ]

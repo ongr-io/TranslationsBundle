@@ -27,6 +27,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             'fallback_locale' => 'en',
             'es_manager' => 'default',
             'managed_locales' => [],
+            'formats' => [],
+            'domains' => [],
         ];
 
         $out = [];
@@ -71,7 +73,32 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             ),
         ];
 
-        // Case #2 No managed locales.
+        // Case #2 Specific translation files format.
+        $out[] = [
+            [
+                'managed_locales' => [
+                    'en',
+                ],
+                'formats' => [
+                    'yml',
+                    'xlf',
+                ],
+            ],
+            array_merge(
+                $expectedConfiguration,
+                [
+                    'managed_locales' => [
+                        'en',
+                    ],
+                    'formats' => [
+                        'yml',
+                        'xlf',
+                    ],
+                ]
+            ),
+        ];
+
+        // Case #3 No managed locales.
         $out[] = [
             [
                 'managed_locales' => [],
@@ -79,6 +106,29 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             $expectedConfiguration,
             true,
             'The path "ongr_translations.managed_locales" should have at least 1 element(s) defined.',
+        ];
+
+        // Case #4 Specific translation domains.
+        $out[] = [
+            [
+                'managed_locales' => [
+                    'en',
+                ],
+                'domains' => [
+                    'messages',
+                ],
+            ],
+            array_merge(
+                $expectedConfiguration,
+                [
+                    'managed_locales' => [
+                        'en',
+                    ],
+                    'domains' => [
+                        'messages',
+                    ],
+                ]
+            ),
         ];
 
         return $out;

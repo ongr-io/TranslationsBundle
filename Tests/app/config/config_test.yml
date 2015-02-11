@@ -27,3 +27,5 @@ ongr_translations:
     es_manager: "default"
     fallback_locale: "en"
     managed_locales: ["lt", "de", "en"]
+    formats: ["yml", "xlf"]
+    domains: ["messages"]

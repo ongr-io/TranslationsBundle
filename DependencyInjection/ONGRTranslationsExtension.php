@@ -35,6 +35,9 @@ class ONGRTranslationsExtension extends Extension
         $loader->load('services.yml');
 
         $container->setParameter('ongr_translations.managed_locales', $config['managed_locales']);
+        $container->setParameter('ongr_translations.formats', $config['formats']);
+        $container->setParameter('ongr_translations.domains', $config['domains']);
+
 
         $this->setElasticsearchStorage($config['es_manager'], $container);
     }
