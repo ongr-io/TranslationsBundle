@@ -13,7 +13,9 @@ namespace ONGR\TranslationsBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
@@ -33,5 +35,25 @@ class ONGRTranslationsExtension extends Extension
         $loader->load('services.yml');
 
         $container->setParameter('ongr_translations.managed_locales', $config['managed_locales']);
+
+        $this->setElasticsearchStorage($config['es_manager'], $container);
+    }
+
+    /**
+     * Sets elasticsearch storage for translations.
+     *
+     * @param string           $managerName
+     * @param ContainerBuilder $container
+     */
+    private function setElasticsearchStorage($managerName, ContainerBuilder $container)
+    {
+        $definition = new Definition(
+            'ONGR\TranslationsBundle\Storage\ElasticsearchStorage',
+            [
+                new Reference("es.manager.{$managerName}"),
+            ]
+        );
+
+        $container->setDefinition('ongr_translations.storage', $definition);
     }
 }
