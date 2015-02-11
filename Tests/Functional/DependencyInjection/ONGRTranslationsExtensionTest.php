@@ -42,7 +42,7 @@ class ONGRTranslationsExtensionTest extends AbstractElasticsearchTestCase
      * Tests if container has services.
      *
      * @param string $id       Service Id.
-     * @param string $instance Instance asociated with service.
+     * @param string $instance Instance associated with service.
      *
      * @dataProvider getTestServicesData
      */

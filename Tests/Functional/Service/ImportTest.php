@@ -1,0 +1,71 @@
+<?php
+
+/*
+ * This file is part of the ONGR package.
+ *
+ * (c) NFQ Technologies UAB <info@nfq.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace ONGR\TranslationsBundle\Tests\Functional\Service;
+
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+
+/**
+ * Class ImportTest.
+ */
+class ImportTest extends WebTestCase
+{
+    /**
+     * Expected translations data provider.
+     *
+     * @return array
+     */
+    public function getExpectedTranslationsData()
+    {
+        $out = [
+            [
+                [
+                    'messages' => [
+                        'en' => [
+                            'home' => 'Home',
+                            'back_to_list' => 'Back',
+                        ],
+                        'lt' => [
+                            'home' => 'Namai',
+                            'back_to_list' => 'Atgal į sąrašą',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        return $out;
+    }
+
+    /**
+     * Tests if translations files are parsed correctly.
+     *
+     * @param array $expectedTranslations
+     *
+     * @dataProvider getExpectedTranslationsData
+     */
+    public function testImport($expectedTranslations)
+    {
+        $importService = $this->getContainer()->get('ongr_translations.import');
+
+        $this->assertArraySubset($expectedTranslations['messages'], $importService->getTranslations()['messages']);
+    }
+
+    /**
+     * Returns container.
+     *
+     * @return \Symfony\Component\DependencyInjection\ContainerInterface
+     */
+    public function getContainer()
+    {
+        return static::createClient()->getContainer();
+    }
+}
