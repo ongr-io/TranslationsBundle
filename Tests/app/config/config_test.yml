@@ -5,3 +5,20 @@ imports:
 framework:
     secret: "TOP-SECRET"
     test: ~
+    
+ongr_elasticsearch:
+    connections:
+        default:
+            hosts:
+                - { host: "%database.elastic_search.host%" }
+            index_name: "%database.elastic_search.index_name%"
+    managers:
+        default:
+            connection: default
+            mappings:
+                - ONGRTranslationsBundle
+    
+ongr_traslations:
+    es_manager: "default"
+    fallback_locale: "en"
+    managed_locales: ["lt", "de", "en"]
