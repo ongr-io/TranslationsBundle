@@ -13,16 +13,16 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>#</th>
                                 <th>Domain</th>
+                                <th>Key</th>
                                 <th>Locale</th>
                                 <th>Message</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="trans in translations">
-                                <td>{{ trans.id }}</td>
                                 <td>{{ trans.domain }}</td>
+                                <td>{{ trans.key }}</td>
                                 <td>{{ trans.locale }}</td>
                                 <td>{{ trans.message }}</td>
                             </tr>
