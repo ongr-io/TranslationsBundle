@@ -8,13 +8,23 @@ parameters:
     ongr_translations.filter.sort.request_field: sort
     ongr_translations.filter.sort.choices:
         msgAsc:
-            label: "Asc"
+            label: "Message asc"
             field: "message"
             order: "asc"
             default: true
         msgDesc:
-            label: "Desc"
+            label: "Message desc"
             field: "message"
+            order: "desc"
+            default: false
+        keyAsc:
+            label: "Key asc"
+            field: "key"
+            order: "asc"
+            default: false
+        keyDesc:
+            label: "Key desc"
+            field: "key"
             order: "desc"
             default: false
     

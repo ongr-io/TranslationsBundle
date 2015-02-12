@@ -22,19 +22,46 @@
                             <a class="navbar-brand" href="{{ path('ongr_translations_list_page') }}">ONGR Translations</a>
                         </div>
                         <div class="collapse navbar-collapse pull-right">
-                            {% if filters_manager.filters.search is defined %}
-                                <form action="?" method="GET" class="navbar-form navbar-left" role="search">
-                                    <div class="input-group">
+                            
+                            {% block sorting %}
+                                {% if filters_manager.filters.sort is defined %}
+                                    {% set filter = filters_manager.filters.sort %}
+                                    <ul class="nav navbar-nav">
+                                        <li class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                                <strong>Sort</strong>: 
+                                                {%- for choice in filter.choices -%}
+                                                    {% if choice.active or ((not filter.state.active) and choice.default) %} {{ choice.label }}{% endif %}
+                                                {%- endfor -%}
+                                                <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu" role="menu">
+                                                {% for choice in filter.choices %}
+                                                    {% if not (choice.active or (choice.default and not filter.state.active)) %}
+                                                        <li><a href="{{ path('ongr_translations_list_page', choice.getUrlParameters()) }}">{{ choice.label }}</a></li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                {% endif %}
+                            {% endblock %}
+                            
+                            {% block search %}
+                                {% if filters_manager.filters.search is defined %}
+                                    <form action="?" method="GET" class="navbar-form navbar-left" role="search">
+                                        <div class="input-group">
                                         <span class="input-group-btn">
                                             {% if filters_manager.filters.search.state.active %}
                                                 <a href="{{ path('ongr_translations_list_page', filters_manager.filters.search.resetUrlParameters) }}" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
                                             {% endif %}
                                             <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i></button>
                                         </span>
-                                        <input type="text" class="form-control" name="q" value="{% if filters_manager.filters.search.state.value is not empty %}{{ filters_manager.filters.search.state.value }}{% endif %}" placeholder="Search for...">
-                                    </div><!-- /input-group -->
-                                </form>
-                            {% endif %}
+                                            <input type="text" class="form-control" name="q" value="{% if filters_manager.filters.search.state.value is not empty %}{{ filters_manager.filters.search.state.value }}{% endif %}" placeholder="Search for...">
+                                        </div><!-- /input-group -->
+                                    </form>
+                                {% endif %}
+                            {% endblock %}
                         </div><!-- /.navbar-collapse -->
                     </div><!-- /.container-fluid -->
                 </nav>
