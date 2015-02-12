@@ -21,32 +21,21 @@
                         <div class="navbar-header">
                             <a class="navbar-brand" href="{{ path('ongr_translations_list_page') }}">ONGR Translations</a>
                         </div>
-                        <div class="collapse navbar-collapse pull-right">
-                            
-                            {% block sorting %}
-                                {% if filters_manager.filters.sort is defined %}
-                                    {% set filter = filters_manager.filters.sort %}
-                                    <ul class="nav navbar-nav">
-                                        <li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                                <strong>Sort</strong>: 
-                                                {%- for choice in filter.choices -%}
-                                                    {% if choice.active or ((not filter.state.active) and choice.default) %} {{ choice.label }}{% endif %}
-                                                {%- endfor -%}
-                                                <span class="caret"></span>
-                                            </a>
-                                            <ul class="dropdown-menu" role="menu">
-                                                {% for choice in filter.choices %}
-                                                    {% if not (choice.active or (choice.default and not filter.state.active)) %}
-                                                        <li><a href="{{ path('ongr_translations_list_page', choice.getUrlParameters()) }}">{{ choice.label }}</a></li>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                {% endif %}
+
+
+                        <div class="collapse navbar-collapse pull-left">
+                            {% import 'ONGRTranslationsBundle:macros:filters.html.twig' as filter_macros %}
+                            {% block filters %}
+                                {{ filter_macros.dropdown(filters_manager.filters.locale) }}
+                                {{ filter_macros.dropdown(filters_manager.filters.domain) }}
+                                {{ filter_macros.dropdown(filters_manager.filters.group) }}
                             {% endblock %}
-                            
+                            </div>
+
+                        <div class="collapse navbar-collapse pull-right">
+
+                            {{ filter_macros.dropdown(filters_manager.filters.sort) }}
+
                             {% block search %}
                                 {% if filters_manager.filters.search is defined %}
                                     <form action="?" method="GET" class="navbar-form navbar-left" role="search">

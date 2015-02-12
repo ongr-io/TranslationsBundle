@@ -33,8 +33,13 @@ parameters:
     ongr_translations.filter.match_search.field: "message"
     
     ongr_translations.filter.single_term.class: ONGR\FilterManagerBundle\Filters\Widget\Choice\SingleTermChoice
-    ongr_translations.filter.single_term.request_field: group
-    ongr_translations.filter.single_term.field: group
+    ongr_translations.filter.single_term.domain.request_field: domain
+    ongr_translations.filter.single_term.domain.field: domain
+    ongr_translations.filter.single_term.locale.request_field: locale
+    ongr_translations.filter.single_term.locale.field: locale
+    ongr_translations.filter.single_term.group.request_field: group
+    ongr_translations.filter.single_term.group.field: group
+
 
     ongr_translations.filters_container.class: ONGR\FilterManagerBundle\Search\FiltersContainer
 
@@ -58,11 +63,22 @@ services:
             - ["setRequestField", ["%ongr_translations.filter.match_search.request_field%"]]
             - ["setField", ["%ongr_translations.filter.match_search.field%"]]
             
-    ongr_translations.filter.single_term:
+    ongr_translations.filter.single_term.domain:
         class: "%ongr_translations.filter.single_term.class%"
         calls:
-            - ["setRequestField", ["%ongr_translations.filter.single_term.request_field%"]]
-            - ["setField", ["%ongr_translations.filter.single_term.field%"]]
+            - ["setRequestField", ["%ongr_translations.filter.single_term.domain.request_field%"]]
+            - ["setField", ["%ongr_translations.filter.single_term.domain.field%"]]
+    ongr_translations.filter.single_term.group:
+            class: "%ongr_translations.filter.single_term.class%"
+            calls:
+                - ["setRequestField", ["%ongr_translations.filter.single_term.group.request_field%"]]
+                - ["setField", ["%ongr_translations.filter.single_term.group.field%"]]
+    ongr_translations.filter.single_term.locale:
+        class: "%ongr_translations.filter.single_term.class%"
+        calls:
+            - ["setRequestField", ["%ongr_translations.filter.single_term.locale.request_field%"]]
+            - ["setField", ["%ongr_translations.filter.single_term.locale.field%"]]
+
 
     ongr_translations.filters_container:
         class: "%ongr_translations.filters_container.class%"
@@ -70,4 +86,7 @@ services:
             - ["set", ["pager", "@ongr_translations.filter.pager"]]
             - ["set", ["sort", "@ongr_translations.filter.sort"]]
             - ["set", ["search", "@ongr_translations.filter.match_search"]]
-            - ["set", ["term", "@ongr_translations.filter.single_term"]]
+            - ["set", ["domain", "@ongr_translations.filter.single_term.domain"]]
+            - ["set", ["group", "@ongr_translations.filter.single_term.group"]]
+            - ["set", ["locale", "@ongr_translations.filter.single_term.locale"]]
+
