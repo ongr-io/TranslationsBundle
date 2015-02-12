@@ -33,12 +33,14 @@ class ONGRTranslationsExtension extends Extension
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
+        $loader->load('filters_container.yml');
 
         $container->setParameter('ongr_translations.managed_locales', $config['managed_locales']);
         $container->setParameter('ongr_translations.formats', $config['formats']);
         $container->setParameter('ongr_translations.domains', $config['domains']);
 
         $this->setElasticsearchStorage($config['es_manager'], $container);
+        $this->setFiltersManager($config['es_manager'], $container);
     }
 
     /**
@@ -57,5 +59,22 @@ class ONGRTranslationsExtension extends Extension
         );
 
         $container->setDefinition('ongr_translations.storage', $definition);
+    }
+
+    /**
+     * @param string           $managerName
+     * @param ContainerBuilder $container
+     */
+    private function setFiltersManager($managerName, ContainerBuilder $container)
+    {
+        $definition = new Definition(
+            'ONGR\FilterManagerBundle\Search\FiltersManager',
+            [
+                new Reference('ongr_translations.filters_container'),
+                new Reference("es.manager.{$managerName}.translation"),
+            ]
+        );
+
+        $container->setDefinition('ongr_translations.filters_manager', $definition);
     }
 }

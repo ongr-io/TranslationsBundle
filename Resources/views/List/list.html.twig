@@ -1,0 +1,46 @@
+{% extends 'ONGRTranslationsBundle::layout.html.twig' %}
+
+{% block body_attr %}ng-app="ongr.translations"{% endblock %}
+
+{% block content %}
+    <div class="container" ng-controller="list">
+        <div class="row">
+            <div class="col-lg-12">
+                {#filters#}
+            </div>
+            <div class="col-lg-12">
+                {% verbatim %}
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Domain</th>
+                                <th>Locale</th>
+                                <th>Message</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="trans in translations">
+                                <td>{{ trans.id }}</td>
+                                <td>{{ trans.domain }}</td>
+                                <td>{{ trans.locale }}</td>
+                                <td>{{ trans.message }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                {% endverbatim %}
+            </div>
+        </div>
+    </div>
+
+    {{ dump(filters_manager) }}
+{% endblock %}
+
+{% block footer_javascript %}
+    <script type="text/javascript">
+        var translations = {{ data | json_encode | raw }};
+    </script>
+    <script src="{{ asset('bundles/ongrtranslations/js/controller/listController.js') }}"></script>
+    <script src="{{ asset('bundles/ongrtranslations/js/app-translations.js') }}"></script>
+    {{ parent() }}
+{% endblock %}

@@ -19,7 +19,7 @@ use ONGR\ElasticsearchBundle\Document\AbstractDocument;
  *
  * @ES\Document(type="translation")
  */
-class Translation extends AbstractDocument
+class Translation extends AbstractDocument implements \JsonSerializable
 {
     /**
      * @var string
@@ -41,6 +41,25 @@ class Translation extends AbstractDocument
      * @ES\Property(name="messages", type="object", multiple=true, objectName="ONGRTranslationsBundle:Message")
      */
     private $messages;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        $messages = [];
+
+        foreach ($this->getMessages() as $message) {
+            $messages[] = [
+                'id' => $message->getId(),
+                'domain' => $this->getDomain(),
+                'locale' => $message->getLocale(),
+                'message' => $message->getMessage(),
+            ];
+        }
+
+        return $messages;
+    }
 
     /**
      * @return Message[]
