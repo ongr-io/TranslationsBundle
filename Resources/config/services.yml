@@ -1,6 +1,10 @@
 parameters:
   ongr_translations.file_import.class: ONGR\TranslationsBundle\Translation\Import\FileImport
+
+  ongr_translations.export.yaml.class: ONGR\TranslationsBundle\Translation\Export\YmlExport
+
   ongr_translations.import.class: ONGR\TranslationsBundle\Service\Import
+  ongr_translations.export.class: ONGR\TranslationsBundle\Service\Export
 
 services:
   ongr_translations.file_import:
@@ -19,3 +23,14 @@ services:
       - [ setLocales, [ %ongr_translations.managed_locales% ] ]
       - [ setDomains, [ %ongr_translations.domains% ] ]
       - [ setFormats, [ %ongr_translations.formats% ] ]
+
+  ongr_translations.export.yaml:
+    class: %ongr_translations.export.yaml.class%
+
+  ongr_translations.export:
+    class: %ongr_translations.export.class%
+    arguments:
+      - @ongr_translations.storage
+      - @ongr_translations.export.yaml
+      - %kernel.root_dir%
+
