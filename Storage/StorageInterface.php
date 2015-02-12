@@ -19,9 +19,12 @@ interface StorageInterface
     /**
      * Returns translations from storage.
      *
+     * @param array $locales
+     * @param array $domains
+     *
      * @return array
      */
-    public function read();
+    public function read($locales, $domains);
 
     /**
      * Writes translations into storage.

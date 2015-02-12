@@ -11,12 +11,10 @@
 
 namespace ONGR\TranslationsBundle\Storage;
 
+use ONGR\ElasticsearchBundle\DSL\Filter\TermsFilter;
 use ONGR\ElasticsearchBundle\DSL\Query\MatchAllQuery;
-use ONGR\ElasticsearchBundle\DSL\Query\TermQuery;
-use ONGR\ElasticsearchBundle\DSL\Query\TermsQuery;
 use ONGR\ElasticsearchBundle\ORM\Manager;
 use ONGR\ElasticsearchBundle\ORM\Repository;
-use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 
 /**
@@ -40,15 +38,23 @@ class ElasticsearchStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function read()
+    public function read($locales = [], $domains = [])
     {
         $repository = $this->getRepository();
 
         $search = $repository
             ->createSearch()
+            ->setScroll('2m')
             ->addQuery(new MatchAllQuery());
 
-        return $repository->execute($search, Repository::RESULTS_ARRAY);
+        if (!empty($locales)) {
+            $search->addFilter(new TermsFilter('locale', $locales));
+        }
+        if (!empty($domains)) {
+            $search->addFilter(new TermsFilter('domain', $domains));
+        }
+
+        return $repository->execute($search, Repository::RESULTS_OBJECT);
     }
 
     /**
@@ -66,7 +72,6 @@ class ElasticsearchStorage implements StorageInterface
                     $document->setLocale($locale);
                     $document->setMessage($trans);
                     $document->setKey($key);
-//                    $document->setId($document->getId());
 
                     $this->manager->persist($document);
                 }
