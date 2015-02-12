@@ -166,7 +166,7 @@ class Import
             $dirs[] = dirname($reflection->getFilename()) . $translationDir;
         }
 
-        $finder = new Finder();
+        $finder = $this->getFinder();
         $finder->files()
             ->name($this->getFileNamePattern())
             ->in($dirs);
@@ -194,7 +194,7 @@ class Import
         $dir = $path . '/Resources/translations';
 
         if (is_dir($dir)) {
-            $finder = new Finder();
+            $finder = $this->getFinder();
             $finder->files()
                 ->name($this->getFileNamePattern())
                 ->in($dir);
@@ -318,5 +318,15 @@ class Import
     public function setBundles($bundles)
     {
         $this->bundles = $bundles;
+    }
+
+    /**
+     * Returns Finder object.
+     *
+     * @return Finder
+     */
+    protected function getFinder()
+    {
+        return new Finder();
     }
 }
