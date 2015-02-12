@@ -11,6 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Command;
 
+use ONGR\TranslationsBundle\Service\Import;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -63,6 +64,7 @@ class ImportCommand extends ContainerAwareCommand
         $this->input = $input;
         $this->output = $output;
 
+        /** @var Import $import */
         $import = $this->getContainer()->get('ongr_translations.import');
 
         $locales = $this->input->getOption('locales');
@@ -71,19 +73,21 @@ class ImportCommand extends ContainerAwareCommand
         }
         $domains = $input->getOption('domains') ? explode(',', $input->getOption('domains')) : [];
         $bundleName = $this->input->getArgument('bundle');
+
         $import->setLocales($locales);
         $import->setDomains($domains);
+
         if ($bundleName) {
             $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
             $import->importBundleTranslationFiles($bundle->getPath());
         } else {
             $this->output->writeln('<info>*** Importing application translation files ***</info>');
-            $import->importAppTranslationFiles($locales, $domains);
+            $import->importAppTranslationFiles();
             if (!$this->input->getOption('globals')) {
                 $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
-                $import->importBundlesTranslationFiles($locales, $domains);
+                $import->importBundlesTranslationFiles();
                 $this->output->writeln('<info>*** Importing component translation files ***</info>');
-                $import->importComponentTranslationFiles($locales, $domains);
+                $import->importComponentTranslationFiles();
             }
         }
         $import->writeToStorage();
