@@ -36,46 +36,25 @@ class Translation extends AbstractDocument implements \JsonSerializable
     private $group;
 
     /**
-     * @var Message
+     * @var string
      *
-     * @ES\Property(name="messages", type="object", multiple=true, objectName="ONGRTranslationsBundle:Message")
+     * @ES\Property(name="locale", type="string", index="not_analyzed")
      */
-    private $messages;
+    private $locale;
 
     /**
-     * {@inheritdoc}
+     * @var string
+     *
+     * @ES\Property(name="message", type="string", index="not_analyzed")
      */
-    public function jsonSerialize()
-    {
-        $messages = [];
-
-        foreach ($this->getMessages() as $message) {
-            $messages[] = [
-                'id' => $message->getId(),
-                'domain' => $this->getDomain(),
-                'locale' => $message->getLocale(),
-                'message' => $message->getMessage(),
-            ];
-        }
-
-        return $messages;
-    }
+    private $message;
 
     /**
-     * @return Message[]
+     * @var string
+     *
+     * @ES\Property(name="key", type="string", index="not_analyzed")
      */
-    public function getMessages()
-    {
-        return $this->messages;
-    }
-
-    /**
-     * @param Message[] $messages
-     */
-    public function setMessages($messages)
-    {
-        $this->messages = $messages;
-    }
+    private $key;
 
     /**
      * @return string
@@ -107,5 +86,71 @@ class Translation extends AbstractDocument implements \JsonSerializable
     public function setGroup($group)
     {
         $this->group = $group;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
+     * @param string $locale
+     */
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     * @param string $message
+     */
+    public function setMessage($message)
+    {
+        $this->message = $message;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * @param string $key
+     */
+    public function setKey($key)
+    {
+        $this->key = $key;
+    }
+
+    /**
+     * Return unique document id.
+     *
+     * @return DocumentInterface
+     */
+    public function getId()
+    {
+        return sha1($this->getDomain() . $this->getLocale() . $this->getKey());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
     }
 }

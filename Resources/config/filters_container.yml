@@ -8,12 +8,12 @@ parameters:
     ongr_translations.filter.sort.choices:
         msgAsc:
             label: "Asc"
-            field: "messages.message"
+            field: "message"
             order: "asc"
             default: true
         msgDesc:
             label: "Desc"
-            field: "messages.message"
+            field: "message"
             order: "desc"
             default: false
     
