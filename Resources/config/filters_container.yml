@@ -1,7 +1,8 @@
 parameters:
     ongr_translations.filter.pager.class: ONGR\FilterManagerBundle\Filters\Widget\Pager\Pager
     ongr_translations.filter.pager.request_field: page
-    ongr_translations.filter.pager.count_per_page: 15
+    ongr_translations.filter.pager.count_per_page: 20
+    ongr_translations.filter.pager.max_pages: 5
     
     ongr_translations.filter.sort.class: ONGR\FilterManagerBundle\Filters\Widget\Sort\Sort
     ongr_translations.filter.sort.request_field: sort
@@ -33,7 +34,8 @@ services:
         calls:
             - ["setRequestField", ["%ongr_translations.filter.pager.request_field%"]]
             - ["setCountPerPage", ["%ongr_translations.filter.pager.count_per_page%"]]
-            
+            - ["setMaxPages", ["%ongr_translations.filter.pager.max_pages%"]]
+
     ongr_translations.filter.sort:
         class: "%ongr_translations.filter.sort.class%"
         calls:

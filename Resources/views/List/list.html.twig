@@ -10,7 +10,7 @@
             </div>
             <div class="col-lg-12">
                 {% verbatim %}
-                    <table class="table">
+                    <table class="table table-striped">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -29,6 +29,10 @@
                         </tbody>
                     </table>
                 {% endverbatim %}
+                {% if filters_manager.filters.pager is defined %}
+                    <div class="text-center">{{ paginate(filters_manager.filters.pager.pager, 'ongr_translations_list_page', filters_manager.filters.pager.getUrlParameters()) }}</div>
+                    <div class="clearfix"></div>
+                {% endif %}
             </div>
         </div>
     </div>
