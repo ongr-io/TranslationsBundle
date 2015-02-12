@@ -11,6 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Service;
 
+use Elasticsearch\Common\Exceptions\BadRequest400Exception;
 use ONGR\TranslationsBundle\Storage\StorageInterface;
 use ONGR\TranslationsBundle\Translation\Import\FileImport;
 use Symfony\Component\Finder\Finder;
@@ -89,7 +90,7 @@ class Import
     }
 
     /**
-     * Returns translations as array.
+     * Returns all translations as array.
      *
      * @return array
      */
@@ -109,7 +110,11 @@ class Import
      */
     public function writeToStorage()
     {
-        $this->storage->write($this->getTranslations());
+        try {
+            $this->storage->write($this->translations);
+        } catch (BadRequest400Exception $e) {
+            // Empty bulk commit exception.
+        }
     }
 
     /**
