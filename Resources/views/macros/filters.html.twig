@@ -1,4 +1,4 @@
-{% macro dropdown(filter) %}
+{% macro dropdown(filter, disable) %}
     {% if filter|default(false) and filter.choices|length %}
         <ul class="nav navbar-nav">
             <li class="dropdown">
@@ -15,6 +15,10 @@
                             <li><a href="{{ path('ongr_translations_list_page', choice.getUrlParameters()) }}">{{ choice.label }}</a></li>
                         {% endif %}
                     {% endfor %}
+                    {% if filter.state.active and disable %}
+                        <li class="divider"></li>
+                        <li><a href="{{ path('ongr_translations_list_page', filter.resetUrlParameters) }}">Clear</a></li>
+                    {% endif %}
                 </ul>
             </li>
         </ul>

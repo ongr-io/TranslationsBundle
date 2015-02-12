@@ -22,19 +22,14 @@
                             <a class="navbar-brand" href="{{ path('ongr_translations_list_page') }}">ONGR Translations</a>
                         </div>
 
-
-                        <div class="collapse navbar-collapse pull-left">
+                        <div class="collapse navbar-collapse pull-right">
                             {% import 'ONGRTranslationsBundle:macros:filters.html.twig' as filter_macros %}
                             {% block filters %}
-                                {{ filter_macros.dropdown(filters_manager.filters.locale) }}
-                                {{ filter_macros.dropdown(filters_manager.filters.domain) }}
-                                {{ filter_macros.dropdown(filters_manager.filters.group) }}
+                                {{ filter_macros.dropdown(filters_manager.filters.locale, true) }}
+                                {{ filter_macros.dropdown(filters_manager.filters.domain, true) }}
+                                {{ filter_macros.dropdown(filters_manager.filters.group, true) }}
+                                {{ filter_macros.dropdown(filters_manager.filters.sort, false) }}
                             {% endblock %}
-                            </div>
-
-                        <div class="collapse navbar-collapse pull-right">
-
-                            {{ filter_macros.dropdown(filters_manager.filters.sort) }}
 
                             {% block search %}
                                 {% if filters_manager.filters.search is defined %}
