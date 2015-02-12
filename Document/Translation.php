@@ -45,7 +45,7 @@ class Translation extends AbstractDocument implements \JsonSerializable
     /**
      * @var string
      *
-     * @ES\Property(name="message", type="string", index="not_analyzed")
+     * @ES\Property(name="message", type="string")
      */
     private $message;
 
