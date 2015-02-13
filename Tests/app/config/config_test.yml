@@ -22,7 +22,19 @@ ongr_elasticsearch:
             connection: default
             mappings:
                 - ONGRTranslationsBundle
-    
+ongr_filter_manager:
+    managers:
+        item_list:
+            filters:
+                - sorting
+            repository: 'translation'
+    filters:
+        sort:
+            sorting:
+                request_field: 'sort'
+                choices:
+                    - { label: Title ascending, field: title, default: true }
+                    - { label: Title descending, field: title, order: desc }
 ongr_translations:
     es_manager: "default"
     fallback_locale: "en"

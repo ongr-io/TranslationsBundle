@@ -16,6 +16,18 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class ListControllerTest extends WebTestCase
 {
     /**
+     * Import test data.
+     */
+    protected function setUp()
+    {
+        $container = static::createClient()->getContainer();
+
+        $importService = $container->get('ongr_translations.import');
+        $importService->import(['en'], ['messages']);
+        $importService->writeToStorage();
+    }
+
+    /**
      * Tests if list is returning 200 response.
      */
     public function testListRoute()
