@@ -64,7 +64,6 @@ class YmlExportTest extends \PHPUnit_Framework_TestCase
         $dumper = new YmlExport();
         $dumper->export($file, $translations);
 
-
         $this->assertTrue($this->root->hasChild('root/Resources/translations/foo_domain.foo_locale.yml'));
         $dumpedData = explode(
             "\n",
