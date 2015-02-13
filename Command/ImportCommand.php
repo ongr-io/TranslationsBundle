@@ -50,8 +50,9 @@ class ImportCommand extends ContainerAwareCommand
         $this->addOption(
             'domains',
             'd',
-            InputOption::VALUE_OPTIONAL,
-            'Only imports files for given domains (comma separated).'
+            InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+            'Exports only these domains.',
+            []
         );
         $this->addArgument('bundle', InputArgument::OPTIONAL, 'Import translations for this specific bundle.', null);
     }
@@ -71,7 +72,8 @@ class ImportCommand extends ContainerAwareCommand
         if (empty($locales)) {
             $locales = $this->getContainer()->getParameter('ongr_translations.managed_locales');
         }
-        $domains = $input->getOption('domains') ? explode(',', $input->getOption('domains')) : [];
+        $domains = $input->getOption('domains');
+
         $bundleName = $this->input->getArgument('bundle');
 
         $import->setLocales($locales);

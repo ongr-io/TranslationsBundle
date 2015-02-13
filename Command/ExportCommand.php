@@ -17,7 +17,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Dumps translations from ES.
+ * Exports translations.
  */
 class ExportCommand extends ContainerAwareCommand
 {

@@ -294,38 +294,6 @@ class Import
     }
 
     /**
-     * @return mixed
-     */
-    public function getKernelDir()
-    {
-        return $this->kernelDir;
-    }
-
-    /**
-     * @param mixed $kernelDir
-     */
-    public function setKernelDir($kernelDir)
-    {
-        $this->kernelDir = $kernelDir;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getBundles()
-    {
-        return $this->bundles;
-    }
-
-    /**
-     * @param mixed $bundles
-     */
-    public function setBundles($bundles)
-    {
-        $this->bundles = $bundles;
-    }
-
-    /**
      * Returns Finder object.
      *
      * @return Finder

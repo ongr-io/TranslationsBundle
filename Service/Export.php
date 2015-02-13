@@ -55,10 +55,10 @@ class Export
      * @param array $locales
      * @param array $domains
      */
-    public function export($locales, $domains)
+    public function export($locales = [], $domains = [])
     {
         if (!file_exists($this->destinationDir)) {
-            mkdir($this->destinationDir, 0755);
+            mkdir($this->destinationDir, 0755, true);
         }
 
         foreach ($this->getExportData($locales, $domains) as $file => $translations) {
@@ -74,17 +74,20 @@ class Export
      *
      * @return array
      */
-    public function getExportData($locales, $domains)
+    private function getExportData($locales, $domains)
     {
         $data = [];
-        foreach ($this->storage->read($locales, $domains) as $translation) {
-            /** @var Translation $translation */
-            $fileName = $translation->getDomain() . '.' .  $translation->getLocale() . '.yml';
-            $path = $this->destinationDir . DIRECTORY_SEPARATOR .  $fileName;
+        $translations = $this->storage->read($locales, $domains);
+        if (!empty($translations)) {
+            foreach ($translations as $translation) {
+                /** @var Translation $translation */
+                $fileName = $translation->getDomain() . '.' .  $translation->getLocale() . '.yml';
+                $path = $this->destinationDir . DIRECTORY_SEPARATOR .  $fileName;
 
-            $data[$path][] = [
-                $translation->getKey() => $translation->getMessage(),
-            ];
+                $data[$path][] = [
+                    $translation->getKey() => $translation->getMessage(),
+                ];
+            }
         }
 
         return $data;
