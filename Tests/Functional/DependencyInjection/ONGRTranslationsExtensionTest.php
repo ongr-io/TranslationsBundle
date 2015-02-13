@@ -35,6 +35,10 @@ class ONGRTranslationsExtensionTest extends AbstractElasticsearchTestCase
                 'ongr_translations.file_import',
                 'ONGR\TranslationsBundle\Translation\Import\FileImport',
             ],
+            [
+                'ongr_translations.filters_manager',
+                'ONGR\FilterManagerBundle\Search\FiltersManager',
+            ],
         ];
     }
 
