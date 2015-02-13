@@ -63,12 +63,4 @@ class FileImport
             return $this->translations;
         }
     }
-
-    /**
-     * @return array
-     */
-    public function getTranslations()
-    {
-        return $this->translations;
-    }
 }
