@@ -53,10 +53,6 @@ class FileImport
             $messageCatalogue = $this->loaders[$extension]->load($file, $locale, $domain);
 
             foreach ($messageCatalogue->all($domain) as $key => $content) {
-                if (!isset($content)) {
-                    continue;
-                }
-
                 $this->translations[$domain][$locale][$key] = $content;
             }
 
