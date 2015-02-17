@@ -37,4 +37,58 @@ class ListControllerTest extends WebTestCase
 
         $this->assertTrue($client->getResponse()->isOk());
     }
+
+    /**
+     * Tests translation not found response code.
+     */
+    public function testTranslationNotFound()
+    {
+        $client = self::createClient();
+        $requestContent = json_encode(
+            [
+                'translation' => [
+                    'field' => 'message',
+                    'value' => 'foo_home',
+                ],
+            ]
+        );
+        $crawler = $client->request(
+            'POST',
+            '/translate/edit/1',
+            ['id' => '1'],
+            [],
+            [],
+            $requestContent
+        );
+
+        $this->assertTrue($client->getResponse()->isNotFound());
+    }
+
+    /**
+     * Tests translation message update case.
+     */
+    public function testUpdateTranslations()
+    {
+        $client = self::createClient();
+
+        $requestContent = json_encode(
+            [
+                'translation' => [
+                    'field' => 'message',
+                    'value' => 'foo_home',
+                ],
+            ]
+        );
+
+        $crawler = $client->request(
+            'GET',
+            '/translate/edit/370f67440cb78b213e563ae380dfd69f4f27e971',
+            [ 'id' => '370f67440cb78b213e563ae380dfd69f4f27e971'],
+            [],
+            [],
+            $requestContent
+        );
+
+        $this->assertTrue($client->getResponse()->isOk());
+    }
 }

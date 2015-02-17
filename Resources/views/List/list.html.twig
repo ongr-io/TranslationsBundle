@@ -17,6 +17,7 @@
                                 <th>Key</th>
                                 <th>Locale</th>
                                 <th>Message</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -24,7 +25,15 @@
                                 <td>{{ trans.domain }}</td>
                                 <td>{{ trans.key }}</td>
                                 <td>{{ trans.locale }}</td>
-                                <td>{{ trans.message }}</td>
+                                <td ng-dblclick="edit()">
+                                    <input editable disabled class="form-control"
+                                           ng-model="trans.message" ng-keydown="keyPress($event)"
+                                           value="{{ trans.message }}">
+                                </td>
+                                <td>
+                                    <button ng-click="save()" class="btn btn-default">Save</button>
+                                    <button ng-click="close()" class="btn btn-default">Close</button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -36,7 +45,6 @@
             </div>
         </div>
     </div>
-
     {#{{ dump(filters_manager) }}#}
 {% endblock %}
 
@@ -44,6 +52,8 @@
     <script type="text/javascript">
         var translations = {{ data | json_encode | raw }};
     </script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
     <script src="{{ asset('bundles/ongrtranslations/js/controller/listController.js') }}"></script>
     <script src="{{ asset('bundles/ongrtranslations/js/app-translations.js') }}"></script>
     {{ parent() }}

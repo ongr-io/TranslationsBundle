@@ -3,3 +3,11 @@ ongr_translations_list_page:
     methods: [GET]
     defaults:
         _controller: ONGRTranslationsBundle:List:list
+
+ongr_translations_translation_edit:
+    pattern: /edit/{id}
+    methods: [POST, GET]
+    defaults:
+        _controller: ONGRTranslationsBundle:List:edit
+    options:
+            expose: true
