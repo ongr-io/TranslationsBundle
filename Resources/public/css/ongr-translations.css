@@ -1,0 +1,15 @@
+.inline-edit a {
+    cursor: pointer;
+}
+
+.inline-edit div {
+    display: none;
+}
+
+.inline-edit.active a {
+    display: none;
+}
+
+.inline-edit.active div {
+    display: table;
+}

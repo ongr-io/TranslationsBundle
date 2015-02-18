@@ -10,6 +10,8 @@
 angular
     .module('ongr.translations', [
         'ui.bootstrap',
-        'controller.list'
+        'controller.list',
+        'directive.inline',
+        'util.asset'
     ])
     .constant('DATA', translations);
