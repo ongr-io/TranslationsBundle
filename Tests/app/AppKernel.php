@@ -28,6 +28,7 @@ class AppKernel extends Kernel
             new ONGR\TranslationsBundle\Tests\app\fixture\Acme\TestBundle\AcmeTestBundle(),
             new ONGR\TranslationsBundle\ONGRTranslationsBundle(),
             new ONGR\FilterManagerBundle\ONGRFilterManagerBundle(),
+            new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
         ];
     }
 
