@@ -52,7 +52,7 @@ class RestController extends Controller
     {
         $content = json_decode($request->getContent(), true);
 
-        if (!array_key_exists('value', $content)) {
+        if (empty($content) || !array_key_exists('value', $content)) {
             return new JsonResponse(Response::$statusTexts[400], 400);
         }
 

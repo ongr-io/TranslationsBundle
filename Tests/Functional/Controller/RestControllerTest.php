@@ -37,26 +37,34 @@ class RestControllerTest extends AbstractElasticsearchTestCase
     }
 
     /**
-     * Tests translation not found response code.
+     * Data provider for testing client status codes on rest controller.
+     *
+     * @return array
      */
-    public function testEditActionTranslationNotFound()
+    public function getTestEdtiActionStatusCodeData()
+    {
+        return [
+            ['/translate/_api/edit/', 404],
+            ['/translate/_api/edit/2', 400],
+            ['/translate/_api/edit/2', 400, '{}'],
+            ['/translate/_api/edit/2', 404, json_encode(['value' => 'foo_home'])],
+        ];
+    }
+
+    /**
+     * Tests edit action status codes.
+     *
+     * @param string $url        Url to send request to.
+     * @param int    $statusCode Status code with which client responded.
+     * @param string $content    Request content.
+     *
+     * @dataProvider getTestEdtiActionStatusCodeData
+     */
+    public function testEdtiActionStatusCode($url, $statusCode, $content = '')
     {
         $client = self::createClient();
-        $requestContent = json_encode(
-            [
-                'value' => 'foo_home',
-            ]
-        );
-        $crawler = $client->request(
-            'POST',
-            '/translate/_api/edit/2',
-            [],
-            [],
-            [],
-            $requestContent
-        );
-
-        $this->assertTrue($client->getResponse()->isNotFound());
+        $client->request('POST', $url, [], [], [], $content);
+        $this->assertEquals($statusCode, $client->getResponse()->getStatusCode());
     }
 
     /**
@@ -73,7 +81,7 @@ class RestControllerTest extends AbstractElasticsearchTestCase
             ]
         );
 
-        $crawler = $client->request(
+        $client->request(
             'POST',
             "/translate/_api/edit/{$id}",
             [],
