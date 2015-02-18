@@ -41,10 +41,8 @@ class YmlExportTest extends \PHPUnit_Framework_TestCase
         $out[] = [
             'vfs://root/Resources/translations/foo_domain.foo_locale.yml',
             [
-                [
-                    'foo_key' => 'foo_message',
-                    'bar_key' => 'bar_message',
-                ],
+                'foo_key' => 'foo_message',
+                'bar_key' => 'bar_message',
             ],
         ];
 

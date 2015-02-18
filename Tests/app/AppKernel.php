@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new Symfony\Bundle\TwigBundle\TwigBundle(),
             new ONGR\ElasticsearchBundle\ONGRElasticsearchBundle(),
+            new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new ONGR\TranslationsBundle\Tests\app\fixture\Acme\TestBundle\AcmeTestBundle(),
             new ONGR\TranslationsBundle\ONGRTranslationsBundle(),
             new ONGR\FilterManagerBundle\ONGRFilterManagerBundle(),

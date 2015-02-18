@@ -45,7 +45,14 @@ class ExportTest extends \PHPUnit_Framework_TestCase
         $expectedDir = 'Resources/translations';
         /* @var $exportService Export */
         $exportService = $this->getMockBuilder('ONGR\TranslationsBundle\Service\Export')
-            ->setConstructorArgs([$this->getStorageMock(['read']), $this->getExporterMock(), vfsStream::url('root')])
+            ->setConstructorArgs(
+                [
+                    $this->getLoadersContainerMock(),
+                    $this->getStorageMock(['read']),
+                    $this->getExporterMock(),
+                    vfsStream::url('root'),
+                ]
+            )
             ->setMethods(null)
             ->getMock();
 
@@ -72,15 +79,13 @@ class ExportTest extends \PHPUnit_Framework_TestCase
         $exporter->expects($this->once())->method('export')->with(
             'vfs://root/Resources/translations/foo_domain.foo_locale.yml',
             [
-                [
-                    'foo_key' => 'foo_message',
-                ],
+                'foo_key' => 'foo_message',
             ]
         );
 
         /* @var Export|\PHPUnit_Framework_MockObject_MockObject $exportService */
         $exportService = $this->getMockBuilder('ONGR\TranslationsBundle\Service\Export')
-            ->setConstructorArgs([$storageMock, $exporter, vfsStream::url('root')])
+            ->setConstructorArgs([$this->getLoadersContainerMock(), $storageMock, $exporter, vfsStream::url('root')])
             ->setMethods(null)
             ->getMock();
 
@@ -113,6 +118,17 @@ class ExportTest extends \PHPUnit_Framework_TestCase
     {
         return $this->getMockBuilder('ONGR\TranslationsBundle\Translation\Export\YmlExport')
             ->setMethods($methods)
+            ->getMock();
+    }
+
+    /**
+     * Returns LoadersContainer mock.
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    public function getLoadersContainerMock()
+    {
+        return $this->getMockBuilder('ONGR\TranslationsBundle\Service\LoadersContainer')
             ->getMock();
     }
 }
