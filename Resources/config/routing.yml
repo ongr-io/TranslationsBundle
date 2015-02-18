@@ -5,9 +5,9 @@ ongr_translations_list_page:
         _controller: ONGRTranslationsBundle:List:list
 
 ongr_translations_translation_edit:
-    pattern: /edit/{id}
-    methods: [POST, GET]
+    pattern: /_api/edit/{id}
+    methods: [POST]
     defaults:
-        _controller: ONGRTranslationsBundle:List:edit
+        _controller: ongr_translations.controller.rest:editAction
     options:
             expose: true
