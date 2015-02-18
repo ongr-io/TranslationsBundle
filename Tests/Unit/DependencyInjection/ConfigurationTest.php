@@ -24,7 +24,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     public function getTestConfigurationData()
     {
         $expectedConfiguration = [
-            'fallback_locale' => 'en',
             'es_manager' => 'default',
             'managed_locales' => [],
             'formats' => [],
@@ -53,7 +52,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         // Case #1 Custom values.
         $out[] = [
             [
-                'fallback_locale' => 'fr',
                 'es_manager' => 'foo',
                 'managed_locales' => [
                     'en',
@@ -63,7 +61,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             array_merge(
                 $expectedConfiguration,
                 [
-                    'fallback_locale' => 'fr',
                     'es_manager' => 'foo',
                     'managed_locales' => [
                         'en',

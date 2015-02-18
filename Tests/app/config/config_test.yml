@@ -37,7 +37,6 @@ ongr_filter_manager:
                     - { label: Title descending, field: title, order: desc }
 ongr_translations:
     es_manager: "default"
-    fallback_locale: "en"
     managed_locales: ["lt", "de", "en"]
     formats: ["yml", "xlf"]
     domains: ["messages"]
