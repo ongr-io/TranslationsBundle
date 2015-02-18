@@ -11,6 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Translation\Import;
 
+use ONGR\TranslationsBundle\Service\LoadersContainer;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Translation\MessageCatalogue;
 
@@ -25,16 +26,16 @@ class FileImport
     private $translations = [];
 
     /**
-     * @var array
+     * @var LoadersContainer
      */
-    private $loaders;
+    private $loadersContainer;
 
     /**
-     * @param array $loaders
+     * @param LoadersContainer $loadersContainer
      */
-    public function __construct(array $loaders = [])
+    public function __construct(LoadersContainer $loadersContainer)
     {
-        $this->loaders = $loaders;
+        $this->loadersContainer = $loadersContainer;
     }
 
     /**
@@ -48,9 +49,9 @@ class FileImport
     {
         list($domain, $locale, $extension) = explode('.', $file->getFilename());
 
-        if (isset($this->loaders[$extension])) {
+        if ($this->loadersContainer->has($extension)) {
             /** @var MessageCatalogue $messageCatalogue */
-            $messageCatalogue = $this->loaders[$extension]->load($file, $locale, $domain);
+            $messageCatalogue = $this->loadersContainer->get($extension)->load($file, $locale, $domain);
 
             foreach ($messageCatalogue->all($domain) as $key => $content) {
                 $this->translations[$domain][$locale][$key] = $content;

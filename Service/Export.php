@@ -36,17 +36,28 @@ class Export
     private $destinationDir;
 
     /**
+     * @var LoadersContainer
+     */
+    private $loadersContainer;
+
+    /**
      * Dependency Injection.
      *
+     * @param LoadersContainer $loadersContainer
      * @param StorageInterface $storage
      * @param ExportInterface  $exporter
      * @param string           $kernelRootDir
      */
-    public function __construct(StorageInterface $storage, ExportInterface $exporter, $kernelRootDir)
-    {
+    public function __construct(
+        LoadersContainer $loadersContainer,
+        StorageInterface $storage,
+        ExportInterface $exporter,
+        $kernelRootDir
+    ) {
         $this->storage = $storage;
         $this->exporter = $exporter;
         $this->destinationDir = $kernelRootDir . '/Resources/translations';
+        $this->loadersContainer = $loadersContainer;
     }
 
     /**
@@ -62,6 +73,14 @@ class Export
         }
 
         foreach ($this->getExportData($locales, $domains) as $file => $translations) {
+            if (file_exists($file)) {
+                list($domain, $locale, $extension) = explode('.', $file);
+                if ($this->loadersContainer && $this->loadersContainer->has($extension)) {
+                    $messageCatalogue = $this->loadersContainer->get($extension)->load($file, $locale, $domain);
+                    $translations = array_merge($messageCatalogue->all($domain), $translations);
+                }
+            }
+
             $this->exporter->export($file, $translations);
         }
     }
@@ -84,9 +103,7 @@ class Export
                 $fileName = $translation->getDomain() . '.' .  $translation->getLocale() . '.yml';
                 $path = $this->destinationDir . DIRECTORY_SEPARATOR .  $fileName;
 
-                $data[$path][] = [
-                    $translation->getKey() => $translation->getMessage(),
-                ];
+                $data[$path][$translation->getKey()] = $translation->getMessage();
             }
         }
 

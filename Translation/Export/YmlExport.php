@@ -31,9 +31,7 @@ class YmlExport implements ExportInterface
         $ymlDumper = new Dumper();
         $ymlDumper->setIndentation(0);
         $ymlContent = '';
-        foreach ($translations as $trans) {
-            $ymlContent .= $ymlDumper->dump($trans, 10);
-        }
+        $ymlContent .= $ymlDumper->dump($translations, 10);
         $bytes = file_put_contents($file, $ymlContent);
 
         return ($bytes !== false);

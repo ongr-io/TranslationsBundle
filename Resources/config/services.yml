@@ -5,12 +5,13 @@ parameters:
 
   ongr_translations.import.class: ONGR\TranslationsBundle\Service\Import
   ongr_translations.export.class: ONGR\TranslationsBundle\Service\Export
+  ongr_translations.loaders_container.class: ONGR\TranslationsBundle\Service\LoadersContainer
 
 services:
   ongr_translations.file_import:
     class: %ongr_translations.file_import.class%
     arguments:
-    - [ [] ]
+      - [ @ongr_translations.loaders_container ]
 
   ongr_translations.import:
     class: %ongr_translations.import.class%
@@ -30,7 +31,10 @@ services:
   ongr_translations.export:
     class: %ongr_translations.export.class%
     arguments:
+      - @ongr_translations.loaders_container
       - @ongr_translations.storage
       - @ongr_translations.export.yaml
       - %kernel.root_dir%
 
+  ongr_translations.loaders_container:
+    class: %ongr_translations.loaders_container.class%

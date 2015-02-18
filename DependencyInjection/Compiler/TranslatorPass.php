@@ -13,6 +13,7 @@ namespace ONGR\TranslationsBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
@@ -25,24 +26,63 @@ class TranslatorPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $loadersReferences = [];
-
         $formats = $container->getParameter('ongr_translations.formats');
+        $loadersContainer = new Definition('ONGR\TranslationsBundle\Service\LoadersContainer');
 
         foreach ($container->findTaggedServiceIds('translation.loader') as $id => $attributes) {
             if (!empty($formats)) {
                 if (array_intersect($attributes[0], $formats)) {
-                    $loadersReferences[$attributes[0]['alias']] = new Reference($id);
-                } else {
-                    continue;
+                    $this->addLoader($loadersContainer, $attributes, $id);
                 }
             } else {
-                $loadersReferences[$attributes[0]['alias']] = new Reference($id);
+                $this->addLoader($loadersContainer, $attributes, $id);
             }
         }
 
+        $container->setDefinition('ongr_translations.loaders_container', $loadersContainer);
+
+        $this->setImportLoadersContainer($container, $loadersContainer);
+        $this->setExportLoadersContainer($container, $loadersContainer);
+    }
+
+    /**
+     * Adds loader to LoadersContainer definition.
+     *
+     * @param Definition $loadersContainer
+     * @param array      $attributes
+     * @param string     $id
+     */
+    public function addLoader($loadersContainer, $attributes, $id)
+    {
+        $loadersContainer->addMethodCall(
+            'set',
+            [$attributes[0]['alias'], new Reference($id)]
+        );
+    }
+
+    /**
+     * Set import service LoadersContainer.
+     *
+     * @param ContainerBuilder $container
+     * @param Definition       $loadersContainer
+     */
+    public function setImportLoadersContainer(ContainerBuilder $container, $loadersContainer)
+    {
         if ($container->hasDefinition('ongr_translations.file_import')) {
-            $container->findDefinition('ongr_translations.file_import')->replaceArgument(0, $loadersReferences);
+            $container->findDefinition('ongr_translations.file_import')->replaceArgument(0, $loadersContainer);
+        }
+    }
+
+    /**
+     * Set export service LoadersContainer.
+     *
+     * @param ContainerBuilder $container
+     * @param Definition       $loadersContainer
+     */
+    public function setExportLoadersContainer(ContainerBuilder $container, $loadersContainer)
+    {
+        if ($container->hasDefinition('ongr_translations.export')) {
+            $container->findDefinition('ongr_translations.export')->replaceArgument(0, $loadersContainer);
         }
     }
 }
