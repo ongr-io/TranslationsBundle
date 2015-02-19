@@ -1,15 +1,31 @@
 language: php
+
 php:
   - 5.4
   - 5.5
   - 5.6
+
 env:
   - SYMFONY="2.6.*"
+
+services:
+  - elasticsearch
+
 install:
   - composer require --no-update symfony/symfony:${SYMFONY}
+  - sudo pip install -q sphinx
+  - wget -q -O conf.py https://raw.githubusercontent.com/ongr-io/docs-aggregator/master/source/conf-travis.py
+
 script:
-  - vendor/bin/phpunit --coverage-text
+  - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
   - vendor/bin/phpcs -p --standard=$TRAVIS_BUILD_DIR/vendor/ongr/ongr-strict-standard/ONGR --ignore=vendor,Tests/app ./
+  - sphinx-build -nWq -b html -c . Resources/doc _build/html
+
 before_script:
   - composer self-update
   - composer update --prefer-source
+
+after_script:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && wget --post-data="" -q -O /dev/null http://readthedocs.org/build/ongr'
