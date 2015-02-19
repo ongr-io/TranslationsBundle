@@ -1,2 +1,16 @@
-foo_trans: 'Example translation'
-empty_key:
+domain: Domain
+key: Key
+locale: Locale
+message: Message
+sort: Sort:
+placeholder.search_for: Search for...
+save: Save
+close: Close
+filter.locale: Locale
+filter.domain: Domain
+filter.sort: Sort
+filter.clear: Clear
+sort.message.asc: Message ASC
+sort.message.desc: Message DESC
+sort.key.asc: Key ASC
+sort.key.desc: Key DESC

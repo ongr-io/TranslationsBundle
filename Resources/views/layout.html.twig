@@ -42,7 +42,7 @@
                                             {% endif %}
                                             <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i></button>
                                         </span>
-                                            <input type="text" class="form-control" name="q" value="{% if filters_manager.filters.search.state.value is not empty %}{{ filters_manager.filters.search.state.value }}{% endif %}" placeholder="Search for...">
+                                            <input type="text" class="form-control" name="q" value="{% if filters_manager.filters.search.state.value is not empty %}{{ filters_manager.filters.search.state.value }}{% endif %}" placeholder="{% trans from 'ONGRTranslations' %}placeholder.search_for{% endtrans %}">
                                         </div><!-- /input-group -->
                                     </form>
                                 {% endif %}

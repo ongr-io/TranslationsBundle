@@ -9,28 +9,28 @@
                 {#filters#}
             </div>
             <div class="col-lg-12">
-                {% verbatim %}
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Domain</th>
-                                <th>Key</th>
-                                <th>Locale</th>
-                                <th>Message</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="trans in translations">
-                                <td>{{ trans.domain }}</td>
-                                <td>{{ trans.key }}</td>
-                                <td>{{ trans.locale }}</td>
-                                <td width="40%">
-                                    <div inline translation="trans"></div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                {% endverbatim %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>{% trans from 'ONGRTranslations'%}domain{% endtrans %}</th>
+                            <th>{% trans from 'ONGRTranslations'%}key{% endtrans %}</th>
+                            <th>{% trans from 'ONGRTranslations'%}locale{% endtrans %}</th>
+                            <th>{% trans from 'ONGRTranslations'%}message{% endtrans %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% verbatim %}
+                        <tr ng-repeat="trans in translations">
+                            <td>{{ trans.domain }}</td>
+                            <td>{{ trans.key }}</td>
+                            <td>{{ trans.locale }}</td>
+                            <td width="40%">
+                                <div inline translation="trans"></div>
+                            </td>
+                        </tr>
+                    {% endverbatim %}
+                    </tbody>
+                </table>
                 {% if filters_manager.filters.pager is defined %}
                     <div class="text-center">{{ paginate(filters_manager.filters.pager.pager, 'ongr_translations_list_page', filters_manager.filters.pager.getUrlParameters()) }}</div>
                     <div class="clearfix"></div>

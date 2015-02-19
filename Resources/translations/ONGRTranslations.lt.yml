@@ -1,0 +1,16 @@
+domain: Domenas
+key: Raktas
+locale: Localė
+message: Tekstas
+sort: Rikiuoti:
+placeholder.search_for: Ieškoti...
+save: Saugoti
+close: Uždaryti
+filter.locale: 'Localė'
+filter.domain: 'Domenas'
+filter.sort: Rikiavimas
+filter.clear: Atšaukti
+sort.message.asc: Žinutė A-Ž
+sort.message.desc: Žinutė Ž-A
+sort.key.asc: Raktas A-Ž
+sort.key.desc: Raktas Ž-A
