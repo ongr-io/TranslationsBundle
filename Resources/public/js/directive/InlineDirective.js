@@ -17,10 +17,15 @@ angular
             link: function(scope, element, attr) {
 
                 var inputElement = angular.element(element[0].children[1].children[1])[0];
-                
+
                 element.addClass('inline-edit');
 
-                scope.value = scope.translation.message;
+                if (scope.translation.message === null) {
+                    scope.value = 'Empty message!';
+                    element.parent().addClass('bg-danger')
+                } else {
+                    scope.value = scope.translation.message;
+                }
 
                 /**
                  * Appears input field
@@ -45,9 +50,9 @@ angular
                 scope.save = function() {
                     element.removeClass('active');
 
-                    requestUrl = Routing.generate('ongr_translations_translation_edit',
+                    var requestUrl = Routing.generate('ongr_translations_translation_edit',
                         {
-                            id: scope.translation.id,
+                            id: scope.translation.id
                         }
                     );
 
@@ -57,6 +62,9 @@ angular
                         data: {
                             value: scope.value
                         }
+
+                    }).success(function(){
+                        element.parent().removeClass('bg-danger')
                     });
                 };
 
@@ -67,10 +75,10 @@ angular
                  */
                 scope.keyPress = function(e) {
                     switch(e.keyCode) {
-                        case 13: //enter
+                        case 13: // Enter.
                             scope.save();
                             break;
-                        case 27: //esc
+                        case 27: // Esc.
                             scope.close();
                             break;
                     }
