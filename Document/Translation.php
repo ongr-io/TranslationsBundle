@@ -33,7 +33,7 @@ class Translation extends AbstractDocument implements \JsonSerializable
      * 
      * @ES\Property(name="group", type="string")
      */
-    private $group;
+    private $group = 'default';
 
     /**
      * @var string

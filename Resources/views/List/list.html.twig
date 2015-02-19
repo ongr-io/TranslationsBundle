@@ -13,6 +13,7 @@
                     <thead>
                         <tr>
                             <th>{% trans from 'ONGRTranslations'%}domain{% endtrans %}</th>
+                            <th>{% trans from 'ONGRTranslations'%}group{% endtrans %}</th>
                             <th>{% trans from 'ONGRTranslations'%}key{% endtrans %}</th>
                             <th>{% trans from 'ONGRTranslations'%}locale{% endtrans %}</th>
                             <th>{% trans from 'ONGRTranslations'%}message{% endtrans %}</th>
@@ -22,10 +23,13 @@
                     {% verbatim %}
                         <tr ng-repeat="trans in translations">
                             <td>{{ trans.domain }}</td>
+                            <td width="40%">
+                                <div inline translation="trans" field="group"></div>
+                            </td>
                             <td>{{ trans.key }}</td>
                             <td>{{ trans.locale }}</td>
                             <td width="40%">
-                                <div inline translation="trans"></div>
+                                <div inline translation="trans" field="message"></div>
                             </td>
                         </tr>
                     {% endverbatim %}

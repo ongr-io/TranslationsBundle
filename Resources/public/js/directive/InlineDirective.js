@@ -12,19 +12,20 @@ angular
     .directive('inline', ['$http', 'asset', function ($http, $asset) {
         return {
             restrict: "A",
-            scope: { translation: "="},
+            scope: { translation: "=" },
             templateUrl: $asset.getLink('template/inline.html'),
             link: function(scope, element, attr) {
 
                 var inputElement = angular.element(element[0].children[1].children[1])[0];
 
+                scope.field = attr.field;
                 element.addClass('inline-edit');
 
-                if (scope.translation.message === null) {
+                if (scope.translation[scope.field] === null) {
                     scope.value = 'Empty message!';
                     element.parent().addClass('bg-danger')
                 } else {
-                    scope.value = scope.translation.message;
+                    scope.value = scope.translation[scope.field];
                 }
 
                 /**
@@ -60,7 +61,8 @@ angular
                         method:"POST",
                         url: requestUrl,
                         data: {
-                            value: scope.value
+                            value: scope.value,
+                            field: scope.field
                         }
 
                     }).success(function(){

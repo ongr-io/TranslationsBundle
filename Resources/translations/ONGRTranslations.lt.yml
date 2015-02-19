@@ -6,8 +6,9 @@ sort: Rikiuoti:
 placeholder.search_for: Ieškoti...
 save: Saugoti
 close: Uždaryti
-filter.locale: 'Localė'
-filter.domain: 'Domenas'
+filter.locale: Localė
+filter.domain: Domenas
+filter.group: Grupė
 filter.sort: Rikiavimas
 filter.clear: Atšaukti
 sort.message.asc: Žinutė A-Ž

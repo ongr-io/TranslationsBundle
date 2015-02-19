@@ -47,7 +47,7 @@ class RestControllerTest extends AbstractElasticsearchTestCase
             ['/translate/_api/edit/', 404],
             ['/translate/_api/edit/2', 400],
             ['/translate/_api/edit/2', 400, '{}'],
-            ['/translate/_api/edit/2', 404, json_encode(['value' => 'foo_home'])],
+            ['/translate/_api/edit/2', 404, json_encode(['value' => 'foo_home', 'field' => 'message'])],
         ];
     }
 
@@ -78,6 +78,7 @@ class RestControllerTest extends AbstractElasticsearchTestCase
         $requestContent = json_encode(
             [
                 'value' => 'foo_home',
+                'field' => 'message',
             ]
         );
 

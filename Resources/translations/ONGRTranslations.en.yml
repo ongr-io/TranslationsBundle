@@ -8,6 +8,7 @@ save: Save
 close: Close
 filter.locale: Locale
 filter.domain: Domain
+filter.group: Group
 filter.sort: Sort
 filter.clear: Clear
 sort.message.asc: Message ASC

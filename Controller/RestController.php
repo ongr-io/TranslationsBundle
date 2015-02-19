@@ -52,11 +52,12 @@ class RestController extends Controller
     {
         $content = json_decode($request->getContent(), true);
 
-        if (empty($content) || !array_key_exists('value', $content)) {
+        if (empty($content) || !array_key_exists('value', $content) || !array_key_exists('field', $content)) {
             return new JsonResponse(Response::$statusTexts[400], 400);
         }
 
         $value = $content['value'];
+        $field = $content['field'];
 
         /** @var Repository $repository */
         $repository = $this->manager->getRepository('ONGRTranslationsBundle:Translation');
@@ -64,7 +65,7 @@ class RestController extends Controller
         try {
             /** @var Translation $translation */
             $translation = $repository->find($id);
-            $translation->setMessage($value);
+            $translation->{'set' . ucfirst($field)}($value);
 
             $this->manager->persist($translation);
             $this->manager->commit();
