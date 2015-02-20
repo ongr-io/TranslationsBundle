@@ -77,6 +77,10 @@ class Translation extends AbstractDocument implements \JsonSerializable
      */
     public function getGroup()
     {
+        if ($this->group === '') {
+            $this->group = 'default';
+        }
+
         return $this->group;
     }
 

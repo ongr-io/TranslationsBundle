@@ -12,6 +12,7 @@ angular
         'ui.bootstrap',
         'controller.list',
         'directive.inline',
-        'util.asset'
+        'util.asset',
+        'boxuk.translation'
     ])
     .constant('DATA', translations);

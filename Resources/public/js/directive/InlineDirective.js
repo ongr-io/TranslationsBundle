@@ -9,7 +9,7 @@
 
 angular
     .module('directive.inline', [])
-    .directive('inline', ['$http', 'asset', function ($http, $asset) {
+    .directive('inline', ['$http', 'asset', 'TranslationService', function ($http, $asset, $TranslationService) {
         return {
             restrict: "A",
             scope: { translation: "=" },
@@ -22,7 +22,7 @@ angular
                 element.addClass('inline-edit');
 
                 if (scope.translation[scope.field] === null || scope.translation[scope.field] === '') {
-                    scope.value = 'Empty field!';
+                    scope.value = $TranslationService.trans('empty_field');
                     element.parent().addClass('bg-danger')
                 } else {
                     scope.value = scope.translation[scope.field];
@@ -66,7 +66,13 @@ angular
                         }
 
                     }).success(function(){
-                        element.parent().removeClass('bg-danger')
+                        if (scope.field == 'group') {
+                            element.parent().removeClass('bg-danger');
+                            scope.value = 'default';
+                        } else if (scope.value == '') {
+                            element.parent().addClass('bg-danger');
+                            scope.value = $TranslationService.trans('empty_field');
+                        }
                     });
                 };
 

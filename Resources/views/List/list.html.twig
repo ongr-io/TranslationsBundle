@@ -12,21 +12,21 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>{% trans from 'ONGRTranslations'%}label.domain{% endtrans %}</th>
-                            <th>{% trans from 'ONGRTranslations'%}label.group{% endtrans %}</th>
-                            <th>{% trans from 'ONGRTranslations'%}label.key{% endtrans %}</th>
-                            <th>{% trans from 'ONGRTranslations'%}label.locale{% endtrans %}</th>
-                            <th>{% trans from 'ONGRTranslations'%}label.message{% endtrans %}</th>
+                            <th>{% trans from 'ONGRTranslations' %}label.domain{% endtrans %}</th>
+                            <th>{% trans from 'ONGRTranslations' %}label.group{% endtrans %}</th>
+                            <th>{% trans from 'ONGRTranslations' %}label.key{% endtrans %}</th>
+                            <th>{% trans from 'ONGRTranslations' %}label.locale{% endtrans %}</th>
+                            <th>{% trans from 'ONGRTranslations' %}label.message{% endtrans %}</th>
                         </tr>
                     </thead>
                     <tbody>
                     {% verbatim %}
                         <tr ng-repeat="trans in translations">
-                            <td>{{ trans.domain }}</td>
-                            <td width="40%">
+                            <td width="10%">{{ trans.domain }}</td>
+                            <td width="10%">
                                 <div inline translation="trans" field="group"></div>
                             </td>
-                            <td>{{ trans.key }}</td>
+                            <td width="40%">{{ trans.key }}</td>
                             <td>{{ trans.locale }}</td>
                             <td width="40%">
                                 <div inline translation="trans" field="message"></div>
@@ -51,6 +51,11 @@
     </script>
     <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+
+    <script src="{{ asset('bundles/ongrtranslations/js/angular-symfony-translation.js') }}"></script>
+    <script src="{{ asset('bundles/bazingajstranslation/js/translator.min.js') }}"></script>
+    <script src="{{ url('bazinga_jstranslation_js', { 'domain': 'ONGRTranslations' }) }}"></script>
+
     <script src="{{ asset('bundles/ongrtranslations/js/controller/listController.js') }}"></script>
     <script src="{{ asset('bundles/ongrtranslations/js/directive/InlineDirective.js') }}"></script>
     <script src="{{ asset('bundles/ongrtranslations/js/utils/AssetService.js') }}"></script>
