@@ -56,8 +56,8 @@ class FileImport
             foreach ($messageCatalogue->all($domain) as $key => $content) {
                 $this->translations[$domain][$locale][$key] = $content;
             }
-
-            return $this->translations;
         }
+
+        return $this->translations;
     }
 }
