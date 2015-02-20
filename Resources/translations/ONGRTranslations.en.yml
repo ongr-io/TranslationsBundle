@@ -1,8 +1,9 @@
-domain: Domain
-key: Key
-locale: Locale
-message: Message
-sort: Sort:
+label.domain: Domain
+label.group: Group
+label.key: Key
+label.locale: Locale
+label.message: Message
+label.sort: Sort:
 placeholder.search_for: Search for...
 save: Save
 close: Close

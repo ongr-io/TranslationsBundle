@@ -1,8 +1,9 @@
-domain: Domenas
-key: Raktas
-locale: Localė
-message: Tekstas
-sort: Rikiuoti:
+label.domain: Domenas
+label.group: Grupė
+label.key: Raktas
+label.locale: Localė
+label.message: Tekstas
+label.sort: Rikiuoti:
 placeholder.search_for: Ieškoti...
 save: Saugoti
 close: Uždaryti
