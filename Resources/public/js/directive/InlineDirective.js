@@ -68,7 +68,9 @@ angular
                     }).success(function(){
                         if (scope.field == 'group') {
                             element.parent().removeClass('bg-danger');
-                            scope.value = 'default';
+                            if (scope.value == '') {
+                                scope.value = 'default';
+                            }
                         } else if (scope.value == '') {
                             element.parent().addClass('bg-danger');
                             scope.value = $TranslationService.trans('empty_field');
