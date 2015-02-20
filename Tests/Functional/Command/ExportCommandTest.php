@@ -13,7 +13,7 @@ namespace ONGR\TranslationsBundle\Tests\Functional\Command;
 
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
 use ONGR\TranslationsBundle\Command\ExportCommand;
-use org\bovigo\vfs\vfsStream;
+use ONGR\TranslationsBundle\Translation\Export\YmlExport;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Yaml\Yaml;
@@ -31,18 +31,13 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
     private $command;
 
     /**
-     * @var vfsStream
-     */
-    private $root;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         parent::setUp();
 
-        $this->remoteTranslations();
+        $this->removeTranslations();
 
         $app = new Application(static::$kernel);
         $app->add($this->getExportCommand());
@@ -79,6 +74,13 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
                         'locale' => 'lt',
                         'key' => 'baz_key',
                         'message' => 'baz_message',
+                    ],
+                    [
+                        '_id' => 'trans4',
+                        'domain' => 'buz_domain',
+                        'locale' => 'lt',
+                        'key' => 'foo_key',
+                        'message' => 'foo_message',
                     ],
                 ],
             ],
@@ -163,6 +165,31 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
     }
 
     /**
+     * Test if destination translations are merged correctly.
+     */
+    public function testExportMerge()
+    {
+        $dummyData = [
+            'buz_domain.lt.yml' => [
+                'bar_key' => 'bar_message',
+            ],
+        ];
+
+        $this->createDummyFileWithData($dummyData);
+
+        $this->commandTester->execute([]);
+
+        $data = [
+            'buz_domain.lt.yml' => [
+                'foo_key' => 'foo_message',
+                'bar_key' => 'bar_message',
+            ],
+        ];
+
+        $this->verifyFiles($data);
+    }
+
+    /**
      * Returns Export command with assigned container.
      *
      * @return ExportCommand
@@ -178,10 +205,10 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
     /**
      * Remove testing files.
      */
-    private function remoteTranslations()
+    private function removeTranslations()
     {
         $root = $this->getContainer()->getParameter('kernel.root_dir');
-        $files = ['baz_domain.lt.yml', 'foo_domain.en.yml'];
+        $files = ['baz_domain.lt.yml', 'foo_domain.en.yml', 'buz_domain.lt.yml'];
         foreach ($files as $file) {
             $path = $root . '/Resources/translations/' . $file;
             if (file_exists($path)) {
@@ -195,6 +222,16 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
      */
     protected function tearDown()
     {
-        $this->remoteTranslations();
+        $this->removeTranslations();
+    }
+
+    private function createDummyFileWithData($dummyData)
+    {
+        $root = $this->getContainer()->getParameter('kernel.root_dir');
+        $exporter = new YmlExport();
+        foreach ($dummyData as $file => $translations) {
+            $path = $root . '/Resources/translations/' . $file;
+            $exporter->export($path, $translations);
+        }
     }
 }
