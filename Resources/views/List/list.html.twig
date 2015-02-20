@@ -21,7 +21,7 @@
                     </thead>
                     <tbody>
                     {% verbatim %}
-                        <tr ng-repeat="trans in translations">
+                        <tr ng-cloak ng-repeat="trans in translations">
                             <td width="10%">{{ trans.domain }}</td>
                             <td width="20%">
                                 <div inline translation="trans" field="group"></div>

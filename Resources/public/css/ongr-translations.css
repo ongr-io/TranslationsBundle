@@ -13,3 +13,6 @@
 .inline-edit.active div {
     display: table;
 }
+[ng-cloak] {
+    display: none !important;
+}
