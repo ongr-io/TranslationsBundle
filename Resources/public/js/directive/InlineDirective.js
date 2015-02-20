@@ -21,8 +21,8 @@ angular
                 scope.field = attr.field;
                 element.addClass('inline-edit');
 
-                if (scope.translation[scope.field] === null) {
-                    scope.value = 'Empty message!';
+                if (scope.translation[scope.field] === null || scope.translation[scope.field] === '') {
+                    scope.value = 'Empty field!';
                     element.parent().addClass('bg-danger')
                 } else {
                     scope.value = scope.translation[scope.field];
