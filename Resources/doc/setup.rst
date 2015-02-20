@@ -94,6 +94,10 @@ This is done using BazingaJsTranslationBundle_ with command ``php app/console ba
 Step 6: Using your new bundle
 -----------------------------
 
+.. note::
+
+    Create Elasticsearch index if do not exists before using import command.
+
 To start using your new bundle you should import data from translations files using bundles ``ongr:translations:import`` command. More details about using ``ongr:translations:import`` command can be found `Import command <import.html>`_.
 
 After editing imported translation files you can export translations to ``app\Resources\translations\*domain*.*locale*.yml`` translations files. More details about ``ongr:translations:export`` command can be found `Export command <export.html>`_.
