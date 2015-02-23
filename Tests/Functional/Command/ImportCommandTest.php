@@ -72,7 +72,7 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
         $this->commandTester->execute(
             [
                 'command' => $this->command->getName(),
-                'bundle' => 'AcmeTestBundle',
+                'bundle' => 'ONGR\TranslationsBundle\Tests\app\fixture\Acme\TestBundle\AcmeTestBundle',
             ]
         );
 
@@ -118,6 +118,23 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
     }
 
     /**
+     * Test 'config-only' bundles import.
+     */
+    public function testConfigOnlyOptionImport()
+    {
+        $this->commandTester->execute(
+            [
+                'command' => $this->command->getName(),
+                '--config-only' => '--config-only',
+            ]
+        );
+        $this->assertEquals(0, $this->getTranslationsCount(['lt'], ['validators']));
+        $this->assertEquals(0, $this->getTranslationsCount(['lt'], ['ONGRTranslation']));
+        $this->assertGreaterThan(0, $this->getTranslationsCount(['en'], ['messages']));
+        $this->assertGreaterThan(0, $this->getTranslationsCount(['lt'], ['messages']));
+    }
+
+    /**
      * Returns translations count.
      *
      * @param array $locales
@@ -125,7 +142,7 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
      *
      * @return int|void
      */
-    private function getTranslationsCount($locales = [], $domains = [])
+    private function getTranslationsCount(array $locales = [], array $domains = [])
     {
         $esStorage = $this->getContainer()->get('ongr_translations.storage');
 
