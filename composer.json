@@ -13,8 +13,8 @@
     "require": {
         "symfony/symfony": "~2.6",
         "ongr/elasticsearch-bundle": "*",
-        "ongr/filter-manager-bundle": "dev-master",
-        "friendsofsymfony/jsrouting-bundle": "~2.0@dev",
+        "ongr/filter-manager-bundle": "~0.4",
+        "friendsofsymfony/jsrouting-bundle": "~1.5",
         "willdurand/js-translation-bundle": "2.2.*"
     },
     "require-dev": {
@@ -26,5 +26,5 @@
     "autoload": {
         "psr-4": { "ONGR\\TranslationsBundle\\": "" }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "stable"
 }
