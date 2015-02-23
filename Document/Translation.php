@@ -155,6 +155,11 @@ class Translation extends AbstractDocument implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        return get_object_vars($this);
+        return array_replace(
+            get_object_vars($this),
+            [
+                'id' => $this->getId(),
+            ]
+        );
     }
 }
