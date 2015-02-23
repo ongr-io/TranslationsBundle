@@ -12,6 +12,8 @@ Bundle configuration example:
         managed_locales: ["lt", "de", "en"]
         formats: ["yml", "xlf"]
         domains: ["messages"]
+        bundles:
+            - ONGR\DemoBundle\ONGRDemoBundle
 
 Elasticsearch bundle configuration example:
 
@@ -41,5 +43,6 @@ Node            Default value Required Explanation
 es_manager      default       No       Es manager for storing translations.
 managed_locales               Yes      Locales to be imported.
 formats         []            no       Translation files formats to be imported.
-domains:        []            No       Domains to be imported.
+domains         []            No       Domains to be imported.
+bundles         []            No       Additional bundles to import.
 =============== ============= ======== =========================================
