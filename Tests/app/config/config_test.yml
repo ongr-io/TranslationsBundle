@@ -40,3 +40,5 @@ ongr_translations:
     managed_locales: ["lt", "de", "en"]
     formats: ["yml", "xlf"]
     domains: ["messages"]
+    bundles:
+      - 'ONGR\TranslationsBundle\Tests\app\fixture\Acme\TestBundle\AcmeTestBundle'

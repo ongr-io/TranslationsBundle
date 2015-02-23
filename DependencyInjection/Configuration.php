@@ -48,6 +48,11 @@ class Configuration implements ConfigurationInterface
                         ->defaultValue([])
                     ->end()
                 ->end()
+                ->arrayNode('bundles')
+                    ->prototype('scalar')
+                    ->defaultValue([])
+                    ->end()
+                ->end()
             ->end()
         ->end();
 

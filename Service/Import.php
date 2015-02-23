@@ -64,17 +64,29 @@ class Import
     private $storage;
 
     /**
+     * @var array
+     */
+    private $configBundles;
+
+    /**
      * @param FileImport       $fileImport
      * @param StorageInterface $storage
      * @param string           $kernelDir
      * @param array            $kernelBundles
+     * @param array            $configBundles
      */
-    public function __construct(FileImport $fileImport, StorageInterface $storage, $kernelDir, $kernelBundles)
-    {
+    public function __construct(
+        FileImport $fileImport,
+        StorageInterface $storage,
+        $kernelDir,
+        $kernelBundles,
+        $configBundles
+    ) {
         $this->fileImport = $fileImport;
         $this->storage = $storage;
         $this->kernelDir = $kernelDir;
         $this->bundles = $kernelBundles;
+        $this->configBundles = $configBundles;
     }
 
     /**
@@ -84,7 +96,7 @@ class Import
     {
         $this->importAppTranslationFiles();
 
-        $this->importBundlesTranslationFiles();
+        $this->importBundlesTranslationFiles(array_merge($this->getConfigBundles(), $this->getBundles()));
 
         $this->importComponentTranslationFiles();
     }
@@ -132,10 +144,12 @@ class Import
 
     /**
      * Imports translation files form all bundles.
+     *
+     * @param array $bundles
      */
-    public function importBundlesTranslationFiles()
+    public function importBundlesTranslationFiles($bundles)
     {
-        foreach ($this->bundles as $bundle) {
+        foreach ($bundles as $bundle) {
             $reflection = new \ReflectionClass($bundle);
             $dir = dirname($reflection->getFilename());
 
@@ -301,5 +315,21 @@ class Import
     protected function getFinder()
     {
         return new Finder();
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfigBundles()
+    {
+        return $this->configBundles;
+    }
+
+    /**
+     * @return array
+     */
+    public function getBundles()
+    {
+        return $this->bundles;
     }
 }

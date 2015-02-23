@@ -28,6 +28,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             'managed_locales' => [],
             'formats' => [],
             'domains' => [],
+            'bundles' => [],
         ];
 
         $out = [];

@@ -11,6 +11,7 @@
 
 namespace ONGR\TranslationsBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -38,6 +39,7 @@ class ONGRTranslationsExtension extends Extension
         $container->setParameter('ongr_translations.managed_locales', $config['managed_locales']);
         $container->setParameter('ongr_translations.formats', $config['formats']);
         $container->setParameter('ongr_translations.domains', $config['domains']);
+        $this->validateBundles($container, $config['bundles']);
 
         $this->setElasticsearchStorage($config['es_manager'], $container);
         $this->setFiltersManager($config['es_manager'], $container);
@@ -94,5 +96,27 @@ class ONGRTranslationsExtension extends Extension
         $definition->addMethodCall('setContainer', [new Reference('service_container')]);
 
         $container->setDefinition('ongr_translations.controller.rest', $definition);
+    }
+
+    /**
+     * Validate configured bundles.
+     *
+     * @param ContainerBuilder $container
+     * @param array            $bundles
+     *
+     * @throws InvalidConfigurationException
+     */
+    private function validateBundles($container, $bundles)
+    {
+        foreach ($bundles as $bundle) {
+            try {
+                $reflection = new \ReflectionClass($bundle);
+            } catch (\ReflectionException $e) {
+                throw new InvalidConfigurationException(
+                    "Invalid bundle namespace {$bundle}. Error: {$e->getMessage()}"
+                );
+            }
+        }
+        $container->setParameter('ongr_translations.bundles', $bundles);
     }
 }

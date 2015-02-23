@@ -41,6 +41,7 @@ class ImportCommand extends ContainerAwareCommand
         $this->setName('ongr:translations:import');
         $this->setDescription('Import all translations from flat files (xliff, yml, php) into the database.');
         $this->addOption('globals', 'g', InputOption::VALUE_NONE, 'Import only globals (app/Resources/translations.');
+        $this->addOption('config-only', 'c', InputOption::VALUE_NONE, 'Import only bundles specified in config.');
         $this->addOption(
             'locales',
             'l',
@@ -79,17 +80,24 @@ class ImportCommand extends ContainerAwareCommand
         $import->setLocales($locales);
         $import->setDomains($domains);
 
-        if ($bundleName) {
-            $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
-            $import->importBundleTranslationFiles($bundle->getPath());
+        if ($input->getOption('config-only')) {
+            $this->output->writeln('<info>*** Importing configured bundles translation files ***</info>');
+            $import->importBundlesTranslationFiles($import->getConfigBundles());
         } else {
-            $this->output->writeln('<info>*** Importing application translation files ***</info>');
-            $import->importAppTranslationFiles();
-            if (!$this->input->getOption('globals')) {
-                $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
-                $import->importBundlesTranslationFiles();
-                $this->output->writeln('<info>*** Importing component translation files ***</info>');
-                $import->importComponentTranslationFiles();
+            if ($bundleName) {
+                $this->output->writeln("<info>*** Importing {$bundleName} translation files ***</info>");
+                $import->importBundlesTranslationFiles([$bundleName]);
+            } else {
+                $this->output->writeln('<info>*** Importing application translation files ***</info>');
+                $import->importAppTranslationFiles();
+                if (!$this->input->getOption('globals')) {
+                    $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
+                    $import->importBundlesTranslationFiles(
+                        array_merge($import->getBundles(), $import->getConfigBundles())
+                    );
+                    $this->output->writeln('<info>*** Importing component translation files ***</info>');
+                    $import->importComponentTranslationFiles();
+                }
             }
         }
         $import->writeToStorage();

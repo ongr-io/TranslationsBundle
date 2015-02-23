@@ -17,12 +17,14 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
 /**
- * Class TranslatorPassTest
+ * Tests TranslatorPass.
  */
 class TranslatorPassTest extends WebTestCase
 {
     /**
+     * Data provider for testLoadersContainerConfiguration.
      *
+     * @return array
      */
     public function getConfigurationData()
     {
@@ -33,30 +35,31 @@ class TranslatorPassTest extends WebTestCase
             [],
             [
                 'yml',
-                'xlf'
+                'xlf',
             ],
-            2
+            2,
         ];
         // Case #1 Yml format registered, one translation loader added.
         $out[] = [
             [
-                'yml'
+                'yml',
             ],
             [
                 'yml',
-                'xlf'
+                'xlf',
             ],
-            1
+            1,
         ];
 
         return $out;
     }
 
-
     /**
-     * @param $registeredFormats
-     * @param $containerLoaders
-     * @param $loaded
+     * Test loaders container configuration.
+     *
+     * @param array $registeredFormats
+     * @param array $containerLoaders
+     * @param array $loaded
      *
      * @dataProvider getConfigurationData
      */
@@ -77,14 +80,13 @@ class TranslatorPassTest extends WebTestCase
             count($loadersContainer->getMethodCalls()),
             'Wrong loaders count in LoadersContainer'
         );
-
     }
 
     /**
      * Mock container builder with translation loaders.
      *
-     * @param $containerLoaders
-     * @param $container
+     * @param array            $containerLoaders
+     * @param ContainerBuilder $container
      */
     public function registerLoaders($containerLoaders, $container)
     {
@@ -97,8 +99,10 @@ class TranslatorPassTest extends WebTestCase
     }
 
     /**
-     * @param $registeredFormats
-     * @param $container
+     * Set registered formats to container.
+     *
+     * @param array            $registeredFormats
+     * @param ContainerBuilder $container
      */
     public function setRegisteredFormats($registeredFormats, $container)
     {
