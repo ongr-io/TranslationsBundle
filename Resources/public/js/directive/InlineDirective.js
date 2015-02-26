@@ -27,7 +27,7 @@ angular
                     scope.value = scope.translation['group'];
                 }
 
-                if (scope.value == null) {
+                if (scope.value == null || scope.value == '') {
                     scope.value = $TranslationService.trans('empty_field');
                     element.parent().addClass('bg-danger');
                 }
