@@ -1,13 +1,10 @@
 {% extends 'ONGRTranslationsBundle::layout.html.twig' %}
 
-{% block body_attr %}ng-app="ongr.translations"{% endblock %}
+{% block body_attr %}ng-app="ongr.translations" ng-controller="list"{% endblock %}
 
 {% block content %}
-    <div class="container-fluid" ng-controller="list">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-12">
-                {#filters#}
-            </div>
             <div class="col-lg-12">
                 <table class="table table-striped">
                     <thead>
@@ -16,7 +13,7 @@
                             <th>{% trans from 'ONGRTranslations' %}label.group{% endtrans %}</th>
                             <th>{% trans from 'ONGRTranslations' %}label.key{% endtrans %}</th>
                     {% verbatim %}
-                            <th ng-repeat="locale in locales">
+                            <th ng-cloak ng-repeat="(locale, enabled) in locales" ng-show="locales[locale]">
                                 {{ locale }}
                             </th>
                         </tr>
@@ -29,7 +26,7 @@
                                 <div inline translation="trans"></div>
                             </td>
                             <td width="20%">{{ trans.key }}</td>
-                            <td ng-repeat="locale in locales">
+                            <td ng-repeat="(locale, enabled) in locales" ng-show="locales[locale]">
                                 <div inline translation="trans" locale="{{locale}}"></div>
                             </td>
                         </tr>

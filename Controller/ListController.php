@@ -56,7 +56,7 @@ class ListController extends Controller
             'ONGRTranslationsBundle:List:list.html.twig',
             [
                 'data' => iterator_to_array($fmr->getResult()),
-                'locales' => $this->buildLocalesList(),
+                'locales' => $this->buildLocalesList($fmr->getFilters()['locale']),
                 'filters_manager' => $fmr,
             ]
         );
@@ -65,9 +65,11 @@ class ListController extends Controller
     /**
      * Creates locales list.
      *
+     * @param FilterInterface $filter
+     *
      * @return array
      */
-    private function buildLocalesList()
+    private function buildLocalesList($filter)
     {
         $repo = $this->manager->getRepository('ONGRTranslationsBundle:Translation');
         $search = $repo->createSearch();
@@ -79,9 +81,18 @@ class ListController extends Controller
         $list = [];
 
         foreach ($result['aggregations']['agg_locale_agg']['buckets'] as $value) {
-            $list[] = $value['key'];
+            $list[$value['key']] = true;
         }
-        sort($list);
+        ksort($list);
+
+        $activeLocales = [];
+
+        if ($filter->getState(null)->isActive()) {
+            foreach ($filter->getChoices() as $choice) {
+                $activeLocales[$choice->getLabel()] = $choice->isActive();
+            }
+            $list = array_merge($list, $activeLocales);
+        }
 
         return $list;
     }

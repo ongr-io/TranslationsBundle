@@ -35,10 +35,12 @@ parameters:
     ongr_translations.filter.single_term.class: ONGR\FilterManagerBundle\Filters\Widget\Choice\SingleTermChoice
     ongr_translations.filter.single_term.domain.request_field: domain
     ongr_translations.filter.single_term.domain.field: domain
-    ongr_translations.filter.single_term.locale.request_field: locale
-    ongr_translations.filter.single_term.locale.field: locale
     ongr_translations.filter.single_term.group.request_field: group
     ongr_translations.filter.single_term.group.field: group
+
+    ongr_translations.filter.locale.class: ONGR\TranslationsBundle\Filter\LocaleFilter
+    ongr_translations.filter.locale.request_field: locale
+    ongr_translations.filter.locale.field: locale
 
 
     ongr_translations.filters_container.class: ONGR\FilterManagerBundle\Search\FiltersContainer
@@ -73,11 +75,13 @@ services:
             calls:
                 - ["setRequestField", ["%ongr_translations.filter.single_term.group.request_field%"]]
                 - ["setField", ["%ongr_translations.filter.single_term.group.field%"]]
-    ongr_translations.filter.single_term.locale:
-        class: "%ongr_translations.filter.single_term.class%"
+    ongr_translations.filter.locale:
+        class: "%ongr_translations.filter.locale.class%"
         calls:
-            - ["setRequestField", ["%ongr_translations.filter.single_term.locale.request_field%"]]
-            - ["setField", ["%ongr_translations.filter.single_term.locale.field%"]]
+            - ["setRequestField", ["%ongr_translations.filter.locale.request_field%"]]
+            - ["setField", ["%ongr_translations.filter.locale.field%"]]
+        tags:
+            - { name: ongr_filter_manager.filter, filter_name: locale }
 
 
     ongr_translations.filters_container:
@@ -88,5 +92,5 @@ services:
             - ["set", ["search", "@ongr_translations.filter.match_search"]]
             - ["set", ["domain", "@ongr_translations.filter.single_term.domain"]]
             - ["set", ["group", "@ongr_translations.filter.single_term.group"]]
-            - ["set", ["locale", "@ongr_translations.filter.single_term.locale"]]
+            - ["set", ["locale", "@ongr_translations.filter.locale"]]
 
