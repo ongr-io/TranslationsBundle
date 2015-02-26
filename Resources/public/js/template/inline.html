@@ -1,8 +1,8 @@
 <a href="#" ng-click="edit()" ng-bind="value"></a>
 <div class="input-group input-group-sm">
     <span class="input-group-btn">
-        <button ng-click="save()" class="btn btn-default">{{ 'save' | trans }}</button>
-        <button ng-click="close()" class="btn btn-default">{{ 'close' | trans }}</button>
+        <button ng-click="save()" class="btn btn-success"><i class="glyphicon glyphicon-ok"></i></button>
+        <button ng-click="close()" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i></button>
     </span>
     <input type="text" class="form-control" ng-model="value" ng-keydown="keyPress($event)"/>
 </div>
