@@ -15,6 +15,7 @@ use ONGR\ElasticsearchBundle\DSL\Filter\TermsFilter;
 use ONGR\ElasticsearchBundle\DSL\Query\MatchAllQuery;
 use ONGR\ElasticsearchBundle\ORM\Manager;
 use ONGR\ElasticsearchBundle\ORM\Repository;
+use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 
 /**
@@ -65,16 +66,19 @@ class ElasticsearchStorage implements StorageInterface
         foreach ($translations as $domain => $domainTrans) {
             /** @var Translation $document */
 
-            foreach ($domainTrans as $locale => $locTrans) {
-                foreach ($locTrans as $key => $trans) {
-                    $document = $this->getRepository()->createDocument();
-                    $document->setDomain($domain);
-                    $document->setLocale($locale);
-                    $document->setMessage($trans);
-                    $document->setKey($key);
+            foreach ($domainTrans as $key => $keyTrans) {
+                $document = $this->getRepository()->createDocument();
+                $document->setDomain($domain);
+                $document->setKey($key);
 
-                    $this->manager->persist($document);
+                foreach ($keyTrans as $locale => $trans) {
+                    $message = new Message();
+                    $message->setLocale($locale);
+                    $message->setMessage($trans);
+
+                    $document->addMessage($message);
                 }
+                $this->manager->persist($document);
             }
         }
 

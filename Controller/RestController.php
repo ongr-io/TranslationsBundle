@@ -14,6 +14,7 @@ namespace ONGR\TranslationsBundle\Controller;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use ONGR\ElasticsearchBundle\ORM\Manager;
 use ONGR\ElasticsearchBundle\ORM\Repository;
+use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -52,12 +53,12 @@ class RestController extends Controller
     {
         $content = json_decode($request->getContent(), true);
 
-        if (empty($content) || !array_key_exists('value', $content) || !array_key_exists('field', $content)) {
+        if (empty($content) || !array_key_exists('value', $content)) {
             return new JsonResponse(Response::$statusTexts[400], 400);
         }
 
         $value = $content['value'];
-        $field = $content['field'];
+        $locale = array_key_exists('locale', $content) ? $content['locale'] : false;
 
         /** @var Repository $repository */
         $repository = $this->manager->getRepository('ONGRTranslationsBundle:Translation');
@@ -65,7 +66,23 @@ class RestController extends Controller
         try {
             /** @var Translation $translation */
             $translation = $repository->find($id);
-            $translation->{'set' . ucfirst($field)}($value);
+            if ($locale) {
+                $exist = false;
+                foreach ($translation->getMessages() as $message) {
+                    if ($message->getLocale() === $locale) {
+                        $message->setMessage($value);
+                        $exist = true;
+                    }
+                }
+                if (!$exist) {
+                    $msg = new Message();
+                    $msg->setLocale($locale);
+                    $msg->setMessage($value);
+                    $translation->addMessage($msg);
+                }
+            } else {
+                $translation->setGroup($value);
+            }
 
             $this->manager->persist($translation);
             $this->manager->commit();

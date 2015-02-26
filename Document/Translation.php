@@ -36,18 +36,11 @@ class Translation extends AbstractDocument implements \JsonSerializable
     private $group = 'default';
 
     /**
-     * @var string
+     * @var Message
      *
-     * @ES\Property(name="locale", type="string", index="not_analyzed")
+     * @ES\Property(name="messages", type="object", multiple=true, objectName="ONGRTranslationsBundle:Message")
      */
-    private $locale;
-
-    /**
-     * @var string
-     *
-     * @ES\Property(name="message", type="string")
-     */
-    private $message;
+    private $messages = [];
 
     /**
      * @var string
@@ -95,38 +88,6 @@ class Translation extends AbstractDocument implements \JsonSerializable
     /**
      * @return string
      */
-    public function getLocale()
-    {
-        return $this->locale;
-    }
-
-    /**
-     * @param string $locale
-     */
-    public function setLocale($locale)
-    {
-        $this->locale = $locale;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMessage()
-    {
-        return $this->message;
-    }
-
-    /**
-     * @param string $message
-     */
-    public function setMessage($message)
-    {
-        $this->message = $message;
-    }
-
-    /**
-     * @return string
-     */
     public function getKey()
     {
         return $this->key;
@@ -143,11 +104,11 @@ class Translation extends AbstractDocument implements \JsonSerializable
     /**
      * Return unique document id.
      *
-     * @return DocumentInterface
+     * @return string
      */
     public function getId()
     {
-        return sha1($this->getDomain() . $this->getLocale() . $this->getKey());
+        return sha1($this->getDomain() . $this->getKey());
     }
 
     /**
@@ -159,7 +120,51 @@ class Translation extends AbstractDocument implements \JsonSerializable
             get_object_vars($this),
             [
                 'id' => $this->getId(),
+                'messages' => $this->getMessagesArray(),
             ]
         );
+    }
+
+    /**
+     * @param Message $message
+     */
+    public function addMessage(Message $message)
+    {
+        $this->messages[] = $message;
+    }
+
+    /**
+     * @return Message[]
+     */
+    public function getMessages()
+    {
+        return $this->messages;
+    }
+
+    /**
+     * @param Message[] $messages
+     */
+    public function setMessages($messages)
+    {
+        $this->messages = $messages;
+    }
+
+    /**
+     * Returns messages as array.
+     *
+     * array (
+     *  'locale' => 'message'
+     * )
+     *
+     * @return array
+     */
+    private function getMessagesArray()
+    {
+        $result = [];
+        foreach ($this->getMessages() as $message) {
+            $result[$message->getLocale()] = $message->getMessage();
+        }
+
+        return $result;
     }
 }

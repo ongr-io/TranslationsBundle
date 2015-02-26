@@ -43,7 +43,8 @@ class ONGRTranslationsExtension extends Extension
 
         $this->setElasticsearchStorage($config['es_manager'], $container);
         $this->setFiltersManager($config['es_manager'], $container);
-        $this->setRestController($config['es_manager'], $container);
+        $this->setControllerManager($config['es_manager'], 'rest', $container);
+        $this->setControllerManager($config['es_manager'], 'list', $container);
     }
 
     /**
@@ -83,19 +84,20 @@ class ONGRTranslationsExtension extends Extension
 
     /**
      * @param string           $managerName
+     * @param string           $controllerName
      * @param ContainerBuilder $container
      */
-    private function setRestController($managerName, ContainerBuilder $container)
+    private function setControllerManager($managerName, $controllerName, ContainerBuilder $container)
     {
         $definition = new Definition(
-            'ONGR\TranslationsBundle\Controller\RestController',
+            sprintf('ONGR\TranslationsBundle\Controller\%sController', ucfirst($controllerName)),
             [
                 new Reference("es.manager.{$managerName}"),
             ]
         );
         $definition->addMethodCall('setContainer', [new Reference('service_container')]);
 
-        $container->setDefinition('ongr_translations.controller.rest', $definition);
+        $container->setDefinition(sprintf('ongr_translations.controller.%s', $controllerName), $definition);
     }
 
     /**

@@ -11,6 +11,11 @@
 
 namespace ONGR\TranslationsBundle\Controller;
 
+use ONGR\ElasticsearchBundle\DSL\Aggregation\TermsAggregation;
+use ONGR\ElasticsearchBundle\ORM\Manager;
+use ONGR\ElasticsearchBundle\ORM\Repository;
+use ONGR\FilterManagerBundle\Filters\FilterInterface;
+use ONGR\FilterManagerBundle\Search\SearchResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +26,21 @@ use Symfony\Component\HttpFoundation\Response;
 class ListController extends Controller
 {
     /**
+     * @var Manager
+     */
+    private $manager;
+
+    /**
+     * Sets elasticsearch manager for rest actions.
+     *
+     * @param Manager $manager
+     */
+    public function __construct(Manager $manager)
+    {
+        $this->manager = $manager;
+    }
+
+    /**
      * Renders view with filter manager response.
      *
      * @param Request $request Request.
@@ -29,14 +49,40 @@ class ListController extends Controller
      */
     public function listAction(Request $request)
     {
+        /** @var SearchResponse $fmr */
         $fmr = $this->get('ongr_translations.filters_manager')->execute($request);
 
         return $this->render(
             'ONGRTranslationsBundle:List:list.html.twig',
             [
                 'data' => iterator_to_array($fmr->getResult()),
+                'locales' => $this->buildLocalesList(),
                 'filters_manager' => $fmr,
             ]
         );
+    }
+
+    /**
+     * Creates locales list.
+     *
+     * @return array
+     */
+    private function buildLocalesList()
+    {
+        $repo = $this->manager->getRepository('ONGRTranslationsBundle:Translation');
+        $search = $repo->createSearch();
+
+        $localeAgg = new TermsAggregation('locale_agg');
+        $localeAgg->setField('messages.locale');
+        $search->addAggregation($localeAgg);
+        $result = $repo->execute($search, Repository::RESULTS_RAW);
+        $list = [];
+
+        foreach ($result['aggregations']['agg_locale_agg']['buckets'] as $value) {
+            $list[] = $value['key'];
+        }
+        sort($list);
+
+        return $list;
     }
 }

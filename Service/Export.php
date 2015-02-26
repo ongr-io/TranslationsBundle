@@ -100,10 +100,11 @@ class Export
         if (!empty($translations)) {
             foreach ($translations as $translation) {
                 /** @var Translation $translation */
-                $fileName = $translation->getDomain() . '.' .  $translation->getLocale() . '.yml';
-                $path = $this->destinationDir . DIRECTORY_SEPARATOR .  $fileName;
-
-                $data[$path][$translation->getKey()] = $translation->getMessage();
+                foreach ($translation->getMessages() as $message) {
+                    $fileName = $translation->getDomain() . '.' .  $message->getLocale() . '.yml';
+                    $path = $this->destinationDir . DIRECTORY_SEPARATOR .  $fileName;
+                    $data[$path][$translation->getKey()] = $message->getMessage();
+                }
             }
         }
 
