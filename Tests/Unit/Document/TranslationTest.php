@@ -11,6 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Tests\Unit\Document;
 
+use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 
 /**
@@ -25,11 +26,13 @@ class TranslationTest extends \PHPUnit_Framework_TestCase
     {
         $translation = new Translation();
         $translation->setDomain('foo_domain');
-        $translation->setLocale('foo_locale');
+        $message = new Message();
+        $message->setLocale('en');
+        $message->setMessage('foo_message');
+        $translation->addMessage($message);
 
-        $expectedJson = '{"domain":"foo_domain","group":"default","locale":"foo_locale","message":null,' .
-            '"key":null,"id":"f1279cd423ab905c338b34c6fab2a24ad1ba1209",'
-            . '"score":null,"parent":null,"ttl":null,"highlight":null}';
+        $expectedJson = '{"domain":"foo_domain","group":"default","messages":{"en":"foo_message"},"key":null,'
+            . '"id":"10b9bf5859bce4052de0dac6c01324679d21cad0"}';
 
         $this->assertEquals($expectedJson, json_encode($translation), 'JSON strings should be equal');
     }

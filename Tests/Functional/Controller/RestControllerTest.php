@@ -29,7 +29,13 @@ class RestControllerTest extends AbstractElasticsearchTestCase
                     [
                         '_id' => sha1('foo.key'),
                         'key' => 'foo.key',
-                        'message' => 'foo',
+                        'messages' =>
+                            [
+                                [
+                                    'locale' => 'en',
+                                    'message' => 'foo',
+                                ],
+                            ],
                     ],
                 ],
             ],
@@ -47,7 +53,7 @@ class RestControllerTest extends AbstractElasticsearchTestCase
             ['/translate/_api/edit/', 404],
             ['/translate/_api/edit/2', 400],
             ['/translate/_api/edit/2', 400, '{}'],
-            ['/translate/_api/edit/2', 404, json_encode(['value' => 'foo_home', 'field' => 'message'])],
+            ['/translate/_api/edit/2', 404, json_encode(['value' => 'foo_home', 'locale' => 'en'])],
         ];
     }
 
@@ -78,7 +84,7 @@ class RestControllerTest extends AbstractElasticsearchTestCase
         $requestContent = json_encode(
             [
                 'value' => 'foo_home',
-                'field' => 'message',
+                'locale' => 'en',
             ]
         );
 
@@ -98,6 +104,6 @@ class RestControllerTest extends AbstractElasticsearchTestCase
             ->getRepository('ONGRTranslationsBundle:Translation')
             ->find($id);
 
-        $this->assertEquals('foo_home', $translation->getMessage(), 'Message should be updated.');
+        $this->assertEquals('foo_home', $translation->getMessages()[0]->getMessage(), 'Message should be updated.');
     }
 }

@@ -60,30 +60,46 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
                     [
                         '_id' => 'trans1',
                         'domain' => 'foo_domain',
-                        'locale' => 'en',
                         'key' => 'foo_key',
-                        'message' => 'foo_message',
+                        'messages' => [
+                            [
+                                'locale' => 'en',
+                                'message' => 'foo_message',
+                            ],
+                        ],
                     ],
                     [
                         '_id' => 'trans2',
                         'domain' => 'foo_domain',
-                        'locale' => 'en',
                         'key' => 'bar_key',
-                        'message' => 'bar_message',
+                        'messages' => [
+                            [
+                                'locale' => 'en',
+                                'message' => 'bar_message',
+                            ],
+                        ],
                     ],
                     [
                         '_id' => 'trans3',
                         'domain' => 'baz_domain',
-                        'locale' => 'lt',
                         'key' => 'baz_key',
-                        'message' => 'baz_message',
+                        'messages' => [
+                            [
+                                'locale' => 'lt',
+                                'message' => 'baz_message',
+                            ],
+                        ],
                     ],
                     [
                         '_id' => 'trans4',
                         'domain' => 'buz_domain',
-                        'locale' => 'lt',
                         'key' => 'foo_key',
-                        'message' => 'foo_message',
+                        'messages' => [
+                            [
+                                'locale' => 'lt',
+                                'message' => 'foo_message',
+                            ],
+                        ],
                     ],
                 ],
             ],

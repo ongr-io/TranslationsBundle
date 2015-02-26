@@ -29,13 +29,13 @@ class ImportTest extends WebTestCase
             [
                 [
                     'messages' => [
-                        'en' => [
-                            'home' => 'Home',
-                            'back_to_list' => 'Back',
+                        'home' => [
+                            'en' => 'Home',
+                            'lt' => 'Namai',
                         ],
-                        'lt' => [
-                            'home' => 'Namai',
-                            'back_to_list' => 'Atgal į sąrašą',
+                        'back_to_list' => [
+                            'en' => 'Back',
+                            'lt' => 'Atgal į sąrašą',
                         ],
                     ],
                 ],

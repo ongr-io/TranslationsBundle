@@ -12,6 +12,7 @@
 namespace ONGR\TranslationsBundle\Tests\Unit\Service;
 
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
+use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\TranslationsBundle\Service\Export;
 use ONGR\TranslationsBundle\Storage\StorageInterface;
@@ -68,9 +69,11 @@ class ExportTest extends \PHPUnit_Framework_TestCase
     {
         $translation = new Translation();
         $translation->setDomain('foo_domain');
-        $translation->setLocale('foo_locale');
         $translation->setKey('foo_key');
-        $translation->setMessage('foo_message');
+        $message = new Message();
+        $message->setLocale('foo_locale');
+        $message->setMessage('foo_message');
+        $translation->addMessage($message);
 
         $storageMock = $this->getStorageMock(['read', 'getRepository']);
         $storageMock->expects($this->once())->method('read')->willReturn([$translation]);
