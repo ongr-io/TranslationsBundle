@@ -18,15 +18,20 @@ angular
 
                 var inputElement = angular.element(element[0].children[1].children[1])[0];
 
-                scope.field = attr.field;
-                element.addClass('inline-edit');
-
-                if (scope.translation[scope.field] === null || scope.translation[scope.field] === '') {
-                    scope.value = $TranslationService.trans('empty_field');
-                    element.parent().addClass('bg-danger')
+                scope.value = null;
+                if (attr.locale != undefined && attr.locale != '') {
+                    scope.value = scope.translation.messages[attr.locale];
+                    scope.field = 'messages';
                 } else {
-                    scope.value = scope.translation[scope.field];
+                    scope.field = 'group';
+                    scope.value = scope.translation['group'];
                 }
+
+                if (scope.value == null) {
+                    scope.value = $TranslationService.trans('empty_field');
+                    element.parent().addClass('bg-danger');
+                }
+                element.addClass('inline-edit');
 
                 /**
                  * Appears input field
@@ -62,7 +67,7 @@ angular
                         url: requestUrl,
                         data: {
                             value: scope.value,
-                            field: scope.field
+                            locale: attr.locale
                         }
 
                     }).success(function(){
@@ -74,6 +79,8 @@ angular
                         } else if (scope.value == '') {
                             element.parent().addClass('bg-danger');
                             scope.value = $TranslationService.trans('empty_field');
+                        } else {
+                            element.parent().removeClass('bg-danger');
                         }
                     });
                 };

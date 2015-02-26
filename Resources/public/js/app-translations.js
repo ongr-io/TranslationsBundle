@@ -15,4 +15,5 @@ angular
         'util.asset',
         'boxuk.translation'
     ])
-    .constant('DATA', translations);
+    .constant('DATA', translations)
+    .constant('LOCALES', locales);
