@@ -44,5 +44,5 @@ es_manager      default       No       Es manager for storing translations.
 managed_locales               Yes      Locales to be imported.
 formats         []            no       Translation files formats to be imported.
 domains         []            No       Domains to be imported.
-bundles         []            No       Additional bundles to import.
+bundles         []            No       Additional bundles to import (Full namespace).
 =============== ============= ======== =========================================
