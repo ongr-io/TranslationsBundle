@@ -17,18 +17,12 @@ Bundle uses ElasticsearchBundle_ for storing translations in Elasticsearch_ inde
 
 Bundle provides UI for editing translations strings. To use bundled UI, you need to enable FOSJsRoutingBundle_.
 
-BazingaJsTranslationBundle_ is used to expose symfony application translations to Javascript.
-
-angular-symfony-translation_ is used for BazingaJsTranslationBundle_ integration with AngularJs.
-
 FilterManagerBundle_ is used in UI for filtering translations.
 
 .. _ElasticsearchBundle: https://github.com/ongr-io/ElasticsearchBundle
 .. _Elasticsearch: http://www.elasticsearch.org/
 .. _FilterManagerBundle: https://github.com/ongr-io/FilterManagerBundle
 .. _FOSJsRoutingBundle: https://github.com/FriendsOfSymfony/FOSJsRoutingBundle
-.. _BazingaJsTranslationBundle: https://github.com/willdurand/BazingaJsTranslationBundle
-.. _angular-symfony-translation: https://github.com/boxuk/angular-symfony-translation
 
 .. code:: php
 
@@ -41,7 +35,6 @@ FilterManagerBundle_ is used in UI for filtering translations.
             // ...
             new ONGR\ElasticsearchBundle\ONGRElasticsearchBundle(),
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
-            new Bazinga\Bundle\JsTranslationBundle\BazingaJsTranslationBundle(),
             new ONGR\TranslationsBundle\ONGRTranslationsBundle(),
             new ONGR\FilterManagerBundle\ONGRFilterManagerBundle(),
             // ...
@@ -81,17 +74,8 @@ Import ``TranslationsBundle`` API and UI routes:
     fos_js_routing:
         resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
 
-    _bazinga_jstranslation:
-        resource: "@BazingaJsTranslationBundle/Resources/config/routing/routing.yml"
 
-
-Step 5: Dump JavaScript translations
-------------------------------------
-
-This is done using BazingaJsTranslationBundle_ with command ``php app/console bazinga:js-translation:dump [target]``. Please refer to `bundles documentation <https://github.com/willdurand/BazingaJsTranslationBundle/blob/master/Resources/doc/index.md>`_ for more information.
-
-
-Step 6: Using your new bundle
+Step 5: Using your new bundle
 -----------------------------
 
 .. note::

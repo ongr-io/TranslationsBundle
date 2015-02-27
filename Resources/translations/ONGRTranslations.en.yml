@@ -16,4 +16,3 @@ sort.message.asc: Message ASC
 sort.message.desc: Message DESC
 sort.key.asc: Key ASC
 sort.key.desc: Key DESC
-empty_field: Empty field
