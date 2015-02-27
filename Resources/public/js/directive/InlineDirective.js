@@ -9,7 +9,7 @@
 
 angular
     .module('directive.inline', [])
-    .directive('inline', ['$http', 'asset', 'TranslationService', function ($http, $asset, $TranslationService) {
+    .directive('inline', ['$http', 'asset', function ($http, $asset) {
         return {
             restrict: "A",
             scope: { translation: "=" },
@@ -28,7 +28,7 @@ angular
                 }
 
                 if (scope.value == null || scope.value == '') {
-                    scope.value = $TranslationService.trans('empty_field');
+                    scope.value = 'Empty field.';
                     element.parent().addClass('bg-danger');
                 }
                 element.addClass('inline-edit');
@@ -78,7 +78,7 @@ angular
                             }
                         } else if (scope.value == '') {
                             element.parent().addClass('bg-danger');
-                            scope.value = $TranslationService.trans('empty_field');
+                            scope.value = 'Empty field.';
                         } else {
                             element.parent().removeClass('bg-danger');
                         }

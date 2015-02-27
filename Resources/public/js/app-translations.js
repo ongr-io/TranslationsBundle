@@ -12,8 +12,7 @@ angular
         'ui.bootstrap',
         'controller.list',
         'directive.inline',
-        'util.asset',
-        'boxuk.translation'
+        'util.asset'
     ])
     .constant('DATA', translations)
     .constant('LOCALES', locales);
