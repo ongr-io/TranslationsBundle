@@ -24,7 +24,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     public function getTestConfigurationData()
     {
         $expectedConfiguration = [
-            'es_manager' => 'default',
+            'repository' => 'es.manager.default.default',
             'managed_locales' => [],
             'formats' => [],
             'domains' => [],
@@ -36,11 +36,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         // Case #0 Default values.
         $out[] = [
             [
+                'repository' => 'es.manager.default.default',
                 'managed_locales' => [
                     'en',
                 ],
             ],
-            array_merge(
+            array_replace(
                 $expectedConfiguration,
                 [
                     'managed_locales' => [
@@ -53,16 +54,16 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         // Case #1 Custom values.
         $out[] = [
             [
-                'es_manager' => 'foo',
+                'repository' => 'es.manager.default.foo',
                 'managed_locales' => [
                     'en',
                     'fr',
                 ],
             ],
-            array_merge(
+            array_replace(
                 $expectedConfiguration,
                 [
-                    'es_manager' => 'foo',
+                    'repository' => 'es.manager.default.foo',
                     'managed_locales' => [
                         'en',
                         'fr',
@@ -74,6 +75,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         // Case #2 Specific translation files format.
         $out[] = [
             [
+                'repository' => 'es.manager.default.default',
                 'managed_locales' => [
                     'en',
                 ],
@@ -82,7 +84,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'xlf',
                 ],
             ],
-            array_merge(
+            array_replace(
                 $expectedConfiguration,
                 [
                     'managed_locales' => [
@@ -99,6 +101,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         // Case #3 No managed locales.
         $out[] = [
             [
+                'repository' => 'es.manager.default.default',
                 'managed_locales' => [],
             ],
             $expectedConfiguration,
@@ -109,6 +112,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         // Case #4 Specific translation domains.
         $out[] = [
             [
+                'repository' => 'es.manager.default.default',
                 'managed_locales' => [
                     'en',
                 ],

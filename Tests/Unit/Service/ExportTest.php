@@ -45,7 +45,8 @@ class ExportTest extends \PHPUnit_Framework_TestCase
     {
         $expectedDir = 'Resources/translations';
         /* @var $exportService Export */
-        $exportService = $this->getMockBuilder('ONGR\TranslationsBundle\Service\Export')
+        $exportService = $this
+            ->getMockBuilder('ONGR\TranslationsBundle\Service\Export')
             ->setConstructorArgs(
                 [
                     $this->getLoadersContainerMock(),
@@ -76,18 +77,25 @@ class ExportTest extends \PHPUnit_Framework_TestCase
         $translation->addMessage($message);
 
         $storageMock = $this->getStorageMock(['read', 'getRepository']);
-        $storageMock->expects($this->once())->method('read')->willReturn([$translation]);
+        $storageMock
+            ->expects($this->once())
+            ->method('read')
+            ->willReturn([$translation]);
 
         $exporter = $this->getExporterMock(['export']);
-        $exporter->expects($this->once())->method('export')->with(
-            'vfs://root/Resources/translations/foo_domain.foo_locale.yml',
-            [
-                'foo_key' => 'foo_message',
-            ]
-        );
+        $exporter
+            ->expects($this->once())
+            ->method('export')
+            ->with(
+                'vfs://root/Resources/translations/foo_domain.foo_locale.yml',
+                [
+                    'foo_key' => 'foo_message',
+                ]
+            );
 
         /* @var Export|\PHPUnit_Framework_MockObject_MockObject $exportService */
-        $exportService = $this->getMockBuilder('ONGR\TranslationsBundle\Service\Export')
+        $exportService = $this
+            ->getMockBuilder('ONGR\TranslationsBundle\Service\Export')
             ->setConstructorArgs([$this->getLoadersContainerMock(), $storageMock, $exporter, vfsStream::url('root')])
             ->setMethods(null)
             ->getMock();
@@ -104,7 +112,8 @@ class ExportTest extends \PHPUnit_Framework_TestCase
      */
     private function getStorageMock($methods = null)
     {
-        return $this->getMockBuilder('ONGR\TranslationsBundle\Storage\ElasticsearchStorage')
+        return $this
+            ->getMockBuilder('ONGR\TranslationsBundle\Storage\ElasticsearchStorage')
             ->disableOriginalConstructor()
             ->setMethods($methods)
             ->getMock();
@@ -119,7 +128,8 @@ class ExportTest extends \PHPUnit_Framework_TestCase
      */
     private function getExporterMock($methods = null)
     {
-        return $this->getMockBuilder('ONGR\TranslationsBundle\Translation\Export\YmlExport')
+        return $this
+            ->getMockBuilder('ONGR\TranslationsBundle\Translation\Export\YmlExport')
             ->setMethods($methods)
             ->getMock();
     }
@@ -131,7 +141,8 @@ class ExportTest extends \PHPUnit_Framework_TestCase
      */
     public function getLoadersContainerMock()
     {
-        return $this->getMockBuilder('ONGR\TranslationsBundle\Service\LoadersContainer')
+        return $this
+            ->getMockBuilder('ONGR\TranslationsBundle\Service\LoadersContainer')
             ->getMock();
     }
 }

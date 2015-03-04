@@ -24,7 +24,7 @@ ongr_elasticsearch:
                 - ONGRTranslationsBundle
 
 ongr_translations:
-    es_manager: "default"
+    repository: es.manager.default.translation
     managed_locales: ["lt", "de", "en"]
     formats: ["yml", "xlf"]
     domains: ["messages"]

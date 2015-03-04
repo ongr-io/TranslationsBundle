@@ -12,7 +12,6 @@
 namespace ONGR\TranslationsBundle\Controller;
 
 use ONGR\ElasticsearchBundle\DSL\Aggregation\TermsAggregation;
-use ONGR\ElasticsearchBundle\ORM\Manager;
 use ONGR\ElasticsearchBundle\ORM\Repository;
 use ONGR\FilterManagerBundle\Filters\FilterInterface;
 use ONGR\FilterManagerBundle\Search\SearchResponse;
@@ -26,18 +25,18 @@ use Symfony\Component\HttpFoundation\Response;
 class ListController extends Controller
 {
     /**
-     * @var Manager
+     * @var Repository
      */
-    private $manager;
+    private $repository;
 
     /**
-     * Sets elasticsearch manager for rest actions.
+     * Injects elasticsearch repository for listing actions.
      *
-     * @param Manager $manager
+     * @param Repository $repository Elasticsearch repository.
      */
-    public function __construct(Manager $manager)
+    public function __construct(Repository $repository)
     {
-        $this->manager = $manager;
+        $this->repository = $repository;
     }
 
     /**
@@ -71,13 +70,12 @@ class ListController extends Controller
      */
     private function buildLocalesList($filter)
     {
-        $repo = $this->manager->getRepository('ONGRTranslationsBundle:Translation');
-        $search = $repo->createSearch();
+        $search = $this->repository->createSearch();
 
         $localeAgg = new TermsAggregation('locale_agg');
         $localeAgg->setField('messages.locale');
         $search->addAggregation($localeAgg);
-        $result = $repo->execute($search, Repository::RESULTS_RAW);
+        $result = $this->repository->execute($search, Repository::RESULTS_RAW);
         $list = [];
 
         foreach ($result['aggregations']['agg_locale_agg']['buckets'] as $value) {

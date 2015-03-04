@@ -117,7 +117,7 @@ class Translation extends AbstractDocument implements \JsonSerializable
     public function jsonSerialize()
     {
         return array_replace(
-            get_object_vars($this),
+            array_diff_key(get_object_vars($this), array_flip(['score', 'parent', 'ttl', 'highlight'])),
             [
                 'id' => $this->getId(),
                 'messages' => $this->getMessagesArray(),
