@@ -34,7 +34,7 @@
                     </tbody>
                 </table>
                 {% if filters_manager.filters.pager is defined %}
-                    <div class="text-center">{{ paginate(filters_manager.filters.pager.pager, 'ongr_translations_list_page', filters_manager.filters.pager.getUrlParameters()) }}</div>
+                    <div class="text-center">{{ ongr_paginate(filters_manager.filters.pager.pager, 'ongr_translations_list_page', filters_manager.filters.pager.getUrlParameters()) }}</div>
                     <div class="clearfix"></div>
                 {% endif %}
             </div>
