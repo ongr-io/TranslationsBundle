@@ -31,9 +31,9 @@ class Translation extends AbstractDocument implements \JsonSerializable
     /**
      * @var string
      * 
-     * @ES\Property(name="group", type="string", index="not_analyzed")
+     * @ES\Property(name="tags", type="object", multiple=true, objectName="ONGRTranslationsBundle:Tag")
      */
-    private $group = 'default';
+    private $tags;
 
     /**
      * @var Message
@@ -48,6 +48,20 @@ class Translation extends AbstractDocument implements \JsonSerializable
      * @ES\Property(name="key", type="string", index="not_analyzed")
      */
     private $key;
+
+    /**
+     * @var string
+     *
+     * @ES\Property(name="path", type="string", index="not_analyzed")
+     */
+    private $path;
+
+    /**
+     * @var string
+     * 
+     * @ES\Property(name="format", type="string")
+     */
+    private $format;
 
     /**
      * @return string
@@ -66,23 +80,19 @@ class Translation extends AbstractDocument implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @param array $tags
      */
-    public function getGroup()
+    public function setTags($tags)
     {
-        if ($this->group === '') {
-            $this->group = 'default';
-        }
-
-        return $this->group;
+        $this->tags = $tags;
     }
 
     /**
-     * @param string $group
+     * @return array
      */
-    public function setGroup($group)
+    public function getTags()
     {
-        $this->group = $group;
+        return $this->tags;
     }
 
     /**
@@ -121,6 +131,7 @@ class Translation extends AbstractDocument implements \JsonSerializable
             [
                 'id' => $this->getId(),
                 'messages' => $this->getMessagesArray(),
+                'tags' => $this->getTagsArray(),
             ]
         );
     }
@@ -150,6 +161,38 @@ class Translation extends AbstractDocument implements \JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @param string $path
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormat()
+    {
+        return $this->format;
+    }
+
+    /**
+     * @param string $format
+     */
+    public function setFormat($format)
+    {
+        $this->format = $format;
+    }
+
+    /**
      * Returns messages as array.
      *
      * array (
@@ -166,5 +209,20 @@ class Translation extends AbstractDocument implements \JsonSerializable
         }
 
         return $result;
+    }
+
+    /**
+     * Returns tags array.
+     *
+     * @return array
+     */
+    private function getTagsArray()
+    {
+        return $this->tags !== null ? array_map(
+            function ($value) {
+                return $value->getName();
+            },
+            $this->tags
+        ) : [];
     }
 }

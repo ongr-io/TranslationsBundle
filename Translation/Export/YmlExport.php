@@ -28,12 +28,16 @@ class YmlExport implements ExportInterface
      */
     public function export($file, $translations)
     {
-        $ymlDumper = new Dumper();
-        $ymlDumper->setIndentation(0);
-        $ymlContent = '';
-        $ymlContent .= $ymlDumper->dump($translations, 10);
-        $bytes = file_put_contents($file, $ymlContent);
+        if (pathinfo($file, PATHINFO_EXTENSION) === 'yml') {
+            $ymlDumper = new Dumper();
+            $ymlDumper->setIndentation(0);
+            $ymlContent = '';
+            $ymlContent .= $ymlDumper->dump($translations, 10);
+            $bytes = file_put_contents($file, $ymlContent);
 
-        return ($bytes !== false);
+            return ($bytes !== false);
+        }
+
+        return false;
     }
 }

@@ -3,16 +3,16 @@ label.group: Group
 label.key: Key
 label.locale: Locale
 label.message: Message
-label.sort: Sort:
-placeholder.search_for: Search for...
+label.sort: 'Sort:'
+placeholder.search_for: 'Search for...'
 save: Save
 close: Close
 filter.locale: Locale
 filter.domain: Domain
-filter.group: Group
 filter.sort: Sort
 filter.clear: Clear
-sort.message.asc: Message ASC
-sort.message.desc: Message DESC
-sort.key.asc: Key ASC
-sort.key.desc: Key DESC
+sort.message.asc: 'Message ASC'
+sort.message.desc: 'Message DESC'
+sort.key.asc: 'Key ASC'
+sort.key.desc: 'Key DESC'
+filter.group: Group

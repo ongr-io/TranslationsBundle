@@ -52,6 +52,7 @@ class ElasticsearchStorage implements StorageInterface
         if (!empty($locales)) {
             $search->addFilter(new TermsFilter('locale', $locales));
         }
+
         if (!empty($domains)) {
             $search->addFilter(new TermsFilter('domain', $domains));
         }
@@ -67,16 +68,17 @@ class ElasticsearchStorage implements StorageInterface
         foreach ($translations as $domain => $domainTrans) {
             /** @var Translation $document */
 
-            foreach ($domainTrans as $key => $keyTrans) {
+            foreach ($domainTrans['translations'] as $key => $keyTrans) {
                 $document = $this->getRepository()->createDocument();
                 $document->setDomain($domain);
                 $document->setKey($key);
+                $document->setPath($domainTrans['path']);
+                $document->setFormat($domainTrans['format']);
 
                 foreach ($keyTrans as $locale => $trans) {
                     $message = new Message();
                     $message->setLocale($locale);
                     $message->setMessage($trans);
-
                     $document->addMessage($message);
                 }
                 $this->getRepository()->getManager()->persist($document);

@@ -3,16 +3,16 @@ label.group: Grupė
 label.key: Raktas
 label.locale: Localė
 label.message: Tekstas
-label.sort: Rikiuoti:
+label.sort: 'Rikiuoti:'
 placeholder.search_for: Ieškoti...
 save: Saugoti
 close: Uždaryti
 filter.locale: Localė
 filter.domain: Domenas
-filter.group: Grupė
 filter.sort: Rikiavimas
 filter.clear: Atšaukti
-sort.message.asc: Žinutė A-Ž
-sort.message.desc: Žinutė Ž-A
-sort.key.asc: Raktas A-Ž
-sort.key.desc: Raktas Ž-A
+sort.message.asc: 'Žinutė A-Ž'
+sort.message.desc: 'Žinutė Ž-A'
+sort.key.asc: 'Raktas A-Ž'
+sort.key.desc: 'Raktas Ž-A'
+filter.group: Grupė

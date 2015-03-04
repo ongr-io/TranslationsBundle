@@ -50,11 +50,19 @@ class FileImport
         list($domain, $locale, $extension) = explode('.', $file->getFilename());
 
         if ($this->loadersContainer->has($extension)) {
-            /** @var MessageCatalogue $messageCatalogue */
+            /* @var MessageCatalogue $messageCatalogue */
             $messageCatalogue = $this->loadersContainer->get($extension)->load($file, $locale, $domain);
+            $domainMessages = $messageCatalogue->all($domain);
 
-            foreach ($messageCatalogue->all($domain) as $key => $content) {
-                $this->translations[$domain][$key][$locale] = $content;
+            if (!empty($domainMessages)) {
+                $this->translations[$domain]['path'] = pathinfo($file->getPathname(), PATHINFO_DIRNAME)
+                    . DIRECTORY_SEPARATOR
+                    . explode('.', pathinfo($file->getPathname(), PATHINFO_BASENAME))[0];
+                $this->translations[$domain]['format'] = $file->getExtension();
+
+                foreach ($domainMessages as $key => $content) {
+                    $this->translations[$domain]['translations'][$key][$locale] = $content;
+                }
             }
         }
 

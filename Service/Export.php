@@ -31,11 +31,6 @@ class Export
     private $exporter;
 
     /**
-     * @var string
-     */
-    private $destinationDir;
-
-    /**
      * @var LoadersContainer
      */
     private $loadersContainer;
@@ -56,7 +51,6 @@ class Export
     ) {
         $this->storage = $storage;
         $this->exporter = $exporter;
-        $this->destinationDir = $kernelRootDir . '/Resources/translations';
         $this->loadersContainer = $loadersContainer;
     }
 
@@ -68,10 +62,6 @@ class Export
      */
     public function export($locales = [], $domains = [])
     {
-        if (!file_exists($this->destinationDir)) {
-            mkdir($this->destinationDir, 0755, true);
-        }
-
         foreach ($this->getExportData($locales, $domains) as $file => $translations) {
             if (file_exists($file)) {
                 list($domain, $locale, $extension) = explode('.', $file);
@@ -101,8 +91,7 @@ class Export
             foreach ($translations as $translation) {
                 /** @var Translation $translation */
                 foreach ($translation->getMessages() as $message) {
-                    $fileName = $translation->getDomain() . '.' .  $message->getLocale() . '.yml';
-                    $path = $this->destinationDir . DIRECTORY_SEPARATOR .  $fileName;
+                    $path = $translation->getPath() . '.' . $message->getLocale() . '.' . $translation->getFormat();
                     $data[$path][$translation->getKey()] = $message->getMessage();
                 }
             }
