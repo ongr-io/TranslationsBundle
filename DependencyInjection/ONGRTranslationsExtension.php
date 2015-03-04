@@ -41,24 +41,24 @@ class ONGRTranslationsExtension extends Extension
         $container->setParameter('ongr_translations.domains', $config['domains']);
         $this->validateBundles($container, $config['bundles']);
 
-        $this->setElasticsearchStorage($config['es_manager'], $container);
-        $this->setFiltersManager($config['es_manager'], $container);
-        $this->setControllerManager($config['es_manager'], 'rest', $container);
-        $this->setControllerManager($config['es_manager'], 'list', $container);
+        $this->setElasticsearchStorage($config['repository'], $container);
+        $this->setFiltersManager($config['repository'], $container);
+        $this->setControllerManager($config['repository'], 'rest', $container);
+        $this->setControllerManager($config['repository'], 'list', $container);
     }
 
     /**
      * Sets elasticsearch storage for translations.
      *
-     * @param string           $managerName
-     * @param ContainerBuilder $container
+     * @param string           $repositoryId Elasticsearch repository id.
+     * @param ContainerBuilder $container    Service container.
      */
-    private function setElasticsearchStorage($managerName, ContainerBuilder $container)
+    private function setElasticsearchStorage($repositoryId, ContainerBuilder $container)
     {
         $definition = new Definition(
             'ONGR\TranslationsBundle\Storage\ElasticsearchStorage',
             [
-                new Reference("es.manager.{$managerName}"),
+                new Reference($repositoryId),
             ]
         );
 
@@ -66,16 +66,18 @@ class ONGRTranslationsExtension extends Extension
     }
 
     /**
-     * @param string           $managerName
-     * @param ContainerBuilder $container
+     * Adds filter manager for displaying translations gui.
+     *
+     * @param string           $repositoryId Elasticsearch repository id.
+     * @param ContainerBuilder $container    Service container.
      */
-    private function setFiltersManager($managerName, ContainerBuilder $container)
+    private function setFiltersManager($repositoryId, ContainerBuilder $container)
     {
         $definition = new Definition(
             'ONGR\FilterManagerBundle\Search\FiltersManager',
             [
                 new Reference('ongr_translations.filters_container'),
-                new Reference("es.manager.{$managerName}.translation"),
+                new Reference($repositoryId),
             ]
         );
 
@@ -83,16 +85,18 @@ class ONGRTranslationsExtension extends Extension
     }
 
     /**
-     * @param string           $managerName
-     * @param string           $controllerName
-     * @param ContainerBuilder $container
+     * Injects elasticsearch repository to controller and sets it into service container.
+     *
+     * @param string           $repositoryId   Elasticsearch repository id.
+     * @param string           $controllerName Controller name to which add repository.
+     * @param ContainerBuilder $container      Service container.
      */
-    private function setControllerManager($managerName, $controllerName, ContainerBuilder $container)
+    private function setControllerManager($repositoryId, $controllerName, ContainerBuilder $container)
     {
         $definition = new Definition(
             sprintf('ONGR\TranslationsBundle\Controller\%sController', ucfirst($controllerName)),
             [
-                new Reference("es.manager.{$managerName}"),
+                new Reference($repositoryId),
             ]
         );
         $definition->addMethodCall('setContainer', [new Reference('service_container')]);
@@ -101,10 +105,10 @@ class ONGRTranslationsExtension extends Extension
     }
 
     /**
-     * Validate configured bundles.
+     * Validates configured bundles and sets into service container as parameter.
      *
-     * @param ContainerBuilder $container
-     * @param array            $bundles
+     * @param ContainerBuilder $container Service container.
+     * @param array            $bundles   Bundles array.
      *
      * @throws InvalidConfigurationException
      */
