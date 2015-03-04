@@ -12,7 +12,6 @@
 namespace ONGR\TranslationsBundle\Controller;
 
 use Elasticsearch\Common\Exceptions\Missing404Exception;
-use ONGR\ElasticsearchBundle\ORM\Manager;
 use ONGR\ElasticsearchBundle\ORM\Repository;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
@@ -27,18 +26,18 @@ use Symfony\Component\HttpFoundation\Response;
 class RestController extends Controller
 {
     /**
-     * @var Manager
+     * @var Repository
      */
-    private $manager;
+    private $repository;
 
     /**
-     * Sets elasticsearch manager for rest actions.
+     * Injects elasticsearch repository for rest actions.
      *
-     * @param Manager $manager
+     * @param Repository $repository Elasticsearch repository.
      */
-    public function __construct(Manager $manager)
+    public function __construct(Repository $repository)
     {
-        $this->manager = $manager;
+        $this->repository = $repository;
     }
 
     /**
@@ -60,12 +59,9 @@ class RestController extends Controller
         $value = $content['value'];
         $locale = array_key_exists('locale', $content) ? $content['locale'] : false;
 
-        /** @var Repository $repository */
-        $repository = $this->manager->getRepository('ONGRTranslationsBundle:Translation');
-
         try {
             /** @var Translation $translation */
-            $translation = $repository->find($id);
+            $translation = $this->repository->find($id);
             if ($locale) {
                 $exist = false;
                 foreach ($translation->getMessages() as $message) {
@@ -84,8 +80,8 @@ class RestController extends Controller
                 $translation->setGroup($value);
             }
 
-            $this->manager->persist($translation);
-            $this->manager->commit();
+            $this->repository->getManager()->persist($translation);
+            $this->repository->getManager()->commit();
         } catch (Missing404Exception $e) {
             return new JsonResponse(Response::$statusTexts[404], 404);
         }

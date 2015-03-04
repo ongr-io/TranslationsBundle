@@ -24,16 +24,18 @@ use ONGR\TranslationsBundle\Document\Translation;
 class ElasticsearchStorage implements StorageInterface
 {
     /**
-     * @var Manager Used for storing translations to elasticsearch.
+     * @var Repository Elasticsearch repository used for storing translations.
      */
-    private $manager;
+    private $repository;
 
     /**
-     * @param Manager $manager
+     * Injects elasticsearch repository for storage actions.
+     *
+     * @param Repository $repository Elasticsearch repository.
      */
-    public function __construct(Manager $manager)
+    public function __construct(Repository $repository)
     {
-        $this->manager = $manager;
+        $this->repository = $repository;
     }
 
     /**
@@ -41,9 +43,8 @@ class ElasticsearchStorage implements StorageInterface
      */
     public function read($locales = [], $domains = [])
     {
-        $repository = $this->getRepository();
-
-        $search = $repository
+        $search = $this
+            ->getRepository()
             ->createSearch()
             ->setScroll('2m')
             ->addQuery(new MatchAllQuery());
@@ -55,7 +56,7 @@ class ElasticsearchStorage implements StorageInterface
             $search->addFilter(new TermsFilter('domain', $domains));
         }
 
-        return $repository->execute($search, Repository::RESULTS_OBJECT);
+        return $this->getRepository()->execute($search, Repository::RESULTS_OBJECT);
     }
 
     /**
@@ -78,11 +79,11 @@ class ElasticsearchStorage implements StorageInterface
 
                     $document->addMessage($message);
                 }
-                $this->manager->persist($document);
+                $this->getRepository()->getManager()->persist($document);
             }
         }
 
-        $this->manager->commit();
+        $this->getRepository()->getManager()->commit();
     }
 
     /**
@@ -92,6 +93,6 @@ class ElasticsearchStorage implements StorageInterface
      */
     private function getRepository()
     {
-        return $this->manager->getRepository('ONGRTranslationsBundle:Translation');
+        return $this->repository;
     }
 }
