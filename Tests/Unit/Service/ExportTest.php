@@ -39,31 +39,6 @@ class ExportTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test if global translations directory is created.
-     */
-    public function testTargetDirectoryIsCreated()
-    {
-        $expectedDir = 'Resources/translations';
-        /* @var $exportService Export */
-        $exportService = $this
-            ->getMockBuilder('ONGR\TranslationsBundle\Service\Export')
-            ->setConstructorArgs(
-                [
-                    $this->getLoadersContainerMock(),
-                    $this->getStorageMock(['read']),
-                    $this->getExporterMock(),
-                    vfsStream::url('root'),
-                ]
-            )
-            ->setMethods(null)
-            ->getMock();
-
-        $this->assertFalse($this->root->hasChild($expectedDir), 'Resources/translations directory should not exists.');
-        $exportService->export();
-        $this->assertTrue($this->root->hasChild($expectedDir), 'Resources/translations directory should exists.');
-    }
-
-    /**
      * Tests if correct data array is formed.
      */
     public function testGetExportData()
@@ -71,6 +46,8 @@ class ExportTest extends \PHPUnit_Framework_TestCase
         $translation = new Translation();
         $translation->setDomain('foo_domain');
         $translation->setKey('foo_key');
+        $translation->setPath('vfs://root/Resources/translations');
+        $translation->setFormat('yml');
         $message = new Message();
         $message->setLocale('foo_locale');
         $message->setMessage('foo_message');

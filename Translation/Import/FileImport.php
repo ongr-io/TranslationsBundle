@@ -55,9 +55,7 @@ class FileImport
             $domainMessages = $messageCatalogue->all($domain);
 
             if (!empty($domainMessages)) {
-                $this->translations[$domain]['path'] = pathinfo($file->getPathname(), PATHINFO_DIRNAME)
-                    . DIRECTORY_SEPARATOR
-                    . explode('.', pathinfo($file->getPathname(), PATHINFO_BASENAME))[0];
+                $this->translations[$domain]['path'] = pathinfo($file->getPathname(), PATHINFO_DIRNAME);
                 $this->translations[$domain]['format'] = $file->getExtension();
 
                 foreach ($domainMessages as $key => $content) {

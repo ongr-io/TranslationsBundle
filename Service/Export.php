@@ -91,7 +91,13 @@ class Export
             foreach ($translations as $translation) {
                 /** @var Translation $translation */
                 foreach ($translation->getMessages() as $message) {
-                    $path = $translation->getPath() . '.' . $message->getLocale() . '.' . $translation->getFormat();
+                    $path = sprintf(
+                        '%s' . DIRECTORY_SEPARATOR . '%s.%s.%s',
+                        $translation->getPath(),
+                        $translation->getDomain(),
+                        $message->getLocale(),
+                        $translation->getFormat()
+                    );
                     $data[$path][$translation->getKey()] = $message->getMessage();
                 }
             }

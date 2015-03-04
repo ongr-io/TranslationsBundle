@@ -11,6 +11,8 @@
 
 namespace ONGR\TranslationsBundle\Translation\Export;
 
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Dumper;
 
 /**
