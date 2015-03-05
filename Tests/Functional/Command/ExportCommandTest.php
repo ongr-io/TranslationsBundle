@@ -14,8 +14,10 @@ namespace ONGR\TranslationsBundle\Tests\Functional\Command;
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
 use ONGR\TranslationsBundle\Command\ExportCommand;
 use ONGR\TranslationsBundle\Translation\Export\YmlExport;
+use org\bovigo\vfs\vfsStream;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -34,13 +36,17 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
     private $command;
 
     /**
+     * @var string
+     */
+    private $translationsDir;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         parent::setUp();
-
-        $this->removeTranslations();
+        vfsStream::setup('translations_test');
 
         $app = new Application(static::$kernel);
         $app->add($this->getExportCommand());
@@ -61,6 +67,8 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
                         '_id' => 'trans1',
                         'domain' => 'foo_domain',
                         'key' => 'foo_key',
+                        'path' => vfsStream::url('translations_test'),
+                        'format' => 'yml',
                         'messages' => [
                             [
                                 'locale' => 'en',
@@ -72,6 +80,8 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
                         '_id' => 'trans2',
                         'domain' => 'foo_domain',
                         'key' => 'bar_key',
+                        'path' => vfsStream::url('translations_test'),
+                        'format' => 'yml',
                         'messages' => [
                             [
                                 'locale' => 'en',
@@ -83,6 +93,8 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
                         '_id' => 'trans3',
                         'domain' => 'baz_domain',
                         'key' => 'baz_key',
+                        'path' => vfsStream::url('translations_test'),
+                        'format' => 'yml',
                         'messages' => [
                             [
                                 'locale' => 'lt',
@@ -94,6 +106,8 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
                         '_id' => 'trans4',
                         'domain' => 'buz_domain',
                         'key' => 'foo_key',
+                        'path' => vfsStream::url('translations_test'),
+                        'format' => 'yml',
                         'messages' => [
                             [
                                 'locale' => 'lt',
@@ -113,9 +127,8 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
      */
     public function verifyFiles($data)
     {
-        $root = $this->getContainer()->getParameter('kernel.root_dir');
         foreach ($data as $fileName => $translations) {
-            $path = $root . '/Resources/translations/' . $fileName;
+            $path = vfsStream::url('translations_test' . DIRECTORY_SEPARATOR . $fileName);
 
             $this->assertFileExists($path, 'Translation file should exist');
             $dumpedData = Yaml::parse(file_get_contents($path));
@@ -222,40 +235,15 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
     }
 
     /**
-     * Remove testing files.
-     */
-    private function removeTranslations()
-    {
-        $root = $this->getContainer()->getParameter('kernel.root_dir');
-        $files = ['baz_domain.lt.yml', 'foo_domain.en.yml', 'buz_domain.lt.yml'];
-        foreach ($files as $file) {
-            $path = $root . '/Resources/translations/' . $file;
-            if (file_exists($path)) {
-                unlink($path);
-            }
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        $this->removeTranslations();
-    }
-
-    /**
      * Create dummy file with data.
      *
      * @param array $dummyData
      */
     private function createDummyFileWithData($dummyData)
     {
-        $root = $this->getContainer()->getParameter('kernel.root_dir');
         $exporter = new YmlExport();
         foreach ($dummyData as $file => $translations) {
-            $path = $root . '/Resources/translations/' . $file;
-            $exporter->export($path, $translations);
+            $exporter->export(vfsStream::url('translations_test' . DIRECTORY_SEPARATOR . $file), $translations);
         }
     }
 }

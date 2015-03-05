@@ -31,8 +31,8 @@ class TranslationTest extends \PHPUnit_Framework_TestCase
         $message->setMessage('foo_message');
         $translation->addMessage($message);
 
-        $expectedJson = '{"domain":"foo_domain","group":"default","messages":{"en":"foo_message"},"key":null,'
-            . '"id":"10b9bf5859bce4052de0dac6c01324679d21cad0"}';
+        $expectedJson = '{"domain":"foo_domain","tags":[],"messages":{"en":"foo_message"},'
+            . '"key":null,"path":null,"format":null,"id":"10b9bf5859bce4052de0dac6c01324679d21cad0"}';
 
         $this->assertEquals($expectedJson, json_encode($translation), 'JSON strings should be equal');
     }
