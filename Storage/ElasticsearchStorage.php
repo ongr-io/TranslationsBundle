@@ -65,23 +65,23 @@ class ElasticsearchStorage implements StorageInterface
      */
     public function write(array $translations)
     {
-        foreach ($translations as $domain => $domainTrans) {
-            /** @var Translation $document */
+        foreach ($translations as $path => $domains) {
+            foreach ($domains as $domain => $transMeta) {
+                foreach ($transMeta['translations'] as $key => $keyTrans) {
+                    $document = $this->getRepository()->createDocument();
+                    $document->setDomain($domain);
+                    $document->setKey($key);
+                    $document->setPath($path);
+                    $document->setFormat($transMeta['format']);
 
-            foreach ($domainTrans['translations'] as $key => $keyTrans) {
-                $document = $this->getRepository()->createDocument();
-                $document->setDomain($domain);
-                $document->setKey($key);
-                $document->setPath($domainTrans['path']);
-                $document->setFormat($domainTrans['format']);
-
-                foreach ($keyTrans as $locale => $trans) {
-                    $message = new Message();
-                    $message->setLocale($locale);
-                    $message->setMessage($trans);
-                    $document->addMessage($message);
+                    foreach ($keyTrans as $locale => $trans) {
+                        $message = new Message();
+                        $message->setLocale($locale);
+                        $message->setMessage($trans);
+                        $document->addMessage($message);
+                    }
+                    $this->getRepository()->getManager()->persist($document);
                 }
-                $this->getRepository()->getManager()->persist($document);
             }
         }
 

@@ -21,11 +21,6 @@ use Symfony\Component\Translation\MessageCatalogue;
 class FileImport
 {
     /**
-     * @var array
-     */
-    private $translations = [];
-
-    /**
      * @var LoadersContainer
      */
     private $loadersContainer;
@@ -49,21 +44,22 @@ class FileImport
     {
         list($domain, $locale, $extension) = explode('.', $file->getFilename());
 
+        $translations = [];
+
         if ($this->loadersContainer->has($extension)) {
             /* @var MessageCatalogue $messageCatalogue */
             $messageCatalogue = $this->loadersContainer->get($extension)->load($file, $locale, $domain);
             $domainMessages = $messageCatalogue->all($domain);
 
             if (!empty($domainMessages)) {
-                $this->translations[$domain]['path'] = pathinfo($file->getPathname(), PATHINFO_DIRNAME);
-                $this->translations[$domain]['format'] = $file->getExtension();
-
+                $path = pathinfo($file->getPathname(), PATHINFO_DIRNAME);
+                $translations[$path][$domain]['format'] = $file->getExtension();
                 foreach ($domainMessages as $key => $content) {
-                    $this->translations[$domain]['translations'][$key][$locale] = $content;
+                    $translations[$path][$domain]['translations'][$key][$locale] = $content;
                 }
             }
         }
 
-        return $this->translations;
+        return $translations;
     }
 }
