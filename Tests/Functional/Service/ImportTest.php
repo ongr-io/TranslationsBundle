@@ -54,11 +54,11 @@ class ImportTest extends WebTestCase
      */
     public function testImport($expectedTranslations)
     {
-        $importService = $this->getContainer()->get('ongr_translations.import');
+        $translations = $this->getContainer()->get('ongr_translations.import')->getTranslations();
 
         $this->assertArraySubset(
             $expectedTranslations['messages'],
-            $importService->getTranslations()['messages']['translations']
+            reset($translations)['messages']['translations']
         );
     }
 
