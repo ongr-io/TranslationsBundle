@@ -52,7 +52,7 @@ class FileImport
             $domainMessages = $messageCatalogue->all($domain);
 
             if (!empty($domainMessages)) {
-                $path = pathinfo($file->getPathname(), PATHINFO_DIRNAME);
+                $path = substr(pathinfo($file->getPathname(), PATHINFO_DIRNAME), strlen(getcwd()) + 1);
                 $translations[$path][$domain]['format'] = $file->getExtension();
                 foreach ($domainMessages as $key => $content) {
                     $translations[$path][$domain]['translations'][$key][$locale] = $content;
