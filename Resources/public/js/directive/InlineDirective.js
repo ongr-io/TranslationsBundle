@@ -22,9 +22,6 @@ angular
                 if (attr.locale != undefined && attr.locale != '') {
                     scope.value = scope.translation.messages[attr.locale];
                     scope.field = 'messages';
-                } else {
-                    scope.field = 'group';
-                    scope.value = scope.translation['group'];
                 }
 
                 if (scope.value == null || scope.value == '') {
@@ -55,22 +52,21 @@ angular
                  */
                 scope.save = function() {
                     element.removeClass('active');
+                    
 
-                    var requestUrl = Routing.generate('ongr_translations_translation_edit',
+                    $http.post(
+                        Routing.generate('ongr_translations_rest_edit'),
                         {
-                            id: scope.translation.id
+                            id: scope.translation.id,
+                            name: 'messages',
+                            objectProperty: 'message',
+                            newPropertyValue: scope.value,
+                            findBy: {
+                                property: 'locale',
+                                value: attr.locale
+                            }
                         }
-                    );
-
-                    $http({
-                        method:"POST",
-                        url: requestUrl,
-                        data: {
-                            value: scope.value,
-                            locale: attr.locale
-                        }
-
-                    }).success(function(){
+                    ).success(function(){
                         if (scope.field == 'group') {
                             element.parent().removeClass('bg-danger');
                             if (scope.value == '') {

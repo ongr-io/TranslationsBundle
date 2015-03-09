@@ -10,8 +10,10 @@
 angular
     .module('ongr.translations', [
         'ui.bootstrap',
+        'ngTagsInput',
         'controller.list',
         'directive.inline',
+        'service.tag',
         'util.asset'
     ])
     .constant('DATA', translations)

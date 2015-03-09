@@ -43,8 +43,24 @@ class ONGRTranslationsExtension extends Extension
 
         $this->setElasticsearchStorage($config['repository'], $container);
         $this->setFiltersManager($config['repository'], $container);
-        $this->setControllerManager($config['repository'], 'rest', $container);
+        $this->setMessageRest($config['repository'], $container);
         $this->setControllerManager($config['repository'], 'list', $container);
+    }
+
+    /**
+     * @param string           $repositoryId
+     * @param ContainerBuilder $container
+     */
+    private function setMessageRest($repositoryId, ContainerBuilder $container)
+    {
+        $definition = new Definition(
+            'ONGR\TranslationsBundle\Translation\TranslationManager',
+            [
+                new Reference($repositoryId),
+            ]
+        );
+
+        $container->setDefinition('ongr_translations.translation_manager', $definition);
     }
 
     /**

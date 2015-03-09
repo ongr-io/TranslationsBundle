@@ -4,6 +4,7 @@ label.key: Raktas
 label.locale: Localė
 label.message: Tekstas
 label.sort: 'Rikiuoti:'
+label.tag: Žymės
 placeholder.search_for: Ieškoti...
 save: Saugoti
 close: Uždaryti
@@ -11,6 +12,7 @@ filter.locale: Localė
 filter.domain: Domenas
 filter.sort: Rikiavimas
 filter.clear: Atšaukti
+filter.tag: Žymė
 sort.message.asc: 'Žinutė A-Ž'
 sort.message.desc: 'Žinutė Ž-A'
 sort.key.asc: 'Raktas A-Ž'

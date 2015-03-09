@@ -9,7 +9,11 @@
 
 angular
     .module('controller.list', [])
-    .controller('list', ['$scope', '$http', 'DATA', 'LOCALES', function($scope, $http, DATA, LOCALES) {
+    .controller('list', ['$scope', '$http', 'tag', 'DATA', 'LOCALES',
+        function($scope, $http, $tag, DATA, LOCALES) {
         $scope.translations = DATA;
+
         $scope.locales = LOCALES;
+        
+        $scope.tag = $tag;
     }]);
