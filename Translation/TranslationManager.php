@@ -11,6 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Translation;
 
+use Elasticsearch\Common\Exceptions\Missing404Exception;
 use ONGR\ElasticsearchBundle\Document\DocumentInterface;
 use ONGR\ElasticsearchBundle\DSL\Filter\ExistsFilter;
 use ONGR\ElasticsearchBundle\ORM\Repository;
@@ -73,11 +74,11 @@ class TranslationManager
      *
      * @param Request $request Http request object.
      */
-    public function remove(Request $request)
+    public function delete(Request $request)
     {
         $content = $this->parseJsonContent($request);
         $document = $this->getTranslation($content['id']);
-        $this->removeObject($document, $content);
+        $this->deleteObject($document, $content);
         $this->commitTranslation($document);
     }
 
@@ -141,7 +142,7 @@ class TranslationManager
      * @param DocumentInterface $document
      * @param array             $options
      */
-    private function removeObject(DocumentInterface $document, $options)
+    private function deleteObject(DocumentInterface $document, $options)
     {
         $accessor = $this->getAccessor();
         $objects = $accessor->getValue($document, $options['name']);
@@ -241,7 +242,11 @@ class TranslationManager
      */
     private function getTranslation($id)
     {
-        $document = $this->repository->find($id);
+        try {
+            $document = $this->repository->find($id);
+        } catch (Missing404Exception $e) {
+            $document = null;
+        }
 
         if ($document === null) {
             throw new BadRequestHttpException('Invalid translation Id.');

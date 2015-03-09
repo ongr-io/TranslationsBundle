@@ -16,9 +16,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Controller used for rest actions.
+ * Controller used for api's actions.
  */
-class RestController extends Controller
+class ApiController extends Controller
 {
     /**
      * Action for editing translation objects.
@@ -41,9 +41,9 @@ class RestController extends Controller
      *
      * @return JsonResponse
      */
-    public function removeAction(Request $request)
+    public function deleteAction(Request $request)
     {
-        $this->get('ongr_translations.translation_manager')->remove($request);
+        $this->get('ongr_translations.translation_manager')->delete($request);
 
         return new JsonResponse();
     }

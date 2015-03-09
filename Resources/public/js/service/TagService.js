@@ -19,7 +19,7 @@ angular
          */
         this.remove = function(id, tag) {
             $http.post(
-                Routing.generate('ongr_translations_rest_remove'),
+                Routing.generate('ongr_translations_api_delete'),
                 {
                     id: id,
                     name: 'tags',
@@ -37,7 +37,7 @@ angular
          */
         this.add = function(id, tag) {
             $http.post(
-                Routing.generate('ongr_translations_rest_add'),
+                Routing.generate('ongr_translations_api_add'),
                 {
                     id: id,
                     name: 'tags',

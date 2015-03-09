@@ -55,7 +55,7 @@ angular
                     
 
                     $http.post(
-                        Routing.generate('ongr_translations_rest_edit'),
+                        Routing.generate('ongr_translations_api_edit'),
                         {
                             id: scope.translation.id,
                             name: 'messages',
