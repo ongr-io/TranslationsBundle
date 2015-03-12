@@ -4,10 +4,34 @@ ongr_translations_list_page:
     defaults:
         _controller: ongr_translations.controller.list:listAction
 
-ongr_translations_translation_edit:
-    pattern: /_api/edit/{id}
+ongr_translations_api_edit:
+    pattern: /_api/edit
     methods: [POST]
     defaults:
-        _controller: ongr_translations.controller.rest:editAction
+        _controller: ONGRTranslationsBundle:Api:edit
     options:
-            expose: true
+        expose: true
+            
+ongr_translations_api_delete:
+    pattern: /_api/delete
+    methods: [POST]
+    defaults:
+        _controller: ONGRTranslationsBundle:Api:delete
+    options:
+        expose: true
+
+ongr_translations_api_add:
+    pattern: /_api/add
+    methods: [POST]
+    defaults:
+        _controller: ONGRTranslationsBundle:Api:add
+    options:
+        expose: true
+
+ongr_translations_api_get:
+    pattern: /_api/get
+    methods: [GET]
+    defaults:
+        _controller: ONGRTranslationsBundle:Api:get
+    options:
+        expose: true

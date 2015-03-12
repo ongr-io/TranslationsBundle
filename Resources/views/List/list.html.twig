@@ -10,6 +10,7 @@
                     <thead>
                         <tr>
                             <th>{% trans from 'ONGRTranslations' %}label.domain{% endtrans %}</th>
+                            <th>{% trans from 'ONGRTranslations' %}label.tag{% endtrans %}</th>
                             <th>{% trans from 'ONGRTranslations' %}label.key{% endtrans %}</th>
                     {% verbatim %}
                             <th ng-cloak ng-repeat="(locale, enabled) in locales" ng-show="locales[locale]">
@@ -21,6 +22,9 @@
 
                         <tr ng-cloak ng-repeat="trans in translations">
                             <td width="10%">{{ trans.domain }}</td>
+                            <td width="20%">
+                                <tags-input on-tag-added="tag.add(trans.id, $tag)" on-tag-removed="tag.remove(trans.id, $tag)" min-length="2" ng-model="trans.tags"></tags-input>
+                            </td>
                             <td width="20%">{{ trans.key }}</td>
                             <td ng-repeat="(locale, enabled) in locales" ng-show="locales[locale]">
                                 <div inline translation="trans" locale="{{locale}}"></div>
@@ -49,6 +53,7 @@
 
     <script src="{{ asset('bundles/ongrtranslations/js/controller/listController.js') }}"></script>
     <script src="{{ asset('bundles/ongrtranslations/js/directive/InlineDirective.js') }}"></script>
+    <script src="{{ asset('bundles/ongrtranslations/js/service/tagService.js') }}"></script>
     <script src="{{ asset('bundles/ongrtranslations/js/utils/AssetService.js') }}"></script>
     <script src="{{ asset('bundles/ongrtranslations/js/app-translations.js') }}"></script>
     {{ parent() }}

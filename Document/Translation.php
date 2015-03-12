@@ -80,7 +80,9 @@ class Translation extends AbstractDocument implements \JsonSerializable
     }
 
     /**
-     * @param array $tags
+     * Sets tags.
+     *
+     * @param Tag[] $tags
      */
     public function setTags($tags)
     {
@@ -88,11 +90,23 @@ class Translation extends AbstractDocument implements \JsonSerializable
     }
 
     /**
-     * @return array
+     * Returns all tags.
+     *
+     * @return Tag[]
      */
     public function getTags()
     {
         return $this->tags;
+    }
+
+    /**
+     * Adds a single tag.
+     *
+     * @param Tag $tag
+     */
+    public function addTag($tag)
+    {
+        $this->tags[] = $tag;
     }
 
     /**
@@ -218,11 +232,15 @@ class Translation extends AbstractDocument implements \JsonSerializable
      */
     private function getTagsArray()
     {
-        return $this->tags !== null ? array_map(
-            function ($value) {
-                return $value->getName();
-            },
-            $this->tags
-        ) : [];
+        if ($this->tags === null) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($this->tags as $tag) {
+            $result[] = $tag->getName();
+        }
+
+        return $result;
     }
 }
