@@ -71,7 +71,7 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
      *
      * @return array
      */
-    public function getTestEdtiActionStatusCodeData()
+    public function getTestActionStatusCodeData()
     {
         return [
             ['POST', '/translate/_api/edit', 400],
@@ -89,6 +89,20 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
                     ]
                 ),
             ],
+            ['POST', '/translate/_api/check', 400],
+            ['POST', '/translate/_api/check', 400, json_encode(['message' => 'foo'])],
+            ['POST', '/translate/_api/check', 200, json_encode(['message' => 'foo', 'locale' => 'en'])],
+            [
+                'POST',
+                '/translate/_api/check',
+                406,
+                json_encode(
+                    [
+                        'message' => '{0 There are no apples|{1} There is one apple|]1,Inf[ There are %count% apples',
+                        'locale' => 'en',
+                    ]
+                ),
+            ],
         ];
     }
 
@@ -100,9 +114,9 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
      * @param int    $statusCode Status code with which client responded.
      * @param string $content    Request content.
      *
-     * @dataProvider getTestEdtiActionStatusCodeData
+     * @dataProvider getTestActionStatusCodeData
      */
-    public function testEdtiActionStatusCode($method, $url, $statusCode, $content = '')
+    public function testActionStatusCode($method, $url, $statusCode, $content = '')
     {
         $client = self::createClient();
         $client->request($method, $url, [], [], [], $content);

@@ -35,3 +35,11 @@ ongr_translations_api_get:
         _controller: ONGRTranslationsBundle:Api:get
     options:
         expose: true
+
+ongr_translations_api_check:
+    pattern: /_api/check
+    methods: [POST]
+    defaults:
+        _controller: ONGRTranslationsBundle:Api:check
+    options:
+        expose: true

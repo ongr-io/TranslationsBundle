@@ -16,3 +16,19 @@
 [ng-cloak] {
     display: none !important;
 }
+
+.highlight {
+    background-color: rgb(245, 245, 245);
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.danger-font {
+    color: #d9534f;
+}
+
+.danger-font:hover {
+    color: rgb(201, 48, 44);
+}
