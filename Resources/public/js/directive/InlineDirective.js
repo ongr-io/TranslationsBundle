@@ -18,12 +18,17 @@ angular
 
                 var inputElement = angular.element(element[0].children[1].children[1])[0];
 
+                scope.message = scope.translation.messages[attr.locale];
+                
                 scope.value = null;
                 
                 scope.error = null;
                 
                 if (attr.locale != undefined && attr.locale != '') {
-                    scope.value = scope.translation.messages[attr.locale];
+                    if (scope.message) {
+                        scope.value = scope.message.message;
+                    }
+                    
                     scope.field = 'messages';
                 }
 
@@ -46,7 +51,11 @@ angular
                  * Closes input field.
                  */
                 scope.close = function() {
-                    scope.value = scope.oldValue;
+                    if (scope.error !== 0 || scope.error === null) {
+                        scope.value = scope.oldValue;
+                    }
+                    
+                    scope.error = null;
                     element.removeClass('active');
                 };
 

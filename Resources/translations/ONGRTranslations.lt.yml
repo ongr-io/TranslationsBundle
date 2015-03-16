@@ -5,6 +5,9 @@ label.locale: Localė
 label.message: Tekstas
 label.sort: 'Rikiuoti:'
 label.tag: Žymės
+label.timestamp: 'Laiko žymės'
+label.created_at: 'Sukurtas'
+label.updated_at: 'Atnaujintas'
 placeholder.search_for: Ieškoti...
 save: Saugoti
 close: Uždaryti
@@ -17,4 +20,6 @@ sort.message.asc: 'Žinutė A-Ž'
 sort.message.desc: 'Žinutė Ž-A'
 sort.key.asc: 'Raktas A-Ž'
 sort.key.desc: 'Raktas Ž-A'
+sort.date.asc: 'Seniausi'
+sort.date.desc: 'Naujausi'
 filter.group: Grupė

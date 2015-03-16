@@ -19,7 +19,7 @@ use ONGR\ElasticsearchBundle\Document\AbstractDocument;
  * 
  * @ES\Object()
  */
-class Message extends AbstractDocument
+class Message extends AbstractDocument implements \JsonSerializable
 {
     /**
      * @var string
@@ -34,6 +34,29 @@ class Message extends AbstractDocument
      * @ES\Property(name="message", type="string")
      */
     private $message;
+
+    /**
+     * @var \DateTime
+     * 
+     * @ES\Property(name="created_at", type="date")
+     */
+    private $createdAt;
+
+    /**
+     * @var \DateTime
+     * 
+     * @ES\Property(name="updated_at", type="date")
+     */
+    private $updatedAt;
+
+    /**
+     * Sets created date.
+     */
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
+    }
 
     /**
      * @return string
@@ -65,5 +88,49 @@ class Message extends AbstractDocument
     public function setMessage($message)
     {
         $this->message = $message;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'message' => $this->getMessage(),
+            'createdAt' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->getUpdatedAt()->format('Y-m-d H:i:s'),
+        ];
     }
 }

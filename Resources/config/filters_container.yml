@@ -11,7 +11,7 @@ parameters:
             label: "sort.message.asc"
             field: "message"
             order: "asc"
-            default: true
+            default: false
         msgDesc:
             label: "sort.message.desc"
             field: "message"
@@ -26,6 +26,16 @@ parameters:
             label: "sort.key.desc"
             field: "key"
             order: "desc"
+            default: false
+        dateDesc:
+            label: "sort.date.desc"
+            field: "updated_at"
+            order: "desc"
+            default: true
+        dateAsc:
+            label: "sort.date.asc"
+            field: "updated_at"
+            order: "asc"
             default: false
     
     ongr_translations.filter.match_search.class: ONGR\FilterManagerBundle\Filters\Widget\Search\MatchSearch
