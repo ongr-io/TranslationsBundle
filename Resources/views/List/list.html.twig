@@ -3,31 +3,53 @@
 {% block body_attr %}ng-app="ongr.translations" ng-controller="list"{% endblock %}
 
 {% block content %}
-    <div class="container-fluid">
+    <div ng-keydown="keyPress($event)" tabindex="0" class="container-fluid">
+        {% verbatim %}
+            <div class="row" ng-show="barVisible">
+                <div class="col-lg-12">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Key: <strong>{{ barTranslation.key }}</strong>
+                            <button class="btn btn-danger btn-xs pull-right" ng-click="closeBar()">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-3 col-lg-3">
+                                    {% endverbatim %}
+                                    <p><strong>{% trans from 'ONGRTranslations' %}label.tag{% endtrans %}:</strong></p>
+                                    {% verbatim %}
+                                    <tags-input on-tag-added="tag.add(barTranslation.id, $tag)" on-tag-removed="tag.remove(barTranslation.id, $tag)" min-length="2" ng-model="barTranslation.tags"></tags-input>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endverbatim %}
+        
         <div class="row">
             <div class="col-lg-12">
-                <table class="table table-striped">
+                <table class="table table-hover translations-table">
                     <thead>
                         <tr>
                             <th>{% trans from 'ONGRTranslations' %}label.domain{% endtrans %}</th>
-                            <th>{% trans from 'ONGRTranslations' %}label.tag{% endtrans %}</th>
                             <th>{% trans from 'ONGRTranslations' %}label.key{% endtrans %}</th>
-                    {% verbatim %}
-                            <th ng-cloak ng-repeat="(locale, enabled) in locales" ng-show="locales[locale]">
-                                {{ locale }}
-                            </th>
+                            {% verbatim %}
+                                <th ng-cloak ng-repeat="(locale, enabled) in locales" ng-show="locales[locale]">
+                                    {{ locale }}
+                                </th>
+                            {% endverbatim %}
                         </tr>
                     </thead>
                     <tbody>
-
-                        <tr ng-cloak ng-repeat="trans in translations">
+                    {% verbatim %}
+                        <tr class="pointer" ng-cloak ng-class="{'highlight': isCurrent($index)}" ng-repeat="trans in translations" ng-click="selectCurrent($index, $event)">
                             <td width="10%">{{ trans.domain }}</td>
-                            <td width="20%">
-                                <tags-input on-tag-added="tag.add(trans.id, $tag)" on-tag-removed="tag.remove(trans.id, $tag)" min-length="2" ng-model="trans.tags"></tags-input>
-                            </td>
                             <td width="20%">{{ trans.key }}</td>
-                            <td ng-repeat="(locale, enabled) in locales" ng-show="locales[locale]">
-                                <div inline translation="trans" locale="{{locale}}"></div>
+                            <td width="{{ transColWidth }}" ng-repeat="(locale, enabled) in locales" ng-show="locales[locale]">
+                                <div inline translation="trans" locale="{{ locale }}"></div>
                             </td>
                         </tr>
                     {% endverbatim %}

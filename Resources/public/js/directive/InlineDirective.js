@@ -19,6 +19,9 @@ angular
                 var inputElement = angular.element(element[0].children[1].children[1])[0];
 
                 scope.value = null;
+                
+                scope.error = null;
+                
                 if (attr.locale != undefined && attr.locale != '') {
                     scope.value = scope.translation.messages[attr.locale];
                     scope.field = 'messages';
@@ -50,10 +53,29 @@ angular
                 /**
                  * Saves values with ajax request.
                  */
-                scope.save = function() {
-                    element.removeClass('active');
-                    
-
+                scope.save = function($event) {
+                    scope
+                        .httpValidate()
+                        .success(function() {
+                            scope.error = 0;
+                            scope.httpSave();
+                        })
+                        .error(function() {
+                            scope.error = 1;
+                        });
+                };
+                
+                scope.httpValidate = function() {
+                    return $http.post(
+                        Routing.generate('ongr_translations_api_check'),
+                        {
+                            message: scope.value,
+                            locale: attr.locale,
+                        }
+                    )
+                }
+                
+                scope.httpSave = function() {
                     $http.post(
                         Routing.generate('ongr_translations_api_edit'),
                         {
@@ -67,19 +89,19 @@ angular
                             }
                         }
                     ).success(function(){
-                        if (scope.field == 'group') {
-                            element.parent().removeClass('bg-danger');
-                            if (scope.value == '') {
-                                scope.value = 'default';
+                            if (scope.field == 'group') {
+                                element.parent().removeClass('bg-danger');
+                                if (scope.value == '') {
+                                    scope.value = 'default';
+                                }
+                            } else if (scope.value == '') {
+                                element.parent().addClass('bg-danger');
+                                scope.value = 'Empty field.';
+                            } else {
+                                element.parent().removeClass('bg-danger');
                             }
-                        } else if (scope.value == '') {
-                            element.parent().addClass('bg-danger');
-                            scope.value = 'Empty field.';
-                        } else {
-                            element.parent().removeClass('bg-danger');
-                        }
-                    });
-                };
+                        });
+                }
 
                 /**
                  * Extra shortcuts for better ux.
