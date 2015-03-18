@@ -29,6 +29,7 @@
                         <div class="collapse navbar-collapse pull-right">
                             {% import 'ONGRTranslationsBundle:macros:filters.html.twig' as filter_macros %}
                             {% block filters %}
+                                {{ filter_macros.dropdown(filters_manager.filters.status, true) }}
                                 {{ filter_macros.dropdown(filters_manager.filters.tag, true) }}
                                 {{ filter_macros.dropdown(filters_manager.filters.locale, true) }}
                                 {{ filter_macros.dropdown(filters_manager.filters.domain, true) }}

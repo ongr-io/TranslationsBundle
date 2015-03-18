@@ -8,6 +8,7 @@ label.tag: Žymės
 label.timestamp: 'Laiko žymės'
 label.created_at: 'Sukurtas'
 label.updated_at: 'Atnaujintas'
+label.status: 'Statusas'
 placeholder.search_for: Ieškoti...
 save: Saugoti
 close: Uždaryti
@@ -16,6 +17,7 @@ filter.domain: Domenas
 filter.sort: Rikiavimas
 filter.clear: Atšaukti
 filter.tag: Žymė
+filter.status: Statusas
 sort.message.asc: 'Žinutė A-Ž'
 sort.message.desc: 'Žinutė Ž-A'
 sort.key.asc: 'Raktas A-Ž'

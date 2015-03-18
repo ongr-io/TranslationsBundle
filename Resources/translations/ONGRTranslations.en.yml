@@ -8,6 +8,7 @@ label.tag: Tags
 label.timestamp: 'Timestamps'
 label.created_at: 'Created at'
 label.updated_at: 'Updated at'
+label.status: 'Status'
 placeholder.search_for: 'Search for...'
 save: Save
 close: Close
@@ -16,6 +17,7 @@ filter.domain: Domain
 filter.sort: Sort
 filter.clear: Clear
 filter.tag: Tag
+filter.status: Status
 sort.message.asc: 'Message ASC'
 sort.message.desc: 'Message DESC'
 sort.key.asc: 'Key ASC'

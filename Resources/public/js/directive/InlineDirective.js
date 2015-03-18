@@ -114,7 +114,8 @@ angular
                             name: 'messages',
                             properties: {
                                 message: scope.value,
-                                locale: attr.locale
+                                locale: attr.locale,
+                                status: 'dirty'
                             },
                             findBy: {
                                 locale: attr.locale

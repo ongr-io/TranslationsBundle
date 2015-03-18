@@ -53,10 +53,20 @@ parameters:
     ongr_translations.filter.tag.class: ONGR\FilterManagerBundle\Filters\Widget\Choice\SingleTermChoice
     ongr_translations.filter.tag.request_field: tag
     ongr_translations.filter.tag.field: tags.name
+    
+    ongr_translations.filter.status.class: ONGR\FilterManagerBundle\Filters\Widget\Choice\SingleTermChoice
+    ongr_translations.filter.status.request_field: status
+    ongr_translations.filter.status.field: status
 
     ongr_translations.filters_container.class: ONGR\FilterManagerBundle\Search\FiltersContainer
 
 services:
+    ongr_translations.filter.status:
+        class: "%ongr_translations.filter.status.class%"
+        calls:
+            - ["setRequestField", ["%ongr_translations.filter.status.request_field%"]]
+            - ["setField", ["%ongr_translations.filter.status.field%"]]
+
     ongr_translations.filter.tag:
         class: "%ongr_translations.filter.tag.class%"
         calls:
@@ -106,3 +116,4 @@ services:
             - ["set", ["domain", "@ongr_translations.filter.single_term.domain"]]
             - ["set", ["locale", "@ongr_translations.filter.locale"]]
             - ["set", ["tag", "@ongr_translations.filter.tag"]]
+            - ["set", ["status", "@ongr_translations.filter.status"]]
