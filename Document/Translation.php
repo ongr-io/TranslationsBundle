@@ -64,6 +64,29 @@ class Translation extends AbstractDocument implements \JsonSerializable
     private $format;
 
     /**
+     * @var \DateTime
+     * 
+     * @ES\Property(name="created_at", type="date")
+     */
+    private $createdAt;
+
+    /**
+     * @var \DateTime
+     * 
+     * @ES\Property(name="updated_at", type="date")
+     */
+    private $updatedAt;
+
+    /**
+     * Sets timestamps.
+     */
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
+    }
+
+    /**
      * @return string
      */
     public function getDomain()
@@ -136,21 +159,6 @@ class Translation extends AbstractDocument implements \JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function jsonSerialize()
-    {
-        return array_replace(
-            array_diff_key(get_object_vars($this), array_flip(['score', 'parent', 'ttl', 'highlight'])),
-            [
-                'id' => $this->getId(),
-                'messages' => $this->getMessagesArray(),
-                'tags' => $this->getTagsArray(),
-            ]
-        );
-    }
-
-    /**
      * @param Message $message
      */
     public function addMessage(Message $message)
@@ -207,6 +215,55 @@ class Translation extends AbstractDocument implements \JsonSerializable
     }
 
     /**
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return array_replace(
+            array_diff_key(get_object_vars($this), array_flip(['score', 'parent', 'ttl', 'highlight'])),
+            [
+                'id' => $this->getId(),
+                'messages' => $this->getMessagesArray(),
+                'tags' => $this->getTagsArray(),
+                'createdAt' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
+                'updatedAt' => $this->getUpdatedAt()->format('Y-m-d H:i:s'),
+            ]
+        );
+    }
+
+    /**
      * Returns messages as array.
      *
      * array (
@@ -219,7 +276,7 @@ class Translation extends AbstractDocument implements \JsonSerializable
     {
         $result = [];
         foreach ($this->getMessages() as $message) {
-            $result[$message->getLocale()] = $message->getMessage();
+            $result[$message->getLocale()] = $message;
         }
 
         return $result;

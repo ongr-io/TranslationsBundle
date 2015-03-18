@@ -18,9 +18,22 @@
                             <div class="row">
                                 <div class="col-xs-12 col-md-3 col-lg-3">
                                     {% endverbatim %}
-                                    <p><strong>{% trans from 'ONGRTranslations' %}label.tag{% endtrans %}:</strong></p>
+                                        <p><strong>{% trans from 'ONGRTranslations' %}label.tag{% endtrans %}:</strong></p>
                                     {% verbatim %}
                                     <tags-input on-tag-added="tag.add(barTranslation.id, $tag)" on-tag-removed="tag.remove(barTranslation.id, $tag)" min-length="2" ng-model="barTranslation.tags"></tags-input>
+                                </div>
+                                <div class="col-xs-12 col-md-3 col-lg-3">
+                                    {% endverbatim %}
+                                        <p><strong>{% trans from 'ONGRTranslations' %}label.timestamp{% endtrans %}</strong></p>
+                                    {% verbatim %}
+                                    <ul class="list-unstyled">
+                                        <li>
+                                            {% endverbatim %}<strong>{% trans from 'ONGRTranslations' %}label.created_at{% endtrans %}:</strong>{% verbatim %} {{ barTranslation.createdAt }}
+                                        </li>
+                                        <li>
+                                            {% endverbatim %}<strong>{% trans from 'ONGRTranslations' %}label.updated_at{% endtrans %}:</strong>{% verbatim %} {{ barTranslation.updatedAt }}
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>

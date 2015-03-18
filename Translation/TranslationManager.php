@@ -125,6 +125,7 @@ class TranslationManager
 
         $object = new $objectClass();
         $accessor->setValue($object, $options['objectProperty'], $options['propertyValue']);
+        $this->updateTimestamp($object);
 
         if ($objects === null) {
             $objects = [$object];
@@ -175,7 +176,9 @@ class TranslationManager
                 $this->addObject($document, $options);
             } else {
                 $accessor->setValue($objects[$key], $options['objectProperty'], $options['newPropertyValue']);
+                $this->updateTimestamp($objects[$key]);
                 $accessor->setValue($document, $options['name'], $objects);
+                $this->updateTimestamp($document);
             }
         }
     }
@@ -270,5 +273,19 @@ class TranslationManager
         }
 
         return $this->accessor;
+    }
+
+    /**
+     * Sets `updated_at` property.
+     *
+     * @param object $object
+     */
+    private function updateTimestamp($object)
+    {
+        $accessor = $this->getAccessor();
+
+        if ($accessor->isWritable($object, 'updated_at')) {
+            $accessor->setValue($object, 'updated_at', new \DateTime());
+        }
     }
 }
