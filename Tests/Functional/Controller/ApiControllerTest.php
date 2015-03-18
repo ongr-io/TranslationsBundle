@@ -85,7 +85,7 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
                     [
                         'id' => sha1('foo.key'),
                         'name' => 'tags',
-                        'objectProperty' => 'name',
+                        'properties' => ['name'],
                     ]
                 ),
             ],
@@ -135,9 +135,12 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
             [
                 'id' => $id,
                 'name' => 'tags',
-                'objectProperty' => 'name',
-                'propertyValue' => 'foo_tag',
-                'newPropertyValue' => 'updated_foo_tag',
+                'properties' => [
+                    'name' => 'updated_foo_tag',
+                ],
+                'findBy' => [
+                    'name' => 'foo_tag',
+                ],
             ]
         );
 
@@ -172,11 +175,11 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
             [
                 'id' => $id,
                 'name' => 'messages',
-                'objectProperty' => 'message',
-                'newPropertyValue' => 'updated_foo',
+                'properties' => [
+                    'message' => 'updated_foo',
+                ],
                 'findBy' => [
-                    'property' => 'locale',
-                    'value' => 'en',
+                    'locale' => 'en',
                 ],
             ]
         );
@@ -212,7 +215,7 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
             [
                 'id' => $id,
                 'name' => 'tags',
-                'objectProperty' => 'name',
+                'properties' => ['name'],
             ]
         );
 
@@ -244,8 +247,9 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
             [
                 'id' => $id,
                 'name' => 'tags',
-                'objectProperty' => 'name',
-                'propertyValue' => 'tuna_tag',
+                'findBy' => [
+                    'name' => 'tuna_tag',
+                ],
             ]
         );
 
@@ -282,8 +286,9 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
             [
                 'id' => $id,
                 'name' => 'tags',
-                'objectProperty' => 'name',
-                'propertyValue' => 'new_foo_tag',
+                'properties' => [
+                    'name' => 'new_foo_tag',
+                ],
             ]
         );
 

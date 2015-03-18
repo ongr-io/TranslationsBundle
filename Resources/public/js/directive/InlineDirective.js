@@ -90,11 +90,12 @@ angular
                         {
                             id: scope.translation.id,
                             name: 'messages',
-                            objectProperty: 'message',
-                            newPropertyValue: scope.value,
+                            properties: {
+                                message: scope.value,
+                                locale: attr.locale
+                            },
                             findBy: {
-                                property: 'locale',
-                                value: attr.locale
+                                locale: attr.locale
                             }
                         }
                     ).success(function(){

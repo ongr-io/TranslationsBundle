@@ -23,8 +23,9 @@ angular
                 {
                     id: id,
                     name: 'tags',
-                    objectProperty: 'name',
-                    propertyValue: tag.text
+                    properties: {
+                        name: tag.text
+                    }
                 }
             );
         }
@@ -41,8 +42,9 @@ angular
                 {
                     id: id,
                     name: 'tags',
-                    objectProperty: 'name',
-                    propertyValue: tag.text
+                    properties: {
+                        name: tag.text
+                    }
                 }
             );
         }

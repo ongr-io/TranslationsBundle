@@ -96,13 +96,16 @@ class TranslationManager
         $search = $this
             ->repository
             ->createSearch()
-            ->addFilter(new ExistsFilter('field', $content['name']))
-            ->setSource($content['name'] . '.' . $content['objectProperty']);
+            ->addFilter(new ExistsFilter('field', $content['name']));
+
+        foreach ($content['properties'] as $property) {
+            $search->setSource($content['name'] . '.' . $property);
+        }
 
         $results = [];
         foreach ($this->repository->execute($search, Repository::RESULTS_ARRAY) as $trans) {
             foreach ($trans[$content['name']] as $object) {
-                $results[] = $object[$content['objectProperty']];
+                $results = array_merge($results, array_values($object));
             }
         }
 
@@ -124,7 +127,8 @@ class TranslationManager
         $objectClass = reset($meta)->getAliases()[$options['name']]['namespace'];
 
         $object = new $objectClass();
-        $accessor->setValue($object, $options['objectProperty'], $options['propertyValue']);
+        $this->setObjectProperties($object, $options['properties']);
+
         $this->updateTimestamp($object);
 
         if ($objects === null) {
@@ -134,7 +138,7 @@ class TranslationManager
         }
 
         $accessor->setValue($document, $options['name'], $objects);
-        $this->commitTranslation($document);
+        $this->updateTimestamp($document);
     }
 
     /**
@@ -147,9 +151,12 @@ class TranslationManager
     {
         $accessor = $this->getAccessor();
         $objects = $accessor->getValue($document, $options['name']);
-        $key = $this->findObject($objects, $options['objectProperty'], $options['propertyValue']);
-        unset($objects[$key]);
-        $accessor->setValue($document, $options['name'], $objects);
+        $key = $this->findObject($objects, $options['findBy']);
+
+        if ($key >= 0) {
+            unset($objects[$key]);
+            $accessor->setValue($document, $options['name'], $objects);
+        }
     }
 
     /**
@@ -166,19 +173,15 @@ class TranslationManager
         if ($objects === null) {
             $this->addObject($document, $options);
         } else {
-            if (array_key_exists('findBy', $options)) {
-                $key = $this->findObject($objects, $options['findBy']['property'], $options['findBy']['value']);
-            } else {
-                $key = $this->findObject($objects, $options['objectProperty'], $options['propertyValue']);
-            }
+            $key = $this->findObject($objects, $options['findBy']);
 
             if ($key < 0) {
                 $this->addObject($document, $options);
             } else {
-                $accessor->setValue($objects[$key], $options['objectProperty'], $options['newPropertyValue']);
+                $this->setObjectProperties($objects[$key], $options['properties']);
                 $this->updateTimestamp($objects[$key]);
-                $accessor->setValue($document, $options['name'], $objects);
                 $this->updateTimestamp($document);
+                $accessor->setValue($document, $options['name'], $objects);
             }
         }
     }
@@ -187,15 +190,23 @@ class TranslationManager
      * Finds object by property and its value from iterator and returns key.
      *
      * @param \Iterator $objects
-     * @param string    $property
-     * @param mixed     $value
+     * @param array     $options
      *
      * @return int
      */
-    private function findObject($objects, $property, $value)
+    private function findObject($objects, $options)
     {
         foreach ($objects as $key => $object) {
-            if ($this->getAccessor()->getValue($object, $property) === $value) {
+            $fit = true;
+
+            foreach ($options as $property => $value) {
+                if ($this->getAccessor()->getValue($object, $property) !== $value) {
+                    $fit = false;
+                    break;
+                }
+            }
+
+            if ($fit) {
                 return $key;
             }
         }
@@ -286,6 +297,19 @@ class TranslationManager
 
         if ($accessor->isWritable($object, 'updated_at')) {
             $accessor->setValue($object, 'updated_at', new \DateTime());
+        }
+    }
+
+    /**
+     * Sets object properties into provided object.
+     *
+     * @param object $object     Object to set properties into.
+     * @param array  $properties Array of properties to set.
+     */
+    private function setObjectProperties($object, $properties)
+    {
+        foreach ($properties as $property => $value) {
+            $this->getAccessor()->setValue($object, $property, $value);
         }
     }
 }
