@@ -18,7 +18,7 @@ use Symfony\Component\Yaml\Dumper;
 /**
  * Class YmlExport for dumping translations to yml file.
  */
-class YmlExport implements ExportInterface
+class YmlExport implements ExporterInterface
 {
     /**
      * Export translations in to the given file.
@@ -30,16 +30,16 @@ class YmlExport implements ExportInterface
      */
     public function export($file, $translations)
     {
+        $bytes = false;
+
         if (pathinfo($file, PATHINFO_EXTENSION) === 'yml') {
             $ymlDumper = new Dumper();
             $ymlDumper->setIndentation(0);
             $ymlContent = '';
             $ymlContent .= $ymlDumper->dump($translations, 10);
             $bytes = file_put_contents($file, $ymlContent);
-
-            return ($bytes !== false);
         }
 
-        return false;
+        return ($bytes !== false);
     }
 }
