@@ -24,6 +24,8 @@ angular
                 
                 scope.error = null;
                 
+                scope.acting = false;
+                
                 if (attr.locale != undefined && attr.locale != '') {
                     if (scope.message) {
                         scope.value = scope.message.message;
@@ -31,17 +33,36 @@ angular
                     
                     scope.field = 'messages';
                 }
-
-                if (scope.value == null || scope.value == '') {
-                    scope.value = 'Empty field.';
-                    element.parent().addClass('bg-danger');
-                }
+                
                 element.addClass('inline-edit');
+                
+                scope.tryActEmpty = function() {
+                    if (scope.value == null || scope.value == '') {
+                        scope.acting = true;
+                        scope.value = 'Empty field.';
+                        element.parent().addClass('bg-danger');
+                        
+                        return true;
+                    }
+                    
+                    return false;
+                }
+
+                scope.tryActEmpty();
+                
+                scope.suspendEmpty = function () {
+                    element.parent().removeClass('bg-danger');
+                    scope.acting = false;
+                }
 
                 /**
                  * Appears input field
                  */
                 scope.edit = function() {
+                    if (scope.acting) {
+                        scope.value = '';
+                    }
+                    
                     scope.oldValue = scope.value;
                     element.addClass('active');
                     inputElement.focus();
@@ -57,6 +78,7 @@ angular
                     
                     scope.error = null;
                     element.removeClass('active');
+                    scope.tryActEmpty();
                 };
 
                 /**
@@ -90,24 +112,18 @@ angular
                         {
                             id: scope.translation.id,
                             name: 'messages',
-                            objectProperty: 'message',
-                            newPropertyValue: scope.value,
+                            properties: {
+                                message: scope.value,
+                                locale: attr.locale,
+                                status: 'dirty'
+                            },
                             findBy: {
-                                property: 'locale',
-                                value: attr.locale
+                                locale: attr.locale
                             }
                         }
                     ).success(function(){
-                            if (scope.field == 'group') {
-                                element.parent().removeClass('bg-danger');
-                                if (scope.value == '') {
-                                    scope.value = 'default';
-                                }
-                            } else if (scope.value == '') {
-                                element.parent().addClass('bg-danger');
-                                scope.value = 'Empty field.';
-                            } else {
-                                element.parent().removeClass('bg-danger');
+                            if (!scope.tryActEmpty()) {
+                                scope.suspendEmpty();
                             }
                         });
                 }

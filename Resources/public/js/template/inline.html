@@ -1,13 +1,8 @@
 <a href="#" ng-click="edit()" ng-bind="value" ng-class="error == 1 ? 'danger-font' : ''"></a>
-<div style="width: 100%;">
-    <p>
-        <i ng-if="message.createdAt" class="glyphicon glyphicon-plus-sign"></i> {{ message.createdAt }}  <i ng-if="message.updatedAt" class="glyphicon glyphicon-refresh"></i> {{ message.updatedAt }}
-    </p>
-    <div class="input-group input-group-sm" ng-class="error === 0 ? 'has-success' : (error === 1  ? 'has-error' : '')">
+<div class="input-group input-group-sm" ng-class="error === 0 ? 'has-success' : (error === 1  ? 'has-error' : '')">
     <span class="input-group-btn">
         <button ng-click="save()" ng-class="error == null ? 'btn-default' : (error == 0 ? 'btn-success' : 'btn-danger')" class="btn"><i class="glyphicon glyphicon-ok"></i></button>
         <button ng-click="close()" class="btn btn-default"><i class="glyphicon glyphicon-remove"></i></button>
     </span>
-        <input type="text" class="form-control" ng-model="value" ng-keydown="keyPress($event)"/>
-    </div>
+    <input type="text" class="form-control" ng-model="value" ng-keydown="keyPress($event)"/>
 </div>

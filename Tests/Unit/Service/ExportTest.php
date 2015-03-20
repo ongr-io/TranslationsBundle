@@ -51,13 +51,15 @@ class ExportTest extends \PHPUnit_Framework_TestCase
         $message = new Message();
         $message->setLocale('foo_locale');
         $message->setMessage('foo_message');
+        $message->setStatus(Message::DIRTY);
         $translation->addMessage($message);
 
-        $storageMock = $this->getStorageMock(['read', 'getRepository']);
+        $storageMock = $this->getStorageMock(['read', 'write']);
         $storageMock
             ->expects($this->once())
             ->method('read')
             ->willReturn([$translation]);
+        $storageMock->expects($this->once())->method('write');
 
         $exporter = $this->getExporterMock(['export']);
         $exporter

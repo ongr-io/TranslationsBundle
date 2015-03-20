@@ -37,7 +37,7 @@ class TranslationTest extends \PHPUnit_Framework_TestCase
         $message->setUpdatedAt($date);
         $translation->addMessage($message);
 
-        $expectedJson = '{"domain":"foo_domain","tags":[],"messages":{"en":{"message":"foo_message",'
+        $expectedJson = '{"domain":"foo_domain","tags":[],"messages":{"en":{"message":"foo_message","status":"fresh",'
             . "\"createdAt\":\"{$dateString}\",\"updatedAt\":\"{$dateString}\"}},\"key\":null,\"path\":null,"
             . "\"format\":null,\"createdAt\":\"{$dateString}\",\"updatedAt\":\"{$dateString}\","
             . '"id":"10b9bf5859bce4052de0dac6c01324679d21cad0"}';

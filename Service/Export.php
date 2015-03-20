@@ -11,9 +11,11 @@
 
 namespace ONGR\TranslationsBundle\Service;
 
+use ONGR\ElasticsearchBundle\ORM\Manager;
+use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\TranslationsBundle\Storage\StorageInterface;
-use ONGR\TranslationsBundle\Translation\Export\ExportInterface;
+use ONGR\TranslationsBundle\Translation\Export\ExporterInterface;
 
 /**
  * Class Export.
@@ -26,7 +28,7 @@ class Export
     private $storage;
 
     /**
-     * @var array
+     * @var ExporterInterface
      */
     private $exporter;
 
@@ -36,18 +38,24 @@ class Export
     private $loadersContainer;
 
     /**
-     * Dependency Injection.
-     *
-     * @param LoadersContainer $loadersContainer
-     * @param StorageInterface $storage
-     * @param ExportInterface  $exporter
-     * @param string           $kernelRootDir
+     * @var array
+     */
+    private $managedLocales = [];
+
+    /**
+     * @var Translation[]
+     */
+    private $refresh = [];
+
+    /**
+     * @param LoadersContainer  $loadersContainer
+     * @param StorageInterface  $storage
+     * @param ExporterInterface $exporter
      */
     public function __construct(
         LoadersContainer $loadersContainer,
         StorageInterface $storage,
-        ExportInterface $exporter,
-        $kernelRootDir
+        ExporterInterface $exporter
     ) {
         $this->storage = $storage;
         $this->exporter = $exporter;
@@ -57,12 +65,11 @@ class Export
     /**
      * Exports translations from ES to files.
      *
-     * @param array $locales
-     * @param array $domains
+     * @param array $domains To export.
      */
-    public function export($locales = [], $domains = [])
+    public function export($domains = [])
     {
-        foreach ($this->getExportData($locales, $domains) as $file => $translations) {
+        foreach ($this->readStorage($domains) as $file => $translations) {
             if (file_exists($file)) {
                 list($domain, $locale, $extension) = explode('.', $file);
                 if ($this->loadersContainer && $this->loadersContainer->has($extension)) {
@@ -73,24 +80,50 @@ class Export
 
             $this->exporter->export($file, $translations);
         }
+
+        if (!empty($this->refresh)) {
+            $this->storage->write($this->refresh);
+            $this->refresh = [];
+        }
+    }
+
+    /**
+     * Sets managed locales.
+     *
+     * @param array $managedLocales
+     */
+    public function setManagedLocales($managedLocales)
+    {
+        $this->managedLocales = $managedLocales;
+    }
+
+    /**
+     * @return array
+     */
+    public function getManagedLocales()
+    {
+        return $this->managedLocales;
     }
 
     /**
      * Get translations for export.
      *
-     * @param array $locales
-     * @param array $domains
+     * @param array $domains To read from storage.
      *
      * @return array
      */
-    private function getExportData($locales, $domains)
+    private function readStorage($domains)
     {
         $data = [];
-        $translations = $this->storage->read($locales, $domains);
-        if (!empty($translations)) {
-            foreach ($translations as $translation) {
-                /** @var Translation $translation */
-                foreach ($translation->getMessages() as $message) {
+        $translations = $this->storage->read($this->getManagedLocales(), $domains);
+
+        /* @var Translation $translation */
+        foreach ($translations as $translation) {
+            $messages = $translation->getMessages();
+            $wasDirty = false;
+
+            foreach ($messages as $key => $message) {
+                if ($message->getStatus() === Message::DIRTY) {
                     $path = sprintf(
                         '%s' . DIRECTORY_SEPARATOR . '%s.%s.%s',
                         $translation->getPath(),
@@ -99,7 +132,16 @@ class Export
                         $translation->getFormat()
                     );
                     $data[$path][$translation->getKey()] = $message->getMessage();
+
+                    $message->setStatus(Message::FRESH);
+                    $messages[$key] = $message;
+                    $wasDirty = true;
                 }
+            }
+
+            if ($wasDirty) {
+                $translation->setMessages($messages);
+                $this->refresh[] = $translation;
             }
         }
 

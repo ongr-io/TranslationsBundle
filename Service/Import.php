@@ -110,11 +110,9 @@ class Import
     {
         if (empty($this->translations)) {
             $this->import();
-
-            return $this->translations;
-        } else {
-            return $this->translations;
         }
+
+        return $this->translations;
     }
 
     /**

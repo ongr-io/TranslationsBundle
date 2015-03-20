@@ -33,7 +33,7 @@ angular
              * @param Event  $event
              */
             $scope.selectCurrent = function($index, $event) {
-                if (!($event.target.hasAttribute('ng-click') || !$scope.isInput($event.target))) {
+                if (!$event.target.hasAttribute('ng-click') && !$scope.isInput($event.target)) {
                     $scope.current = $index;
                     $scope.updateTranslationBar();
                     $scope.openBar();
@@ -108,8 +108,7 @@ angular
              * @param Event e
              */
             $scope.keyPress = function(e) {
-                
-                if ($scope.isInput(e.target)) {
+                if (!$scope.isInput(e.target)) {
                     e.preventDefault();
                     switch(e.keyCode) {
                         case 40: // down
@@ -133,6 +132,32 @@ angular
              * @returns {boolean}
              */
             $scope.isInput = function(target) {
-                return ['INPUT', 'TEXTAREA', 'A', '', 'BUTTON'].indexOf(target.tagName);
+                inputs = ['INPUT', 'TEXTAREA', 'A', 'BUTTON'];
+                
+                for (var key in inputs) {
+                    if (inputs[key] === target.tagName) {
+                        return true;
+                    }
+                }
+                
+                return false;
+            }
+
+            /**
+             * Returns class for label based on status.
+             *
+             * @param {string} status
+             * 
+             * @returns {string}
+             */
+            $scope.getLabelClass = function(status) {
+                switch (status) {
+                    case 'dirty':
+                        return 'label-danger';
+                    case 'fresh':
+                        return 'label-success';
+                    default:
+                        return 'label-default';
+                }
             }
     }]);

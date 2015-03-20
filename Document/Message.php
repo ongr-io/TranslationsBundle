@@ -21,6 +21,9 @@ use ONGR\ElasticsearchBundle\Document\AbstractDocument;
  */
 class Message extends AbstractDocument implements \JsonSerializable
 {
+    const DIRTY = 'dirty';
+    const FRESH = 'fresh';
+
     /**
      * @var string
      *
@@ -34,6 +37,13 @@ class Message extends AbstractDocument implements \JsonSerializable
      * @ES\Property(name="message", type="string")
      */
     private $message;
+
+    /**
+     * @var string
+     * 
+     * @ES\Property(name="status", type="string")
+     */
+    private $status;
 
     /**
      * @var \DateTime
@@ -54,6 +64,7 @@ class Message extends AbstractDocument implements \JsonSerializable
      */
     public function __construct()
     {
+        $this->status = self::FRESH;
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
     }
@@ -123,12 +134,31 @@ class Message extends AbstractDocument implements \JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     */
+    public function setStatus($status)
+    {
+        if (in_array($status, (new \ReflectionObject($this))->getConstants())) {
+            $this->status = $status;
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function jsonSerialize()
     {
         return [
             'message' => $this->getMessage(),
+            'status' => $this->getStatus(),
             'createdAt' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
             'updatedAt' => $this->getUpdatedAt()->format('Y-m-d H:i:s'),
         ];

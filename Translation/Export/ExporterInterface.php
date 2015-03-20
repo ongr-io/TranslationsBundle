@@ -12,9 +12,9 @@
 namespace ONGR\TranslationsBundle\Translation\Export;
 
 /**
- * Interface ExportInterface for file exporters.
+ * This interface should be implemented by file exporters.
  */
-interface ExportInterface
+interface ExporterInterface
 {
     /**
      * Export translations in to the given file.
