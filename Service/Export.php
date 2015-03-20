@@ -28,7 +28,7 @@ class Export
     private $storage;
 
     /**
-     * @var array
+     * @var ExporterInterface
      */
     private $exporter;
 
@@ -81,7 +81,7 @@ class Export
             $this->exporter->export($file, $translations);
         }
 
-        if ($this->refresh) {
+        if (!empty($this->refresh)) {
             $this->storage->write($this->refresh);
             $this->refresh = [];
         }
