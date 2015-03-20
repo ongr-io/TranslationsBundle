@@ -65,6 +65,28 @@ class ElasticsearchStorage implements StorageInterface
      */
     public function write(array $translations)
     {
+        if (!(reset($translations) instanceof Translation)) {
+            $translations = $this->toDocumentArray($translations);
+        }
+
+        foreach ($translations as $translation) {
+            $this->getRepository()->getManager()->persist($translation);
+        }
+
+        $this->getRepository()->getManager()->commit();
+    }
+
+    /**
+     * Converts arrays to documents.
+     *
+     * @param array $translations
+     *
+     * @return array
+     */
+    private function toDocumentArray(array $translations)
+    {
+        $out = [];
+
         foreach ($translations as $path => $domains) {
             foreach ($domains as $domain => $transMeta) {
                 foreach ($transMeta['translations'] as $key => $keyTrans) {
@@ -80,18 +102,16 @@ class ElasticsearchStorage implements StorageInterface
                         $message->setMessage($trans);
                         $document->addMessage($message);
                     }
-                    $this->getRepository()->getManager()->persist($document);
+                    $out[] = $document;
                 }
             }
         }
 
-        $this->getRepository()->getManager()->commit();
+        return $out;
     }
 
     /**
-     * Returns repository for translations.
-     *
-     * @return Repository
+     * {@inheritdoc}
      */
     private function getRepository()
     {
