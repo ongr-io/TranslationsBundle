@@ -13,10 +13,11 @@ namespace ONGR\TranslationsBundle\Controller;
 
 use ONGR\TranslationsBundle\Translation\TranslationChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Translation\Translator;
 
 /**
  * Controller used for api's actions.
@@ -99,6 +100,25 @@ class ApiController extends Controller
         return new JsonResponse(
             Response::$statusTexts[Response::HTTP_NOT_ACCEPTABLE],
             Response::HTTP_NOT_ACCEPTABLE
+        );
+    }
+
+    /**
+     * Action for executing export command.
+     *
+     * @param Request $request Http request object.
+     *
+     * @return JsonResponse
+     */
+    public function exportAction(Request $request)
+    {
+        $cwd = getcwd();
+        if (substr($cwd, -3) === 'web') {
+            chdir($cwd . DIRECTORY_SEPARATOR . '..');
+        }
+
+        return new JsonResponse(
+            $this->get('ongr_translations.command.export')->run(new ArrayInput([]), new NullOutput())
         );
     }
 }

@@ -17,25 +17,34 @@ angular
             link: function(scope, element, attr) {
 
                 var inputElement = angular.element(element[0].children[1].children[1])[0];
-
-                scope.message = scope.translation.messages[attr.locale];
-                
-                scope.value = null;
-                
-                scope.error = null;
-                
-                scope.acting = false;
-                
-                if (attr.locale != undefined && attr.locale != '') {
-                    if (scope.message) {
-                        scope.value = scope.message.message;
-                    }
-                    
-                    scope.field = 'messages';
-                }
                 
                 element.addClass('inline-edit');
-                
+
+                /**
+                 * @type {}
+                 */
+                scope.message = scope.translation.messages[attr.locale];
+
+                /**
+                 * @type {string}
+                 */
+                scope.value = scope.message.message ? scope.message.message : null;
+
+                /**
+                 * @type {int}
+                 */
+                scope.error = null;
+
+                /**
+                 * @type {boolean}
+                 */
+                scope.acting = false;
+
+                /**
+                 * Acts as empty value if it is null.
+                 * 
+                 * @returns {boolean}
+                 */
                 scope.tryActEmpty = function() {
                     if (scope.value == null || scope.value == '') {
                         scope.acting = true;
@@ -49,7 +58,10 @@ angular
                 }
 
                 scope.tryActEmpty();
-                
+
+                /**
+                 * Suspends empty message.
+                 */
                 scope.suspendEmpty = function () {
                     element.parent().removeClass('bg-danger');
                     scope.acting = false;
@@ -95,7 +107,12 @@ angular
                             scope.error = 1;
                         });
                 };
-                
+
+                /**
+                 * Validates translation message through http.
+                 * 
+                 * @returns {Promise}
+                 */
                 scope.httpValidate = function() {
                     return $http.post(
                         Routing.generate('ongr_translations_api_check'),
@@ -105,7 +122,10 @@ angular
                         }
                     )
                 }
-                
+
+                /**
+                 * Saves translation throught http request if it's valid.
+                 */
                 scope.httpSave = function() {
                     $http.post(
                         Routing.generate('ongr_translations_api_edit'),

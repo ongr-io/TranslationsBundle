@@ -30,7 +30,7 @@ ongr_translations_api_add:
 
 ongr_translations_api_get:
     pattern: /_api/get
-    methods: [GET]
+    methods: [POST]
     defaults:
         _controller: ONGRTranslationsBundle:Api:get
     options:
@@ -41,5 +41,13 @@ ongr_translations_api_check:
     methods: [POST]
     defaults:
         _controller: ONGRTranslationsBundle:Api:check
+    options:
+        expose: true
+
+ongr_translations_api_export:
+    pattern: /_api/export
+    methods: [POST]
+    defaults:
+        _controller: ONGRTranslationsBundle:Api:export
     options:
         expose: true

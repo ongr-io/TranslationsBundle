@@ -9,28 +9,49 @@
 
 angular
     .module('controller.list', [])
-    .controller('list', ['$scope', '$http', 'tag', 'DATA', 'LOCALES',
-        function($scope, $http, $tag, DATA, LOCALES) {
-            
+    .controller('list', ['$scope', '$http', 'tag', 'DATA', 'LOCALES', '$modal', 'asset',
+        function($scope, $http, $tag, DATA, LOCALES, $modal, $asset) {
+
+            /**
+             * @type {{}}
+             */
             $scope.translations = DATA;
-    
+
+            /**
+             * @type {{}}
+             */
             $scope.locales = LOCALES;
-            
+
+            /**
+             * @type {{}}
+             */
             $scope.tag = $tag;
-                
+
+            /**
+             * @type {boolean}
+             */
             $scope.barVisible = false;
-            
+
+            /**
+             * @type {number}
+             */
             $scope.current = -1;
-            
+
+            /**
+             * @type {}
+             */
             $scope.barTranslation = {};
-            
+
+            /**
+             * @type {string}
+             */
             $scope.transColWidth = (70 / Object.keys(LOCALES).length)+'px';
 
             /**
              * Selects translation row.
              * 
              * @param {string} $index
-             * @param Event  $event
+             * @param {Event}  $event
              */
             $scope.selectCurrent = function($index, $event) {
                 if (!$event.target.hasAttribute('ng-click') && !$scope.isInput($event.target)) {
@@ -48,7 +69,7 @@ angular
             }
 
             /**
-             * Closes to translation bar.
+             * Closes top translation bar.
              */
             $scope.closeBar = function() {
                 $scope.barVisible = false;
@@ -89,7 +110,7 @@ angular
             }
 
             /**
-             * Selects prev row.
+             * Selects previous row.
              */
             $scope.selectPrev = function() {
                 if (!$scope.barVisible) {
@@ -105,7 +126,7 @@ angular
             /**
              * Extra shortcuts for better ux.
              *
-             * @param Event e
+             * @param {Event} e
              */
             $scope.keyPress = function(e) {
                 if (!$scope.isInput(e.target)) {
@@ -127,7 +148,7 @@ angular
             /**
              * Checks if target is input element.
              * 
-             * @param {} $target
+             * @param {{}} $target
              * 
              * @returns {boolean}
              */
@@ -159,5 +180,20 @@ angular
                     default:
                         return 'label-default';
                 }
+            }
+
+            /**
+             * Opens up modal for exporting.
+             */
+            $scope.openExportModal = function() {
+                $modal.open({
+                    controller: 'export',
+                    templateUrl: $asset.getLink('template/exportModal.html'),
+                    resolve: {
+                        locales: function () {
+                            return $scope.locales;
+                        }
+                    }
+                });
             }
     }]);

@@ -12,9 +12,14 @@ angular
         'ui.bootstrap',
         'ngTagsInput',
         'controller.list',
+        'controller.export',
         'directive.inline',
         'service.tag',
         'util.asset'
     ])
     .constant('DATA', translations)
-    .constant('LOCALES', locales);
+    .constant('LOCALES', locales)
+    .constant('STATUS', {
+        changed: 'dirty',
+        unchanged: 'fresh'
+    });
