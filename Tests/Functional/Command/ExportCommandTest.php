@@ -13,6 +13,7 @@ namespace ONGR\TranslationsBundle\Tests\Functional\Command;
 
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
 use ONGR\TranslationsBundle\Command\ExportCommand;
+use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Translation\Export\YmlExport;
 use org\bovigo\vfs\vfsStream;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -73,6 +74,7 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
                             [
                                 'locale' => 'en',
                                 'message' => 'foo_message',
+                                'status' => Message::DIRTY,
                             ],
                         ],
                     ],
@@ -86,6 +88,7 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
                             [
                                 'locale' => 'en',
                                 'message' => 'bar_message',
+                                'status' => Message::DIRTY,
                             ],
                         ],
                     ],
@@ -99,6 +102,7 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
                             [
                                 'locale' => 'lt',
                                 'message' => 'baz_message',
+                                'status' => Message::DIRTY,
                             ],
                         ],
                     ],
@@ -112,6 +116,21 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
                             [
                                 'locale' => 'lt',
                                 'message' => 'foo_message',
+                                'status' => Message::DIRTY,
+                            ],
+                        ],
+                    ],
+                    [
+                        '_id' => 'trans5',
+                        'domain' => 'buz_domain',
+                        'key' => 'fresh_key',
+                        'path' => vfsStream::url('translations_test'),
+                        'format' => 'yml',
+                        'messages' => [
+                            [
+                                'locale' => 'lt',
+                                'message' => 'fresh_foo_message',
+                                'status' => Message::FRESH,
                             ],
                         ],
                     ],

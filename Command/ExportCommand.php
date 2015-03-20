@@ -11,6 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Command;
 
+use ONGR\TranslationsBundle\Service\Export;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -48,13 +49,14 @@ class ExportCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /** @var Export $export */
+        $export = $this->getContainer()->get('ongr_translations.export');
+
         $locales = $input->getOption('locales');
-        if (empty($locales)) {
-            $locales = $this->getContainer()->getParameter('ongr_translations.managed_locales');
+        if (!empty($locales)) {
+            $export->setManagedLocales($locales);
         }
 
-        $domains = $input->getOption('domains');
-
-        $this->getContainer()->get('ongr_translations.export')->export($locales, $domains);
+        $export->export($input->getOption('domains'));
     }
 }

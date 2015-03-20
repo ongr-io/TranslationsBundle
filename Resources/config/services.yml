@@ -35,7 +35,8 @@ services:
       - @ongr_translations.loaders_container
       - @ongr_translations.storage
       - @ongr_translations.export.yaml
-      - %kernel.root_dir%
+    calls:
+      - ["setManagedLocales", ["%ongr_translations.managed_locales%"]]
 
   ongr_translations.loaders_container:
     class: %ongr_translations.loaders_container.class%
