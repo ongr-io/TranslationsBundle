@@ -74,24 +74,31 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
     public function getTestActionStatusCodeData()
     {
         return [
+            // Case #0.
             ['POST', '/translate/_api/edit', 400],
+            // Case #1.
             ['POST', '/translate/_api/edit', 400, json_encode(['id' => 2])],
+            // Case #2.
             ['POST', '/translate/_api/edit', 400, '{}'],
+            // Case #3.
             [
-                'GET',
+                'POST',
                 '/translate/_api/get',
                 200,
                 json_encode(
                     [
                         'id' => sha1('foo.key'),
                         'name' => 'tags',
-                        'properties' => ['name'],
                     ]
                 ),
             ],
+            // Case #4.
             ['POST', '/translate/_api/check', 400],
+            // Case #5.
             ['POST', '/translate/_api/check', 400, json_encode(['message' => 'foo'])],
+            // Case #6.
             ['POST', '/translate/_api/check', 200, json_encode(['message' => 'foo', 'locale' => 'en'])],
+            // Case #7.
             [
                 'POST',
                 '/translate/_api/check',
@@ -220,7 +227,7 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
         );
 
         $client->request(
-            'GET',
+            'POST',
             '/translate/_api/get',
             [],
             [],
@@ -230,7 +237,19 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
 
         $this->assertTrue($client->getResponse()->isOk(), 'Controller response should be 200.');
         $this->assertEquals(
-            ['foo_tag', 'tuna_tag', 'baz_tag'],
+            [
+                [
+                    'tags' => [
+                        ['name' => 'foo_tag'],
+                        ['name' => 'tuna_tag'],
+                    ],
+                ],
+                [
+                    'tags' => [
+                        ['name' => 'baz_tag'],
+                    ],
+                ],
+            ],
             json_decode($client->getResponse()->getContent(), true)
         );
     }

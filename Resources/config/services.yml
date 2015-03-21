@@ -1,13 +1,17 @@
 parameters:
   ongr_translations.file_import.class: ONGR\TranslationsBundle\Translation\Import\FileImport
-
   ongr_translations.export.yaml.class: ONGR\TranslationsBundle\Translation\Export\YmlExport
-
   ongr_translations.import.class: ONGR\TranslationsBundle\Service\Import
   ongr_translations.export.class: ONGR\TranslationsBundle\Service\Export
   ongr_translations.loaders_container.class: ONGR\TranslationsBundle\Service\LoadersContainer
+  ongr_translations.command.export.class: ONGR\TranslationsBundle\Command\ExportCommand
 
 services:
+  ongr_translations.command.export:
+    class: %ongr_translations.command.export.class%
+    calls:
+      - [setContainer, ["@service_container"]]
+
   ongr_translations.file_import:
     class: %ongr_translations.file_import.class%
     arguments:

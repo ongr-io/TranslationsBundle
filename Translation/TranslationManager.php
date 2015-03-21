@@ -14,6 +14,7 @@ namespace ONGR\TranslationsBundle\Translation;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use ONGR\ElasticsearchBundle\Document\DocumentInterface;
 use ONGR\ElasticsearchBundle\DSL\Filter\ExistsFilter;
+use ONGR\ElasticsearchBundle\DSL\Query\TermsQuery;
 use ONGR\ElasticsearchBundle\ORM\Repository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -98,18 +99,22 @@ class TranslationManager
             ->createSearch()
             ->addFilter(new ExistsFilter('field', $content['name']));
 
-        foreach ($content['properties'] as $property) {
-            $search->setSource($content['name'] . '.' . $property);
-        }
-
-        $results = [];
-        foreach ($this->repository->execute($search, Repository::RESULTS_ARRAY) as $trans) {
-            foreach ($trans[$content['name']] as $object) {
-                $results = array_merge($results, array_values($object));
+        if (array_key_exists('properties', $content)) {
+            foreach ($content['properties'] as $property) {
+                $search->setSource($content['name'] . '.' . $property);
             }
         }
 
-        return array_unique($results);
+        if (array_key_exists('findBy', $content)) {
+            foreach ($content['findBy'] as $field => $value) {
+                $search->addQuery(
+                    new TermsQuery($content['name'] . '.' . $field, is_array($value) ? $value : [$value]),
+                    'must'
+                );
+            }
+        }
+
+        return $this->repository->execute($search, Repository::RESULTS_ARRAY);
     }
 
     /**

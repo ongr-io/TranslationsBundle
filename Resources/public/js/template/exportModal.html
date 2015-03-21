@@ -1,0 +1,28 @@
+<div class="modal-header">
+    <h3 class="modal-title">Pending changes</h3>
+</div>
+<div class="modal-body">
+    <div ng-if="data.length > 0">
+        <table class="table">
+            <tr>
+                <th>Domain</th>
+                <th>Key</th>
+                <th>Locale</th>
+                <th>Message</th>
+            </tr>
+            <tr ng-repeat="translation in data">
+                <td>{{ translation.domain }}</td>
+                <td>{{ translation.key }}</td>
+                <td>{{ translation.locale }}</td>
+                <td>{{ translation.message }}</td>
+            </tr>
+        </table>
+    </div>
+    <div ng-if="data.length === 0" class="alert" ng-class="getFeedClass()" role="alert">{{ getFeedMessage() }}</div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary ladda-button" data-size="xs" data-style="expand-right" data-color="blue" ng-click="export()" ng-attr-disabled="{{ data.length === 0 ? true : false }}">
+        <span class="ladda-label">Export</span>
+    </button>
+    <button class="btn btn-warning" ng-click="close()">Close</button>
+</div>

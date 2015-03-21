@@ -5,10 +5,10 @@ label.locale: Locale
 label.message: Message
 label.sort: 'Sort:'
 label.tag: Tags
-label.timestamp: 'Timestamps'
+label.timestamp: Timestamps
 label.created_at: 'Created at'
 label.updated_at: 'Updated at'
-label.status: 'Status'
+label.status: Status
 placeholder.search_for: 'Search for...'
 save: Save
 close: Close
