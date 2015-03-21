@@ -120,7 +120,7 @@ class ImportCommand extends ContainerAwareCommand
     private function validateBundleNamespace($bundleName)
     {
         try {
-            $reflection = new \ReflectionClass($bundleName);
+            new \ReflectionClass($bundleName);
         } catch (\ReflectionException $e) {
             throw new InvalidArgumentException(
                 "Invalid bundle namespace '{$bundleName}'. Error: {$e->getMessage()}"

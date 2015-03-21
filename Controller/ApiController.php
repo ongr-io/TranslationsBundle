@@ -106,11 +106,9 @@ class ApiController extends Controller
     /**
      * Action for executing export command.
      *
-     * @param Request $request Http request object.
-     *
      * @return JsonResponse
      */
-    public function exportAction(Request $request)
+    public function exportAction()
     {
         $cwd = getcwd();
         if (substr($cwd, -3) === 'web') {

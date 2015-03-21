@@ -43,6 +43,7 @@ angular
 
             setTimeout(function() {
                 ladda = Ladda.create(document.querySelector('.ladda-button'));
+                ladda.disable();
 
                 $scope.$watch('data', function(newValue, oldValue) {
                     newValue.length > 0 ? ladda.enable() : ladda.disable();
