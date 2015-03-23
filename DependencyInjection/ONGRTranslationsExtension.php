@@ -135,7 +135,7 @@ class ONGRTranslationsExtension extends Extension
         foreach ($bundles as $bundle) {
             if (!class_exists($bundle)) {
                 throw new InvalidConfigurationException(
-                    "Invalid bundle namespace {$bundle}. Error: {$e->getMessage()}"
+                    "Invalid bundle namespace '{$bundle}'."
                 );
             }
         }
