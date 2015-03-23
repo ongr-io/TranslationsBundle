@@ -28,7 +28,7 @@ angular
                 /**
                  * @type {string}
                  */
-                scope.value = scope.message.message ? scope.message.message : null;
+                scope.value = scope.message ? scope.message.message : null;
 
                 /**
                  * @type {int}

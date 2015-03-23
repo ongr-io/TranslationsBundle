@@ -22,7 +22,7 @@ interface StorageInterface
      * @param array $locales
      * @param array $domains
      *
-     * @return array
+     * @return array|\Traversable
      */
     public function read($locales, $domains);
 
