@@ -133,9 +133,7 @@ class ONGRTranslationsExtension extends Extension
     private function validateBundles($container, $bundles)
     {
         foreach ($bundles as $bundle) {
-            try {
-                $reflection = new \ReflectionClass($bundle);
-            } catch (\ReflectionException $e) {
+            if (!class_exists($bundle)) {
                 throw new InvalidConfigurationException(
                     "Invalid bundle namespace {$bundle}. Error: {$e->getMessage()}"
                 );
