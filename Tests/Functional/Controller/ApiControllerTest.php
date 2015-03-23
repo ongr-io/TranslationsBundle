@@ -12,12 +12,26 @@
 namespace ONGR\TranslationsBundle\Tests\Functional\Controller;
 
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
+use ONGR\TranslationsBundle\Document\Message;
+use org\bovigo\vfs\vfsStream;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Tests rest controller actions.
  */
 class ApiControllerTest extends AbstractElasticsearchTestCase
 {
+    const STREAM = 'translations_ctrl_api_test';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+        vfsStream::setup(self::STREAM);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -27,8 +41,11 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
             'default' => [
                 'translation' => [
                     [
-                        '_id' => sha1('foo.key'),
+                        '_id' => sha1('foofoo.key'),
                         'key' => 'foo.key',
+                        'domain' => 'foo',
+                        'path' => vfsStream::url(self::STREAM),
+                        'format' => 'yml',
                         'tags' => [
                             [
                                 'name' => 'foo_tag',
@@ -37,29 +54,32 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
                                 'name' => 'tuna_tag',
                             ],
                         ],
-                        'messages' =>
+                        'messages' => [
                             [
-                                [
-                                    'locale' => 'en',
-                                    'message' => 'foo',
-                                ],
+                                'locale' => 'en',
+                                'message' => 'foo',
+                                'status' => Message::FRESH,
                             ],
+                        ],
                     ],
                     [
-                        '_id' => sha1('baz.key'),
+                        '_id' => sha1('bazbaz.key'),
                         'key' => 'baz.key',
+                        'domain' => 'baz',
+                        'path' => vfsStream::url(self::STREAM),
+                        'format' => 'yml',
                         'tags' => [
                             [
                                 'name' => 'baz_tag',
                             ],
                         ],
-                        'messages' =>
+                        'messages' => [
                             [
-                                [
-                                    'locale' => 'en',
-                                    'message' => 'baz',
-                                ],
+                                'locale' => 'en',
+                                'message' => 'baz',
+                                'status' => Message::DIRTY,
                             ],
+                        ],
                     ],
                 ],
             ],
@@ -136,7 +156,7 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
     public function testEditTagAction()
     {
         $client = self::createClient();
-        $id = sha1('foo.key');
+        $id = sha1('foofoo.key');
 
         $requestContent = json_encode(
             [
@@ -176,7 +196,7 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
     public function testEditMessageAction()
     {
         $client = self::createClient();
-        $id = sha1('foo.key');
+        $id = sha1('foofoo.key');
 
         $requestContent = json_encode(
             [
@@ -216,7 +236,7 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
     public function testGetTagsAction()
     {
         $client = self::createClient();
-        $id = sha1('foo.key');
+        $id = sha1('foofoo.key');
 
         $requestContent = json_encode(
             [
@@ -240,13 +260,13 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
             [
                 [
                     'tags' => [
-                        ['name' => 'foo_tag'],
-                        ['name' => 'tuna_tag'],
+                        ['name' => 'baz_tag'],
                     ],
                 ],
                 [
                     'tags' => [
-                        ['name' => 'baz_tag'],
+                        ['name' => 'foo_tag'],
+                        ['name' => 'tuna_tag'],
                     ],
                 ],
             ],
@@ -260,7 +280,7 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
     public function testRemoveAction()
     {
         $client = self::createClient();
-        $id = sha1('foo.key');
+        $id = sha1('foofoo.key');
 
         $requestContent = json_encode(
             [
@@ -299,7 +319,7 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
     public function testAddAction()
     {
         $client = self::createClient();
-        $id = sha1('foo.key');
+        $id = sha1('foofoo.key');
 
         $requestContent = json_encode(
             [
@@ -335,5 +355,38 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
         $key = array_search('new_foo_tag', $tags);
         $this->assertNotFalse($key, 'tag should exist');
         $this->assertEquals('new_foo_tag', $tags[$key], 'Tag should have name as defined in request.');
+    }
+
+    /**
+     * Tests export action.
+     */
+    public function testExportAction()
+    {
+        $client = self::createClient();
+        $currentDir = getcwd();
+        $webDir = $currentDir . DIRECTORY_SEPARATOR . 'web';
+
+        if (!is_dir($webDir)) {
+            mkdir($webDir);
+        }
+
+        chdir($webDir);
+
+        $client->request('post', '/translate/_api/export');
+        $path = vfsStream::url(self::STREAM . DIRECTORY_SEPARATOR . 'baz.en.yml');
+
+        $this->assertFileExists($path, 'Translation file should exist');
+        $dumpedData = Yaml::parse(file_get_contents($path));
+
+        $this->assertEquals(['baz.key' => 'baz'], $dumpedData, 'Translations should be the same.');
+        $document = $this
+            ->getManager('default', false)
+            ->getRepository('ONGRTranslationsBundle:Translation')
+            ->find(sha1('bazbaz.key'));
+
+        $this->assertEquals(Message::FRESH, $document->getMessages()[0]->getStatus(), 'Message should be refreshed');
+        $this->assertEquals($currentDir, getcwd());
+
+        rmdir($webDir);
     }
 }
