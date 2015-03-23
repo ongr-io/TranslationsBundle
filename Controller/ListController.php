@@ -13,7 +13,7 @@ namespace ONGR\TranslationsBundle\Controller;
 
 use ONGR\ElasticsearchBundle\DSL\Aggregation\TermsAggregation;
 use ONGR\ElasticsearchBundle\ORM\Repository;
-use ONGR\FilterManagerBundle\Filters\FilterInterface;
+use ONGR\FilterManagerBundle\Filters\ViewData;
 use ONGR\FilterManagerBundle\Search\SearchResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -64,7 +64,7 @@ class ListController extends Controller
     /**
      * Creates locales list.
      *
-     * @param FilterInterface $filter
+     * @param ViewData\ChoicesAwareViewData $filter
      *
      * @return array
      */
@@ -85,7 +85,7 @@ class ListController extends Controller
 
         $activeLocales = [];
 
-        if ($filter->getState(null)->isActive()) {
+        if ($filter->getState()->isActive()) {
             foreach ($filter->getChoices() as $choice) {
                 $activeLocales[$choice->getLabel()] = $choice->isActive();
             }
