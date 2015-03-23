@@ -29,14 +29,14 @@ class Translation extends AbstractDocument implements \JsonSerializable
     private $domain;
 
     /**
-     * @var string
+     * @var Tag[]
      * 
      * @ES\Property(name="tags", type="object", multiple=true, objectName="ONGRTranslationsBundle:Tag")
      */
-    private $tags;
+    private $tags = [];
 
     /**
-     * @var Message
+     * @var Message[]
      *
      * @ES\Property(name="messages", type="object", multiple=true, objectName="ONGRTranslationsBundle:Message")
      */
