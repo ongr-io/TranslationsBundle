@@ -135,6 +135,21 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
     }
 
     /**
+     * Tests if exception is thrown when unknown bundle is provided.
+     *
+     * @expectedException \InvalidArgumentException
+     */
+    public function testIncorrectBundleImportException()
+    {
+        $this->commandTester->execute(
+            [
+                'command' => $this->command->getName(),
+                'bundle' => 'Acme\AcmeTestBundle',
+            ]
+        );
+    }
+
+    /**
      * Returns translations count.
      *
      * @param array $locales
