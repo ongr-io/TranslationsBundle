@@ -155,7 +155,11 @@ class Translation extends AbstractDocument implements \JsonSerializable
      */
     public function getId()
     {
-        return sha1($this->getDomain() . $this->getKey());
+        if (!parent::getId()) {
+            $this->setId(sha1($this->getDomain() . $this->getKey()));
+        }
+
+        return parent::getId();
     }
 
     /**

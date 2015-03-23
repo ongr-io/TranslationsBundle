@@ -119,11 +119,9 @@ class ImportCommand extends ContainerAwareCommand
      */
     private function validateBundleNamespace($bundleName)
     {
-        try {
-            new \ReflectionClass($bundleName);
-        } catch (\ReflectionException $e) {
+        if (!class_exists($bundleName)) {
             throw new InvalidArgumentException(
-                "Invalid bundle namespace '{$bundleName}'. Error: {$e->getMessage()}"
+                "Invalid bundle namespace '{$bundleName}'"
             );
         }
     }
