@@ -55,17 +55,22 @@ class ExportCommand extends ContainerAwareCommand
         $locales = $input->getOption('locales');
         if (!empty($locales)) {
             $export->setManagedLocales($locales);
-            $locales = implode('</comment><info>, </info><comment>', $locales);
-        } else {
-            $locales = 'all';
         }
 
-        $export->export($input->getOption('domains'));
+        $domains = $input->getOption('domains');
+        $export->export($domains);
+
+        $prettify = function ($array) {
+            return !empty($array) ? implode('</comment><info>`, `</info><comment>', $array) : 'all';
+        };
 
         $output->writeln(
             sprintf(
-                '<info>Successfully exported translations for </info><comment>`%s`</comment><info> locales.</info>',
-                $locales
+                '<info>Successfully exported translations in `</info>'
+                . '<comment>%s</comment><info>` locale(s) for `</info>'
+                . '<comment>%s</comment><info>` domain(s).</info>',
+                $prettify($locales),
+                $prettify($domains)
             )
         );
     }
