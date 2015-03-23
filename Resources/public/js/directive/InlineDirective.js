@@ -9,10 +9,12 @@
 
 angular
     .module('directive.inline', [])
-    .directive('inline', ['$http', 'asset', function ($http, $asset) {
+    .directive('inline', ['$http', 'asset', 'STATUS', function ($http, $asset, STATUS) {
         return {
             restrict: "A",
-            scope: { translation: "=" },
+            scope: { 
+                translation: "=" 
+            },
             templateUrl: $asset.getLink('template/inline.html'),
             link: function(scope, element, attr) {
 
@@ -23,12 +25,7 @@ angular
                 /**
                  * @type {}
                  */
-                scope.message = scope.translation.messages[attr.locale];
-
-                /**
-                 * @type {string}
-                 */
-                scope.value = scope.message ? scope.message.message : null;
+                scope.message = scope.translation.messages[attr.locale] ? scope.translation.messages[attr.locale] : {message: null};
 
                 /**
                  * @type {int}
@@ -46,9 +43,9 @@ angular
                  * @returns {boolean}
                  */
                 scope.tryActEmpty = function() {
-                    if (scope.value == null || scope.value == '') {
+                    if (scope.message.message == null || scope.message.message == '') {
                         scope.acting = true;
-                        scope.value = 'Empty field.';
+                        scope.message.message = 'Empty field.';
                         element.parent().addClass('bg-danger');
                         
                         return true;
@@ -72,10 +69,10 @@ angular
                  */
                 scope.edit = function() {
                     if (scope.acting) {
-                        scope.value = '';
+                        scope.message.message = '';
                     }
                     
-                    scope.oldValue = scope.value;
+                    scope.oldValue = scope.message.message;
                     element.addClass('active');
                     inputElement.focus();
                 };
@@ -85,7 +82,7 @@ angular
                  */
                 scope.close = function() {
                     if (scope.error !== 0 || scope.error === null) {
-                        scope.value = scope.oldValue;
+                        scope.message.message = scope.oldValue;
                     }
                     
                     scope.error = null;
@@ -100,8 +97,8 @@ angular
                     scope
                         .httpValidate()
                         .success(function() {
-                            scope.error = 0;
                             scope.httpSave();
+                            scope.error = 0;
                         })
                         .error(function() {
                             scope.error = 1;
@@ -117,7 +114,7 @@ angular
                     return $http.post(
                         Routing.generate('ongr_translations_api_check'),
                         {
-                            message: scope.value,
+                            message: scope.message.message,
                             locale: attr.locale,
                         }
                     )
@@ -133,9 +130,9 @@ angular
                             id: scope.translation.id,
                             name: 'messages',
                             properties: {
-                                message: scope.value,
+                                message: scope.message.message,
                                 locale: attr.locale,
-                                status: 'dirty'
+                                status: STATUS.changed
                             },
                             findBy: {
                                 locale: attr.locale
@@ -144,6 +141,7 @@ angular
                     ).success(function(){
                             if (!scope.tryActEmpty()) {
                                 scope.suspendEmpty();
+                                scope.message.status = STATUS.changed;
                             }
                         });
                 }

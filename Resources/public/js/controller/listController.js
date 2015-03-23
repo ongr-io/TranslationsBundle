@@ -9,8 +9,8 @@
 
 angular
     .module('controller.list', [])
-    .controller('list', ['$scope', '$http', 'tag', 'DATA', 'LOCALES', '$modal', 'asset',
-        function($scope, $http, $tag, DATA, LOCALES, $modal, $asset) {
+    .controller('list', ['$scope', '$http', 'tag', 'DATA', 'LOCALES', '$modal', 'asset', 'STATUS',
+        function($scope, $http, $tag, DATA, LOCALES, $modal, $asset, $STATUS) {
 
             /**
              * @type {{}}
@@ -173,9 +173,9 @@ angular
              */
             $scope.getLabelClass = function(status) {
                 switch (status) {
-                    case 'dirty':
+                    case $STATUS.changed:
                         return 'label-danger';
-                    case 'fresh':
+                    case $STATUS.unchanged:
                         return 'label-success';
                     default:
                         return 'label-default';
