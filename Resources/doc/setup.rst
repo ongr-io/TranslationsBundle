@@ -51,10 +51,25 @@ Add minimal configuration for TranslationsBundle bundle.
     #app/config/config.yml
     ongr_translations:
         managed_locales: ["lt", "de", "en"]
+        repository: 'es.manager.translation.translation'
 
 .. note::
 
     Guide for installing and configuring ElasticsearchBundle_ can be found `here <http://ongr.readthedocs.org/en/latest/components/ElasticsearchBundle/setup.html>`_.
+
+
+We recommend to create standalone manager for translation:
+
+.. code:: yaml
+
+    #app/config/config.yml
+    ongr_elasticsearch:
+        managers:
+            translation:
+            connection: translation
+            debug: true
+            mappings:
+                - ONGRTranslationsBundle
 
 More about bundles `configuration tree <configuration.html>`_.
 
