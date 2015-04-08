@@ -57,8 +57,9 @@ Add minimal configuration for TranslationsBundle bundle.
 
     Guide for installing and configuring ElasticsearchBundle_ can be found `here <http://ongr.readthedocs.org/en/latest/components/ElasticsearchBundle/setup.html>`_.
 
+.. note::
 
-We recommend to create standalone manager for translation:
+    We recommend to create standalone manager for translation:
 
 .. code:: yaml
 
@@ -66,10 +67,10 @@ We recommend to create standalone manager for translation:
     ongr_elasticsearch:
         managers:
             translation:
-            connection: translation
-            debug: true
-            mappings:
-                - ONGRTranslationsBundle
+                connection: translation
+                debug: true
+                mappings:
+                    - ONGRTranslationsBundle
 
 More about bundles `configuration tree <configuration.html>`_.
 
