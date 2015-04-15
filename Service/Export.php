@@ -16,6 +16,7 @@ use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\TranslationsBundle\Storage\StorageInterface;
 use ONGR\TranslationsBundle\Translation\Export\ExporterInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class Export.
@@ -70,12 +71,13 @@ class Export
     public function export($domains = [])
     {
         foreach ($this->readStorage($domains) as $file => $translations) {
-            if (file_exists($file)) {
-                list($domain, $locale, $extension) = explode('.', $file);
-                if ($this->loadersContainer && $this->loadersContainer->has($extension)) {
-                    $messageCatalogue = $this->loadersContainer->get($extension)->load($file, $locale, $domain);
-                    $translations = array_merge($messageCatalogue->all($domain), $translations);
-                }
+            if (!file_exists($file)) {
+                $this->getFilesystem()->touch($file);
+            }
+            list($domain, $locale, $extension) = explode('.', $file);
+            if ($this->loadersContainer && $this->loadersContainer->has($extension)) {
+                $messageCatalogue = $this->loadersContainer->get($extension)->load($file, $locale, $domain);
+                $translations = array_merge($messageCatalogue->all($domain), $translations);
             }
 
             $this->exporter->export($file, $translations);
@@ -146,5 +148,13 @@ class Export
         }
 
         return $data;
+    }
+
+    /**
+     * @return Filesystem
+     */
+    protected function getFilesystem()
+    {
+        return new Filesystem();
     }
 }

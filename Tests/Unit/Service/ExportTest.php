@@ -11,7 +11,6 @@
 
 namespace ONGR\TranslationsBundle\Tests\Unit\Service;
 
-use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\TranslationsBundle\Service\Export;
@@ -72,13 +71,19 @@ class ExportTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
+        $filesystemMock = $this->getFilesystemMock();
+        $filesystemMock
+            ->expects($this->once())
+            ->method('touch')
+            ->with('vfs://root/Resources/translations/foo_domain.foo_locale.yml');
+
         /* @var Export|\PHPUnit_Framework_MockObject_MockObject $exportService */
         $exportService = $this
             ->getMockBuilder('ONGR\TranslationsBundle\Service\Export')
             ->setConstructorArgs([$this->getLoadersContainerMock(), $storageMock, $exporter, vfsStream::url('root')])
-            ->setMethods(null)
+            ->setMethods(['getFilesystem'])
             ->getMock();
-
+        $exportService->expects($this->any())->method('getFilesystem')->willReturn($filesystemMock);
         $exportService->export();
     }
 
@@ -122,6 +127,19 @@ class ExportTest extends \PHPUnit_Framework_TestCase
     {
         return $this
             ->getMockBuilder('ONGR\TranslationsBundle\Service\LoadersContainer')
+            ->getMock();
+    }
+
+    /**
+     * Returns Filesystem mock.
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    public function getFilesystemMock()
+    {
+        return $this
+            ->getMockBuilder('Symfony\Component\Filesystem\Filesystem')
+            ->setMethods(['touch'])
             ->getMock();
     }
 }
