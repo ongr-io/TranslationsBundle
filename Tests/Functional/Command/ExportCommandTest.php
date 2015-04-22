@@ -18,7 +18,6 @@ use ONGR\TranslationsBundle\Translation\Export\YmlExport;
 use org\bovigo\vfs\vfsStream;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -164,8 +163,9 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
         $this->commandTester->execute([]);
 
         $data = [
-            'baz_domain.lt.yml' =>
-                ['baz_key' => 'baz_message'],
+            'baz_domain.lt.yml' => [
+                'baz_key' => 'baz_message',
+            ],
             'foo_domain.en.yml' => [
                 'foo_key' => 'foo_message',
                 'bar_key' => 'bar_message',
@@ -187,8 +187,9 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
         );
 
         $data = [
-            'baz_domain.lt.yml' =>
-                ['baz_key' => 'baz_message'],
+            'baz_domain.lt.yml' => [
+                'baz_key' => 'baz_message',
+            ],
         ];
 
         $this->verifyFiles($data);

@@ -43,7 +43,7 @@ class FileImport implements ImporterInterface
         $translations = [];
 
         if ($this->loadersContainer->has($extension)) {
-            /* @var MessageCatalogue $messageCatalogue */
+            /** @var MessageCatalogue $messageCatalogue */
             $messageCatalogue = $this->loadersContainer->get($extension)->load($file, $locale, $domain);
             $domainMessages = $messageCatalogue->all($domain);
 

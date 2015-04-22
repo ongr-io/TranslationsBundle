@@ -77,7 +77,7 @@ class ExportTest extends \PHPUnit_Framework_TestCase
             ->method('touch')
             ->with('vfs://root/Resources/translations/foo_domain.foo_locale.yml');
 
-        /* @var Export|\PHPUnit_Framework_MockObject_MockObject $exportService */
+        /** @var Export|\PHPUnit_Framework_MockObject_MockObject $exportService */
         $exportService = $this
             ->getMockBuilder('ONGR\TranslationsBundle\Service\Export')
             ->setConstructorArgs([$this->getLoadersContainerMock(), $storageMock, $exporter, vfsStream::url('root')])

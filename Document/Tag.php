@@ -16,14 +16,14 @@ use ONGR\ElasticsearchBundle\Document\AbstractDocument;
 
 /**
  * Object used for translation tags.
- * 
+ *
  * @ES\Object()
  */
 class Tag extends AbstractDocument
 {
     /**
      * @var string
-     * 
+     *
      * @ES\Property(name="name", type="string")
      */
     private $name;
