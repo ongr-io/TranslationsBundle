@@ -16,7 +16,7 @@ use ONGR\ElasticsearchBundle\Document\AbstractDocument;
 
 /**
  * Object for translations in elasticsearch.
- * 
+ *
  * @ES\Object()
  */
 class Message extends AbstractDocument implements \JsonSerializable
@@ -40,21 +40,21 @@ class Message extends AbstractDocument implements \JsonSerializable
 
     /**
      * @var string
-     * 
+     *
      * @ES\Property(name="status", type="string")
      */
     private $status;
 
     /**
      * @var \DateTime
-     * 
+     *
      * @ES\Property(name="created_at", type="date")
      */
     private $createdAt;
 
     /**
      * @var \DateTime
-     * 
+     *
      * @ES\Property(name="updated_at", type="date")
      */
     private $updatedAt;

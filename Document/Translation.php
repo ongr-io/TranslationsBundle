@@ -30,7 +30,7 @@ class Translation extends AbstractDocument implements \JsonSerializable
 
     /**
      * @var Tag[]
-     * 
+     *
      * @ES\Property(name="tags", type="object", multiple=true, objectName="ONGRTranslationsBundle:Tag")
      */
     private $tags = [];
@@ -58,21 +58,21 @@ class Translation extends AbstractDocument implements \JsonSerializable
 
     /**
      * @var string
-     * 
+     *
      * @ES\Property(name="format", type="string")
      */
     private $format;
 
     /**
      * @var \DateTime
-     * 
+     *
      * @ES\Property(name="created_at", type="date")
      */
     private $createdAt;
 
     /**
      * @var \DateTime
-     * 
+     *
      * @ES\Property(name="updated_at", type="date")
      */
     private $updatedAt;
@@ -270,9 +270,7 @@ class Translation extends AbstractDocument implements \JsonSerializable
     /**
      * Returns messages as array.
      *
-     * array (
-     *  'locale' => 'message'
-     * )
+     * Format: ['locale' => 'message'].
      *
      * @return array
      */

@@ -11,7 +11,6 @@
 
 namespace ONGR\TranslationsBundle\Service;
 
-use ONGR\ElasticsearchBundle\ORM\Manager;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\TranslationsBundle\Storage\StorageInterface;
@@ -119,7 +118,7 @@ class Export
         $data = [];
         $translations = $this->storage->read($this->getManagedLocales(), $domains);
 
-        /* @var Translation $translation */
+        /** @var Translation $translation */
         foreach ($translations as $translation) {
             $messages = $translation->getMessages();
             $wasDirty = false;
