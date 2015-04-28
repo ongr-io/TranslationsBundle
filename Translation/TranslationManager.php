@@ -16,6 +16,9 @@ use ONGR\ElasticsearchBundle\Document\DocumentInterface;
 use ONGR\ElasticsearchBundle\DSL\Filter\ExistsFilter;
 use ONGR\ElasticsearchBundle\DSL\Query\TermsQuery;
 use ONGR\ElasticsearchBundle\ORM\Repository;
+use ONGR\TranslationsBundle\Event\Events;
+use ONGR\TranslationsBundle\Event\TranslationEditMessageEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -37,11 +40,18 @@ class TranslationManager
     private $accessor;
 
     /**
-     * @param Repository $repository Elasticsearch repository.
+     * @var EventDispatcherInterface
      */
-    public function __construct(Repository $repository)
+    private $dispatcher;
+
+    /**
+     * @param Repository               $repository
+     * @param EventDispatcherInterface $dispatcher
+     */
+    public function __construct(Repository $repository, EventDispatcherInterface $dispatcher)
     {
         $this->repository = $repository;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -66,6 +76,9 @@ class TranslationManager
     {
         $content = $this->parseJsonContent($request);
         $document = $this->getTranslation($content['id']);
+
+        $this->dispatcher->dispatch(Events::ADD_TO_HISTORY, new TranslationEditMessageEvent($request, $document));
+
         $this->editObject($document, $content);
         $this->commitTranslation($document);
     }

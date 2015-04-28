@@ -210,6 +210,9 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
                 ],
             ]
         );
+        $translation = $this->getTranslation($id);
+        $oldMessage = $translation->getMessages()[0]->getMessage();
+        $historyId = sha1($id . $oldMessage);
 
         $client->request(
             'POST',
@@ -222,12 +225,16 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
 
         $this->assertTrue($client->getResponse()->isOk(), 'Controller response should be 200.');
 
-        $translation = $this
-            ->getManager('default', false)
-            ->getRepository('ONGRTranslationsBundle:Translation')
-            ->find($id);
+        $translation = $this->getTranslation($id);
 
         $this->assertEquals('updated_foo', $translation->getMessages()[0]->getMessage(), 'Message should be updated.');
+
+        $history = $this
+            ->getManager('default', false)
+            ->getRepository('ONGRTranslationsBundle:History')
+            ->find($historyId);
+
+        $this->assertEquals('foo', $history->getMessage(), 'Old message should be added to history.');
     }
 
     /**
@@ -388,5 +395,20 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
         $this->assertEquals($currentDir, getcwd());
 
         rmdir($webDir);
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return \ONGR\ElasticsearchBundle\Document\DocumentInterface
+     */
+    private function getTranslation($id)
+    {
+        $translation = $this
+            ->getManager('default', false)
+            ->getRepository('ONGRTranslationsBundle:Translation')
+            ->find($id);
+
+        return $translation;
     }
 }

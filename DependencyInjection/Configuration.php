@@ -55,6 +55,9 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue([])
                     ->end()
                 ->end()
+                ->booleanNode('history')
+                    ->defaultTrue()
+                ->end()
             ->end()
         ->end();
 

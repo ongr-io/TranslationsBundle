@@ -47,6 +47,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'managed_locales' => [
                         'en',
                     ],
+                    'history' => true,
                 ]
             ),
         ];
@@ -59,6 +60,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'en',
                     'fr',
                 ],
+                'history' => false,
             ],
             array_replace(
                 $expectedConfiguration,
@@ -68,6 +70,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                         'en',
                         'fr',
                     ],
+                    'history' => false,
                 ]
             ),
         ];
@@ -83,6 +86,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'yml',
                     'xlf',
                 ],
+                'history' => true,
             ],
             array_replace(
                 $expectedConfiguration,
@@ -94,6 +98,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                         'yml',
                         'xlf',
                     ],
+                    'history' => true,
                 ]
             ),
         ];
@@ -119,6 +124,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'domains' => [
                     'messages',
                 ],
+                'history' => true,
             ],
             array_merge(
                 $expectedConfiguration,
@@ -129,6 +135,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'domains' => [
                         'messages',
                     ],
+                    'history' => true,
                 ]
             ),
         ];
