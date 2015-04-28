@@ -110,7 +110,7 @@ class TranslationManager
         $search = $this
             ->repository
             ->createSearch()
-            ->addFilter(new ExistsFilter('field', $content['name']));
+            ->addFilter(new ExistsFilter($content['name']));
 
         if (array_key_exists('properties', $content)) {
             foreach ($content['properties'] as $property) {
