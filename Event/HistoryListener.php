@@ -13,6 +13,8 @@ namespace ONGR\TranslationsBundle\Event;
 
 use ONGR\ElasticsearchBundle\Document\DocumentInterface;
 use ONGR\ElasticsearchBundle\ORM\Repository;
+use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Listens for edit message request event and add old message to history.
@@ -60,12 +62,8 @@ class HistoryListener
     {
         $request = $event->getRequest();
         $content = json_decode($request->getContent());
-        if (isset ($content->properties->locale)) {
-            return $content->properties->locale;
-        }
-        if (isset ($content->findBy->locale)) {
-            return $content->findBy->locale;
-        }
+
+        return $content->properties->locale;
     }
 
     /**

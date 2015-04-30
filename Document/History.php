@@ -15,7 +15,7 @@ use ONGR\ElasticsearchBundle\Annotation as ES;
 use ONGR\ElasticsearchBundle\Document\AbstractDocument;
 
 /**
- * Holds translation messages history.
+ * Holds translations history.
  *
  * @ES\Document(type="history")
  */

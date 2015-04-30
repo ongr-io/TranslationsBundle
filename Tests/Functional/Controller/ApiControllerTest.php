@@ -11,6 +11,9 @@
 
 namespace ONGR\TranslationsBundle\Tests\Functional\Controller;
 
+use ONGR\ElasticsearchBundle\DSL\Bool\Bool;
+use ONGR\ElasticsearchBundle\DSL\Filter\TermFilter;
+use ONGR\ElasticsearchBundle\ORM\Repository;
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
 use ONGR\TranslationsBundle\Document\Message;
 use org\bovigo\vfs\vfsStream;
@@ -80,6 +83,24 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
                                 'status' => Message::DIRTY,
                             ],
                         ],
+                    ],
+                ],
+                'history' => [
+                    [
+                        '_id' => 1,
+                        'key' => 'foo',
+                        'message' => 'Lorum ipsum',
+                        'domain' => 'barbar',
+                        'locale' => 'en',
+                        'historyId' => sha1('foo.en.barbar'),
+                    ],
+                    [
+                        '_id' => 2,
+                        'key' => 'foo',
+                        'message' => 'Lorum',
+                        'domain' => 'barbar',
+                        'locale' => 'en',
+                        'historyId' => sha1('foo.en.barbar'),
                     ],
                 ],
             ],
@@ -204,6 +225,7 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
                 'name' => 'messages',
                 'properties' => [
                     'message' => 'updated_foo',
+                    'locale' => 'en',
                 ],
                 'findBy' => [
                     'locale' => 'en',
@@ -318,6 +340,49 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
         foreach ($translation->getTags() as $tag) {
             $this->assertNotEquals('tuna_tag', $tag->getName());
         }
+    }
+
+    /**
+     * Test history action.
+     */
+    public function testHistoryAction()
+    {
+        $client = self::createClient();
+
+        $requestContent = json_encode(
+            [
+                'key' => 'foo',
+                'domain' => 'barbar',
+                'locale' => 'en',
+            ]
+        );
+
+        $client->request(
+            'POST',
+            '/translate/_api/history',
+            [],
+            [],
+            [],
+            $requestContent
+        );
+
+        $this->assertTrue($client->getResponse()->isOk(), 'Controller response should be 200.');
+
+        $manager = $this->getManager('default', false);
+        $repository = $manager->getRepository('ONGRTranslationsBundle:History');
+        $boolFilter = new Bool();
+        $boolFilter->addToBool(new TermFilter('key', 'foo'));
+        $boolFilter->addToBool(new TermFilter('domain', 'barbar'));
+        $boolFilter->addToBool(new TermFilter('locale', 'en'));
+        $search = $repository->createSearch()->addFilter($boolFilter);
+
+        $results = $repository->execute($search, Repository::RESULTS_ARRAY);
+
+        $this->assertEquals(
+            $results,
+            json_decode($client->getResponse()->getContent(), true),
+            'History should be received.'
+        );
     }
 
     /**

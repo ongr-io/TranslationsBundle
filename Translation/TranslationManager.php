@@ -77,8 +77,9 @@ class TranslationManager
         $content = $this->parseJsonContent($request);
         $document = $this->getTranslation($content['id']);
 
-        $this->dispatcher->dispatch(Events::ADD_TO_HISTORY, new TranslationEditMessageEvent($request, $document));
-
+        if ($content['name'] == 'messages') {
+            $this->dispatcher->dispatch(Events::ADD_HISTORY, new TranslationEditMessageEvent($request, $document));
+        }
         $this->editObject($document, $content);
         $this->commitTranslation($document);
     }

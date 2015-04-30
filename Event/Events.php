@@ -19,5 +19,5 @@ final class Events
     /**
      * Event dispatched after a message is edited.
      */
-    const ADD_TO_HISTORY = 'translation.add.to.history';
+    const ADD_HISTORY = 'translation.history.add';
 }

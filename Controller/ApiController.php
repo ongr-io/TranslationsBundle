@@ -119,4 +119,16 @@ class ApiController extends Controller
             $this->get('ongr_translations.command.export')->run(new ArrayInput([]), new NullOutput())
         );
     }
+
+    /**
+     * Action for executing history command.
+     *
+     * @param Request $request Http request object.
+     *
+     * @return JsonResponse
+     */
+    public function historyAction(Request $request)
+    {
+        return new JsonResponse($this->get('ongr_translations.history_manager')->history($request));
+    }
 }

@@ -56,6 +56,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->booleanNode('history')
+                    ->info('History enable/disable. Default is enable.')
                     ->defaultTrue()
                 ->end()
             ->end()
