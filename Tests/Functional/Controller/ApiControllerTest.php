@@ -11,6 +11,9 @@
 
 namespace ONGR\TranslationsBundle\Tests\Functional\Controller;
 
+use ONGR\ElasticsearchBundle\DSL\Bool\Bool;
+use ONGR\ElasticsearchBundle\DSL\Filter\TermFilter;
+use ONGR\ElasticsearchBundle\ORM\Repository;
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
 use ONGR\TranslationsBundle\Document\Message;
 use org\bovigo\vfs\vfsStream;
@@ -80,6 +83,24 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
                                 'status' => Message::DIRTY,
                             ],
                         ],
+                    ],
+                ],
+                'history' => [
+                    [
+                        '_id' => 1,
+                        'key' => 'foo',
+                        'message' => 'Lorum ipsum',
+                        'domain' => 'barbar',
+                        'locale' => 'en',
+                        'historyId' => sha1('foo.en.barbar'),
+                    ],
+                    [
+                        '_id' => 2,
+                        'key' => 'foo',
+                        'message' => 'Lorum',
+                        'domain' => 'barbar',
+                        'locale' => 'en',
+                        'historyId' => sha1('foo.en.barbar'),
                     ],
                 ],
             ],
@@ -204,12 +225,16 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
                 'name' => 'messages',
                 'properties' => [
                     'message' => 'updated_foo',
+                    'locale' => 'en',
                 ],
                 'findBy' => [
                     'locale' => 'en',
                 ],
             ]
         );
+        $translation = $this->getTranslation($id);
+        $oldMessage = $translation->getMessages()[0]->getMessage();
+        $historyId = sha1($id . $oldMessage);
 
         $client->request(
             'POST',
@@ -222,12 +247,16 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
 
         $this->assertTrue($client->getResponse()->isOk(), 'Controller response should be 200.');
 
-        $translation = $this
-            ->getManager('default', false)
-            ->getRepository('ONGRTranslationsBundle:Translation')
-            ->find($id);
+        $translation = $this->getTranslation($id);
 
         $this->assertEquals('updated_foo', $translation->getMessages()[0]->getMessage(), 'Message should be updated.');
+
+        $history = $this
+            ->getManager('default', false)
+            ->getRepository('ONGRTranslationsBundle:History')
+            ->find($historyId);
+
+        $this->assertEquals('foo', $history->getMessage(), 'Old message should be added to history.');
     }
 
     /**
@@ -314,6 +343,49 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
     }
 
     /**
+     * Test history action.
+     */
+    public function testHistoryAction()
+    {
+        $client = self::createClient();
+
+        $requestContent = json_encode(
+            [
+                'key' => 'foo',
+                'domain' => 'barbar',
+                'locale' => 'en',
+            ]
+        );
+
+        $client->request(
+            'POST',
+            '/translate/_api/history',
+            [],
+            [],
+            [],
+            $requestContent
+        );
+
+        $this->assertTrue($client->getResponse()->isOk(), 'Controller response should be 200.');
+
+        $manager = $this->getManager('default', false);
+        $repository = $manager->getRepository('ONGRTranslationsBundle:History');
+        $boolFilter = new Bool();
+        $boolFilter->addToBool(new TermFilter('key', 'foo'));
+        $boolFilter->addToBool(new TermFilter('domain', 'barbar'));
+        $boolFilter->addToBool(new TermFilter('locale', 'en'));
+        $search = $repository->createSearch()->addFilter($boolFilter);
+
+        $results = $repository->execute($search, Repository::RESULTS_ARRAY);
+
+        $this->assertEquals(
+            $results,
+            json_decode($client->getResponse()->getContent(), true),
+            'History should be received.'
+        );
+    }
+
+    /**
      * Test add action.
      */
     public function testAddAction()
@@ -388,5 +460,20 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
         $this->assertEquals($currentDir, getcwd());
 
         rmdir($webDir);
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return \ONGR\ElasticsearchBundle\Document\DocumentInterface
+     */
+    private function getTranslation($id)
+    {
+        $translation = $this
+            ->getManager('default', false)
+            ->getRepository('ONGRTranslationsBundle:Translation')
+            ->find($id);
+
+        return $translation;
     }
 }

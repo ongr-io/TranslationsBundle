@@ -45,6 +45,10 @@ class ONGRTranslationsExtension extends Extension
         $this->setFiltersManager($config['repository'], $container);
         $this->setTranslationManager($config['repository'], $container);
         $this->setControllerManager($config['repository'], 'list', $container);
+        $this->setHistoryManager($this->editRepositoryName($config['repository']), $container);
+        if ($config['history']) {
+            $this->setEditMessageEvent($this->editRepositoryName($config['repository']), $container);
+        }
     }
 
     /**
@@ -59,10 +63,29 @@ class ONGRTranslationsExtension extends Extension
             'ONGR\TranslationsBundle\Translation\TranslationManager',
             [
                 new Reference($repositoryId),
+                new Reference('event_dispatcher'),
             ]
         );
 
         $container->setDefinition('ongr_translations.translation_manager', $definition);
+    }
+
+    /**
+     * Adds history manager.
+     *
+     * @param string           $repositoryId
+     * @param ContainerBuilder $container
+     */
+    private function setHistoryManager($repositoryId, ContainerBuilder $container)
+    {
+        $definition = new Definition(
+            'ONGR\TranslationsBundle\Translation\HistoryManager',
+            [
+                new Reference($repositoryId),
+            ]
+        );
+
+        $container->setDefinition('ongr_translations.history_manager', $definition);
     }
 
     /**
@@ -140,5 +163,38 @@ class ONGRTranslationsExtension extends Extension
             }
         }
         $container->setParameter('ongr_translations.bundles', $bundles);
+    }
+
+    /**
+     * Validates edit message event.
+     *
+     * @param string           $repositoryId
+     * @param ContainerBuilder $container
+     */
+    private function setEditMessageEvent($repositoryId, ContainerBuilder $container)
+    {
+        $definition = new Definition(
+            'ONGR\TranslationsBundle\Event\HistoryListener',
+            [
+                new Reference($repositoryId),
+            ]
+        );
+        $definition->addTag(
+            'kernel.event_listener',
+            ['event' => 'translation.history.add', 'method' => 'addToHistory']
+        );
+        $container->setDefinition('ongr_translations.es_manager', $definition);
+    }
+
+    /**
+     * Edits repository name.
+     *
+     * @param string $repository
+     *
+     * @return string
+     */
+    private function editRepositoryName($repository)
+    {
+        return substr_replace($repository, 'history', strrpos($repository, '.') + 1);
     }
 }

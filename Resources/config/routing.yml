@@ -51,3 +51,11 @@ ongr_translations_api_export:
         _controller: ONGRTranslationsBundle:Api:export
     options:
         expose: true
+
+ongr_translations_api_history:
+    pattern: /_api/history
+    methods: [POST]
+    defaults:
+        _controller: ONGRTranslationsBundle:Api:history
+    options:
+        expose: true

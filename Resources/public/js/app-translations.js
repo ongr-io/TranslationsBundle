@@ -13,6 +13,7 @@ angular
         'ngTagsInput',
         'controller.list',
         'controller.export',
+        'controller.history',
         'directive.inline',
         'service.tag',
         'util.asset'

@@ -9,17 +9,18 @@
 
 angular
     .module('directive.inline', [])
-    .directive('inline', ['$http', 'asset', 'STATUS', function ($http, $asset, STATUS) {
+    .directive('inline', ['$http', 'asset', 'STATUS', '$modal',
+        function ($http, $asset, STATUS, $modal) {
         return {
             restrict: "A",
-            scope: { 
-                translation: "=" 
+            scope: {
+                translation: "="
             },
             templateUrl: $asset.getLink('template/inline.html'),
             link: function(scope, element, attr) {
 
                 var inputElement = angular.element(element[0].children[1].children[1])[0];
-                
+
                 element.addClass('inline-edit');
 
                 /**
@@ -39,7 +40,7 @@ angular
 
                 /**
                  * Acts as empty value if it is null.
-                 * 
+                 *
                  * @returns {boolean}
                  */
                 scope.tryActEmpty = function() {
@@ -47,10 +48,10 @@ angular
                         scope.acting = true;
                         scope.message.message = 'Empty field.';
                         element.parent().addClass('bg-danger');
-                        
+
                         return true;
                     }
-                    
+
                     return false;
                 }
 
@@ -71,7 +72,7 @@ angular
                     if (scope.acting) {
                         scope.message.message = '';
                     }
-                    
+
                     scope.oldValue = scope.message.message;
                     element.addClass('active');
                     inputElement.focus();
@@ -84,7 +85,7 @@ angular
                     if (scope.error !== 0 || scope.error === null) {
                         scope.message.message = scope.oldValue;
                     }
-                    
+
                     scope.error = null;
                     element.removeClass('active');
                     scope.tryActEmpty();
@@ -107,7 +108,7 @@ angular
 
                 /**
                  * Validates translation message through http.
-                 * 
+                 *
                  * @returns {Promise}
                  */
                 scope.httpValidate = function() {
@@ -160,6 +161,35 @@ angular
                             scope.close();
                             break;
                     }
+                }
+
+                /**
+                 * Returns locale, key, domain of the message.
+                 *
+                 * @returns {*[]|*}
+                 */
+                scope.getMessageParams = function() {
+                    locale = scope.$parent.locale;
+                    key = scope.translation.key;
+                    domain = scope.translation.domain;
+                    arr = [key, locale, domain];
+
+                    return arr
+                };
+
+                /**
+                 * Opens up modal for history.
+                 */
+                scope.history = function() {
+                    $modal.open({
+                        controller: 'history',
+                        templateUrl: $asset.getLink('template/historyModal.html'),
+                        resolve: {
+                            history: function () {
+                                return scope.getMessageParams();
+                            }
+                        }
+                    });
                 }
             }
         }
