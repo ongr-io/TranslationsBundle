@@ -13,6 +13,7 @@ placeholder.search_for: Ieškoti...
 save: Saugoti
 close: Uždaryti
 filter.locale: Localė
+filter.missing_locale: Neišverstos
 filter.domain: Domenas
 filter.sort: Rikiavimas
 filter.clear: Atšaukti
