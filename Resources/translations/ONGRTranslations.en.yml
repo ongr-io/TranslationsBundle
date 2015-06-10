@@ -13,6 +13,7 @@ placeholder.search_for: 'Search for...'
 save: Save
 close: Close
 filter.locale: Locale
+filter.missing_locale: Missing translations
 filter.domain: Domain
 filter.sort: Sort
 filter.clear: Clear
