@@ -9,6 +9,7 @@ label.timestamp: 'Laiko žymės'
 label.created_at: 'Sukurtas'
 label.updated_at: 'Atnaujintas'
 label.status: 'Statusas'
+label.missing_locale.all: 'Parinkti visus'
 placeholder.search_for: Ieškoti...
 save: Saugoti
 close: Uždaryti
