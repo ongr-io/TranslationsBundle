@@ -1,3 +1,4 @@
+sudo: false
 language: php
 
 php:
@@ -13,7 +14,8 @@ services:
 
 install:
   - composer require --no-update symfony/symfony:${SYMFONY}
-  - sudo pip install -q sphinx
+  - pip install --upgrade pip --user `whoami`
+  - pip install -q sphinx --user `whoami`
   - wget -q -O conf.py https://raw.githubusercontent.com/ongr-io/docs-aggregator/master/source/conf-travis.py
 
 script:
