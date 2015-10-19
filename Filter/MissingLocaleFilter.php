@@ -13,7 +13,11 @@ namespace ONGR\TranslationsBundle\Filter;
 
 use ONGR\ElasticsearchBundle\DSL\Filter\TermsFilter;
 use ONGR\ElasticsearchBundle\DSL\Search;
+use ONGR\ElasticsearchBundle\Result\DocumentIterator;
 use ONGR\FilterManagerBundle\Filters\FilterState;
+use ONGR\FilterManagerBundle\Filters\ViewData;
+use ONGR\FilterManagerBundle\Filters\ViewData\Choice;
+use ONGR\FilterManagerBundle\Filters\ViewData\ChoicesAwareViewData;
 use ONGR\FilterManagerBundle\Filters\Widget\Choice\MultiTermChoice;
 use ONGR\FilterManagerBundle\Search\SearchRequest;
 
@@ -33,5 +37,49 @@ class MissingLocaleFilter extends MultiTermChoice
                 'must_not'
             );
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getViewData(DocumentIterator $result, ViewData $data)
+    {
+        $data = parent::getViewData($result, $data);
+        $requestField = $this->getRequestField();
+        $choices = $data->getChoices();
+        $list = [];
+        $active = true;
+
+        foreach ($choices as $choice) {
+            $parameters = $choice->getUrlParameters();
+            if (isset($parameters[$requestField])) {
+                $list = array_merge($list, $parameters[$requestField]);
+            }
+            $active &= $choice->isActive();
+        }
+
+        if (!$active) {
+            $this->addSelectAll($data, array_unique($list));
+        }
+
+        return $data;
+    }
+
+    /**
+     * Adds Select all choice.
+     *
+     * @param ChoicesAwareViewData $data
+     * @param array                $list
+     */
+    private function addSelectAll(ChoicesAwareViewData $data, $list)
+    {
+        $parameters = $data->getUrlParameters();
+        $parameters[$this->getRequestField()] = $list;
+
+        $choice = new Choice();
+        $choice->setLabel('label.missing_locale.all');
+        $choice->setUrlParameters($parameters);
+
+        $data->addChoice($choice);
     }
 }
