@@ -11,7 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Tests\Functional\Controller;
 
-use ONGR\ElasticsearchDSL\Bool\Bool;
+use ONGR\ElasticsearchDSL\Query\BoolQuery;
 use ONGR\ElasticsearchDSL\Filter\TermFilter;
 use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
@@ -370,10 +370,10 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
 
         $manager = $this->getManager('default', false);
         $repository = $manager->getRepository('ONGRTranslationsBundle:History');
-        $boolFilter = new Bool();
-        $boolFilter->addToBool(new TermFilter('key', 'foo'));
-        $boolFilter->addToBool(new TermFilter('domain', 'barbar'));
-        $boolFilter->addToBool(new TermFilter('locale', 'en'));
+        $boolFilter = new BoolQuery();
+        $boolFilter->add(new TermFilter('key', 'foo'));
+        $boolFilter->add(new TermFilter('domain', 'barbar'));
+        $boolFilter->add(new TermFilter('locale', 'en'));
         $search = $repository->createSearch()->addFilter($boolFilter);
 
         $results = $repository->execute($search, Repository::RESULTS_ARRAY);
