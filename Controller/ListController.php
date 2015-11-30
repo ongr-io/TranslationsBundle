@@ -11,8 +11,8 @@
 
 namespace ONGR\TranslationsBundle\Controller;
 
-use ONGR\ElasticsearchBundle\DSL\Aggregation\TermsAggregation;
-use ONGR\ElasticsearchBundle\ORM\Repository;
+use ONGR\ElasticsearchDSL\Aggregation\TermsAggregation;
+use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\FilterManagerBundle\Filters\ViewData;
 use ONGR\FilterManagerBundle\Search\SearchResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
