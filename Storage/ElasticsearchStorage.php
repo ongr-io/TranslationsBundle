@@ -90,7 +90,10 @@ class ElasticsearchStorage implements StorageInterface
         foreach ($translations as $path => $domains) {
             foreach ($domains as $domain => $transMeta) {
                 foreach ($transMeta['translations'] as $key => $keyTrans) {
-                    $document = $this->getRepository()->createDocument();
+
+                    /** @var Translation $document */
+                    $document = new Translation();
+
                     $document->setDomain($domain);
                     $document->setKey($key);
                     $document->setPath($path);

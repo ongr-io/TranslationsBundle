@@ -15,7 +15,7 @@ ongr_elasticsearch:
     connections:
         default:
             hosts:
-                - { host: "%database.elastic_search.host%" }
+                - "%database.elastic_search.host%"
             index_name: "%database.elastic_search.index%"
     managers:
         default:
