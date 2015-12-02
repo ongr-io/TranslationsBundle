@@ -11,8 +11,8 @@
 
 namespace ONGR\TranslationsBundle\Tests\Functional\Command;
 
-use ONGR\ElasticsearchBundle\DSL\Filter\TermsFilter;
-use ONGR\ElasticsearchBundle\ORM\Repository;
+use ONGR\ElasticsearchDSL\Filter\TermsFilter;
+use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
 use ONGR\TranslationsBundle\Command\ImportCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;

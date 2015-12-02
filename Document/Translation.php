@@ -24,7 +24,7 @@ class Translation extends AbstractDocument implements \JsonSerializable
     /**
      * @var string
      *
-     * @ES\Property(name="domain", type="string", index="not_analyzed")
+     * @ES\Property(name="domain", type="string", options={"index"="not_analyzed"})
      */
     private $domain;
 
@@ -45,14 +45,14 @@ class Translation extends AbstractDocument implements \JsonSerializable
     /**
      * @var string
      *
-     * @ES\Property(name="key", type="string", index="not_analyzed")
+     * @ES\Property(name="key", type="string", options={"index"="not_analyzed"})
      */
     private $key;
 
     /**
      * @var string
      *
-     * @ES\Property(name="path", type="string", index="not_analyzed")
+     * @ES\Property(name="path", type="string", options={"index"="not_analyzed"})
      */
     private $path;
 

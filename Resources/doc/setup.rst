@@ -68,7 +68,6 @@ Add minimal configuration for TranslationsBundle bundle.
         managers:
             translation:
                 connection: translation
-                debug: true
                 mappings:
                     - ONGRTranslationsBundle
 
@@ -85,7 +84,7 @@ Import ``TranslationsBundle`` API and UI routes:
 
     ongr_translation_ui:
         resource: "@ONGRTranslationsBundle/Resources/config/routing.yml"
-        prefix:   /translations
+        prefix:   /translate
 
     fos_js_routing:
         resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
