@@ -12,7 +12,8 @@
 namespace ONGR\TranslationsBundle\Event;
 
 use ONGR\ElasticsearchBundle\Document\DocumentInterface;
-use ONGR\ElasticsearchBundle\ORM\Repository;
+use ONGR\ElasticsearchBundle\Service\Repository;
+use ONGR\TranslationsBundle\Document\History;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -46,8 +47,7 @@ class HistoryListener
         $locale = $this->getLocale($event);
         $oldMessage = $this->getOldMessage($document, $locale);
 
-        $repository = $manager->getRepository('ONGRTranslationsBundle:History');
-        $historyDocument = $this->setDocument($document, $repository, $oldMessage, $locale);
+        $historyDocument = $this->setDocument($document, $oldMessage, $locale);
 
         $manager->persist($historyDocument);
         $manager->commit();
@@ -68,15 +68,16 @@ class HistoryListener
 
     /**
      * @param DocumentInterface $document
-     * @param Repository        $repository
      * @param string            $oldMessage
      * @param string            $locale
      *
      * @return mixed
      */
-    private function setDocument($document, $repository, $oldMessage, $locale)
+    private function setDocument($document, $oldMessage, $locale)
     {
-        $newDocument = $repository->createDocument();
+        /** @var History $newDocument */
+        $newDocument = new History();
+
         $key = $document->getKey();
         $domain = $document->getDomain();
         $newDocument->setKey($key);

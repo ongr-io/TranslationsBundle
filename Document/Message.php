@@ -27,7 +27,7 @@ class Message extends AbstractDocument implements \JsonSerializable
     /**
      * @var string
      *
-     * @ES\Property(name="locale", type="string", index="not_analyzed")
+     * @ES\Property(name="locale", type="string", options={"index"="not_analyzed"})
      */
     private $locale;
 

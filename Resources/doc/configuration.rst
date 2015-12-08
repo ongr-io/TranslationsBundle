@@ -23,7 +23,7 @@ Elasticsearch bundle configuration example:
         connections:
             default:
                 hosts:
-                    - { host: 127.0.0.1:9200 }
+                    - 127.0.0.1:9200
                 index_name: ongr-translations
                 settings:
                     refresh_interval: -1
