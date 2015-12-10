@@ -41,12 +41,12 @@ class HistoryManager
     public function history(Request $request)
     {
         $content = $this->parseJsonContent($request);
-        $boolFilter = new BoolQuery();
-        $boolFilter->add(new TermFilter('key', $content['key']));
-        $boolFilter->add(new TermFilter('domain', $content['domain']));
-        $boolFilter->add(new TermFilter('locale', $content['locale']));
-        $sort = new FieldSort('created_at', FieldSort::DESC);
-        $search = $this->repository->createSearch()->addFilter($boolFilter)->addSort($sort);
+
+        $search = $this->repository->createSearch();
+        $search->addFilter(new TermFilter('key', $content['key']));
+        $search->addFilter(new TermFilter('domain', $content['domain']));
+        $search->addFilter(new TermFilter('locale', $content['locale']));
+        $search->addSort(new FieldSort('created_at', FieldSort::DESC));
 
         return $this->repository->execute($search, Repository::RESULTS_ARRAY);
     }
