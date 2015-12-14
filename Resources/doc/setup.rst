@@ -68,7 +68,6 @@ Add minimal configuration for TranslationsBundle bundle.
         managers:
             translation:
                 connection: translation
-                debug: true
                 mappings:
                     - ONGRTranslationsBundle
 

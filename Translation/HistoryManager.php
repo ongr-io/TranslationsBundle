@@ -11,10 +11,10 @@
 
 namespace ONGR\TranslationsBundle\Translation;
 
-use ONGR\ElasticsearchBundle\DSL\Bool\Bool;
-use ONGR\ElasticsearchBundle\DSL\Filter\TermFilter;
-use ONGR\ElasticsearchBundle\DSL\Sort\Sort;
-use ONGR\ElasticsearchBundle\ORM\Repository;
+use ONGR\ElasticsearchDSL\Query\BoolQuery;
+use ONGR\ElasticsearchDSL\Filter\TermFilter;
+use ONGR\ElasticsearchDSL\Sort\FieldSort;
+use ONGR\ElasticsearchBundle\Service\Repository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -41,12 +41,12 @@ class HistoryManager
     public function history(Request $request)
     {
         $content = $this->parseJsonContent($request);
-        $boolFilter = new Bool();
-        $boolFilter->addToBool(new TermFilter('key', $content['key']));
-        $boolFilter->addToBool(new TermFilter('domain', $content['domain']));
-        $boolFilter->addToBool(new TermFilter('locale', $content['locale']));
-        $sort = new Sort('created_at', Sort::ORDER_DESC);
-        $search = $this->repository->createSearch()->addFilter($boolFilter)->addSort($sort);
+
+        $search = $this->repository->createSearch();
+        $search->addFilter(new TermFilter('key', $content['key']));
+        $search->addFilter(new TermFilter('domain', $content['domain']));
+        $search->addFilter(new TermFilter('locale', $content['locale']));
+        $search->addSort(new FieldSort('created_at', FieldSort::DESC));
 
         return $this->repository->execute($search, Repository::RESULTS_ARRAY);
     }

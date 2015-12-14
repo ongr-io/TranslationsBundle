@@ -13,9 +13,9 @@ namespace ONGR\TranslationsBundle\Translation;
 
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use ONGR\ElasticsearchBundle\Document\DocumentInterface;
-use ONGR\ElasticsearchBundle\DSL\Filter\ExistsFilter;
-use ONGR\ElasticsearchBundle\DSL\Query\TermsQuery;
-use ONGR\ElasticsearchBundle\ORM\Repository;
+use ONGR\ElasticsearchDSL\Filter\ExistsFilter;
+use ONGR\ElasticsearchDSL\Query\TermsQuery;
+use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\TranslationsBundle\Event\Events;
 use ONGR\TranslationsBundle\Event\TranslationEditMessageEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;

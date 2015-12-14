@@ -11,8 +11,8 @@
 
 namespace ONGR\TranslationsBundle\Filter;
 
-use ONGR\ElasticsearchBundle\DSL\Filter\TermsFilter;
-use ONGR\ElasticsearchBundle\DSL\Search;
+use ONGR\ElasticsearchDSL\Filter\TermsFilter;
+use ONGR\ElasticsearchDSL\Search;
 use ONGR\ElasticsearchBundle\Result\DocumentIterator;
 use ONGR\FilterManagerBundle\Filters\FilterState;
 use ONGR\FilterManagerBundle\Filters\ViewData;

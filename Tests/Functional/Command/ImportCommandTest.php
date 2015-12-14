@@ -11,8 +11,6 @@
 
 namespace ONGR\TranslationsBundle\Tests\Functional\Command;
 
-use ONGR\ElasticsearchBundle\DSL\Filter\TermsFilter;
-use ONGR\ElasticsearchBundle\ORM\Repository;
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
 use ONGR\TranslationsBundle\Command\ImportCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -52,6 +50,8 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
      */
     public function testImportAllCommand()
     {
+        $this->getManager();
+
         $this->commandTester->execute(
             [
                 'command' => $this->command->getName(),
@@ -103,6 +103,8 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
      */
     public function testDomainsImport()
     {
+        $this->getManager();
+
         $this->commandTester->execute(
             [
                 'command' => $this->command->getName(),
@@ -122,6 +124,8 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
      */
     public function testConfigOnlyOptionImport()
     {
+        $this->getManager();
+
         $this->commandTester->execute(
             [
                 'command' => $this->command->getName(),

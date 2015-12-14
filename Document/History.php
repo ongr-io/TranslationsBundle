@@ -24,28 +24,28 @@ class History extends AbstractDocument
     /**
      * @var string
      *
-     * @ES\Property(name="key", type="string", index="not_analyzed")
+     * @ES\Property(name="key", type="string", options={"index"="not_analyzed"})
      */
     public $key;
 
     /**
      * @var string
      *
-     * @ES\Property(name="locale", type="string", index="not_analyzed")
+     * @ES\Property(name="locale", type="string", options={"index"="not_analyzed"})
      */
     public $locale;
 
     /**
      * @var string
      *
-     * @ES\Property(name="message", type="string", index="not_analyzed")
+     * @ES\Property(name="message", type="string", options={"index"="not_analyzed"})
      */
     public $message;
 
     /**
      * @var string
      *
-     * @ES\Property(name="domain", type="string", index="not_analyzed")
+     * @ES\Property(name="domain", type="string", options={"index"="not_analyzed"})
      */
     public $domain;
 

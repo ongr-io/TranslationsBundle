@@ -23,6 +23,8 @@ class ListControllerTest extends AbstractElasticsearchTestCase
      */
     public function testListAction()
     {
+        $this->getManager();
+
         $client = self::createClient();
         $crawler = $client->request('GET', '/translate/list');
 
