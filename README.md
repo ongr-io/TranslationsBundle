@@ -3,7 +3,7 @@ ONGR Translations Bundle
 
 This bundle provides graphical user interface for translations management. It
 allows to add, edit and remove translations in multiple languages. Translations
-can be automatically collected and dumped into your project. 
+can be automatically collected from and dumped into your project. 
 
 [![Stable Release](https://poser.pugx.org/ongr/translations-bundle/v/stable.svg)](https://packagist.org/packages/ongr/translations-bundle)
 [![Build Status](https://travis-ci.org/ongr-io/TranslationsBundle.svg?branch=master)](https://travis-ci.org/ongr-io/TranslationsBundle)
@@ -17,6 +17,8 @@ The documentation of the bundle can be found in [Resources/doc/][2]
 
 Installation
 ---
+
+Follow 5 quick steps to get ready to translate.
 
 ### Step 1: Download the Bundle
 

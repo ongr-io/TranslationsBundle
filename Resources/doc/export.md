@@ -1,10 +1,12 @@
-Export of Translations
+Exporting Translations
 ===
 
-This bundle provides `ongr:translations:export` command for exporting
-translations to `app/Resources/translations` directory.
+Eventually when you have translated all messages you needed to, you can export
+your translations. This bundle provides `ongr:translations:export` command to
+do that for you. It saves exported translations into `app/Resources/translations`
+directory.
 
-Command options
+Using Command
 ---
 
 Command accepts several options:
@@ -13,9 +15,6 @@ Command accepts several options:
 |---------|-------|------------
 | locales | array | Locales to be exported. If not specified, `managed_locales` from bundles configuration will be used.
 | domains | array | Domains to export. If not specified, all domains will be exported.
-
-Examples
----
 
 You can simply run this command without any arguments or options. This will
 export translations for all locales and domains:
