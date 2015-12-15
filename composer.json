@@ -11,18 +11,19 @@
         }
     ],
     "require": {
-        "symfony/symfony": "~2.7",
+        "php": ">=5.5",
+        "symfony/symfony": "~2.7|~3.0",
         "ongr/elasticsearch-bundle": "dev-master",
         "ongr/filter-manager-bundle": "dev-master",
         "friendsofsymfony/jsrouting-bundle": "~1.5"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.4",
-        "squizlabs/php_codesniffer": "~2.0",
-        "mikey179/vfsStream": "1.4"
+        "phpunit/phpunit": "~4.8",
+        "squizlabs/php_codesniffer": "~2.5",
+        "mikey179/vfsStream": "~1.6",
+        "satooshi/php-coveralls": "~0.7"
     },
     "autoload": {
         "psr-4": { "ONGR\\TranslationsBundle\\": "" }
-    },
-    "minimum-stability": "stable"
+    }
 }

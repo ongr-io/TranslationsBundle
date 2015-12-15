@@ -1,36 +1,31 @@
 sudo: false
 language: php
-
 php:
   - 5.5
   - 5.6
   - 7.0
+  - hhvm
 matrix:
   allow_failures:
     - php: hhvm
-
 env:
   - SYMFONY="2.7.*"
-
+#  - SYMFONY="~3.0"
 services:
   - elasticsearch
-
 install:
   - composer require --no-update symfony/symfony:${SYMFONY}
-  - pip install --upgrade pip --user `whoami`
-  - pip install -q sphinx --user `whoami`
-  - wget -q -O conf.py https://raw.githubusercontent.com/ongr-io/docs-aggregator/master/source/conf-travis.py
-
-script:
-  - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
-  - vendor/bin/phpcs -p --standard=PSR2 --ignore=vendor/,Tests/app/,Resources/public/ ./
-  - sphinx-build -nWq -b html -c . Resources/doc _build/html
-
 before_script:
-  - composer self-update
-  - composer update --prefer-source
-
+  - composer config -g github-oauth.github.com $GITHUB_COMPOSER_AUTH
+  - composer install --no-interaction --prefer-dist
+script:
+  - vendor/bin/phpunit --coverage-clover=coveralls.clover
+  - vendor/bin/phpcs -p --standard=PSR2 --ignore=vendor/,Tests/app/,Resources/public/ ./
 after_script:
-  - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && wget --post-data="" -q -O /dev/null http://readthedocs.org/build/ongr'
+  - vendor/bin/coveralls
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/81e47479feba5ba8dc47
+    on_success: change
+    on_start: never
