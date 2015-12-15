@@ -36,7 +36,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->arrayNode('managed_locales')
                     ->requiresAtleastOneElement()
-                    ->info('Locales to manage (f.e. `en`, `de`).')
+                    ->info('Locales to manage (e.g. "en", "de").')
                     ->prototype('scalar')->end()
                 ->end()
                 ->arrayNode('formats')
