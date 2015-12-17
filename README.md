@@ -75,7 +75,7 @@ fos_js_routing:
     resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
 ```
 
-### Step 4: Create Elasticsearch Type for Translations  
+### Step 4: Configure Elasticsearch Bundle  
 
 This bundle provides `Translation` document. Add this bundle to your ES
 manager's mapping to associate it:
@@ -163,7 +163,7 @@ with this source code.
 
 [1]: LICENSE
 [2]: Resources/doc/index.md
-[3]: https://getcomposer.org/
+[3]: https://getcomposer.org/doc/00-intro.md
 [4]: https://github.com/ongr-io/ElasticsearchBundle
 [5]: https://github.com/ongr-io/FilterManagerBundle
 [6]: https://github.com/FriendsOfSymfony/FOSJsRoutingBundle  

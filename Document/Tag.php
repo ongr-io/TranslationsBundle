@@ -19,7 +19,7 @@ use ONGR\ElasticsearchBundle\Document\AbstractDocument;
  *
  * @ES\Object()
  */
-class Tag extends AbstractDocument
+class Tag
 {
     /**
      * @var string
