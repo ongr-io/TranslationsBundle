@@ -19,7 +19,7 @@ use ONGR\ElasticsearchBundle\Document\AbstractDocument;
  *
  * @ES\Object()
  */
-class Message extends AbstractDocument implements \JsonSerializable
+class Message implements \JsonSerializable
 {
     const DIRTY = 'dirty';
     const FRESH = 'fresh';
