@@ -11,11 +11,8 @@
 
 namespace ONGR\TranslationsBundle\Event;
 
-use ONGR\ElasticsearchBundle\Document\DocumentInterface;
 use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\TranslationsBundle\Document\History;
-use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Listens for edit message request event and add old message to history.
@@ -67,15 +64,14 @@ class HistoryListener
     }
 
     /**
-     * @param DocumentInterface $document
-     * @param string            $oldMessage
-     * @param string            $locale
+     * @param object $document
+     * @param string $oldMessage
+     * @param string $locale
      *
      * @return mixed
      */
     private function setDocument($document, $oldMessage, $locale)
     {
-        /** @var History $newDocument */
         $newDocument = new History();
 
         $key = $document->getKey();
@@ -91,8 +87,8 @@ class HistoryListener
     }
 
     /**
-     * @param DocumentInterface $document
-     * @param string            $locale
+     * @param object $document
+     * @param string $locale
      *
      * @return mixed
      */

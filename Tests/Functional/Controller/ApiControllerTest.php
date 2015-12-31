@@ -11,9 +11,9 @@
 
 namespace ONGR\TranslationsBundle\Tests\Functional\Controller;
 
+use ONGR\ElasticsearchBundle\Result\Result;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;
 use ONGR\ElasticsearchDSL\Filter\TermFilter;
-use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
 use ONGR\TranslationsBundle\Document\History;
 use ONGR\TranslationsBundle\Document\Message;
@@ -381,7 +381,7 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
         $boolFilter->add(new TermFilter('locale', 'en'));
         $search = $repository->createSearch()->addFilter($boolFilter);
 
-        $results = $repository->execute($search, Repository::RESULTS_ARRAY);
+        $results = $repository->execute($search, Result::RESULTS_ARRAY);
 
         $this->assertEquals(
             $results,
@@ -468,14 +468,13 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
     /**
      * @param string $id
      *
-     * @return \ONGR\ElasticsearchBundle\Document\DocumentInterface|Translation
+     * @return Translation
      */
     private function getTranslation($id)
     {
         $translation = $this
             ->getManager('default', false)
-            ->getRepository('ONGRTranslationsBundle:Translation')
-            ->find($id);
+            ->find('ONGRTranslationsBundle:Translation', $id);
 
         return $translation;
     }
@@ -483,14 +482,13 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
     /**
      * @param string $id
      *
-     * @return \ONGR\ElasticsearchBundle\Document\DocumentInterface|History
+     * @return History
      */
     private function getHistory($id)
     {
         $history = $this
             ->getManager('default', false)
-            ->getRepository('ONGRTranslationsBundle:History')
-            ->find($id);
+            ->find('ONGRTranslationsBundle:History', $id);
 
         return $history;
     }

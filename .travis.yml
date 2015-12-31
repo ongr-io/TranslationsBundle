@@ -10,7 +10,7 @@ matrix:
     - php: hhvm
 env:
   - SYMFONY="2.7.*"
-#  - SYMFONY="~3.0"
+  - SYMFONY="~3.0"
 services:
   - elasticsearch
 install:

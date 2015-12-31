@@ -11,10 +11,10 @@
 
 namespace ONGR\TranslationsBundle\Storage;
 
-use ONGR\ElasticsearchDSL\Filter\TermsFilter;
+use ONGR\ElasticsearchBundle\Result\Result;
 use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
-use ONGR\ElasticsearchBundle\Service\Manager;
 use ONGR\ElasticsearchBundle\Service\Repository;
+use ONGR\ElasticsearchDSL\Query\TermsQuery;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 
@@ -50,14 +50,14 @@ class ElasticsearchStorage implements StorageInterface
             ->addQuery(new MatchAllQuery());
 
         if (!empty($locales)) {
-            $search->addFilter(new TermsFilter('locale', $locales));
+            $search->addFilter(new TermsQuery('locale', $locales));
         }
 
         if (!empty($domains)) {
-            $search->addFilter(new TermsFilter('domain', $domains));
+            $search->addFilter(new TermsQuery('domain', $domains));
         }
 
-        return $this->getRepository()->execute($search, Repository::RESULTS_OBJECT);
+        return $this->getRepository()->execute($search, Result::RESULTS_OBJECT);
     }
 
     /**

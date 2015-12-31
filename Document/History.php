@@ -12,47 +12,49 @@
 namespace ONGR\TranslationsBundle\Document;
 
 use ONGR\ElasticsearchBundle\Annotation as ES;
-use ONGR\ElasticsearchBundle\Document\AbstractDocument;
+use ONGR\ElasticsearchBundle\Document\DocumentTrait;
 
 /**
  * Holds translations history.
  *
  * @ES\Document(type="history")
  */
-class History extends AbstractDocument
+class History
 {
+    use DocumentTrait;
+
     /**
      * @var string
      *
-     * @ES\Property(name="key", type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="string", options={"index"="not_analyzed"})
      */
     public $key;
 
     /**
      * @var string
      *
-     * @ES\Property(name="locale", type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="string", options={"index"="not_analyzed"})
      */
     public $locale;
 
     /**
      * @var string
      *
-     * @ES\Property(name="message", type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="string", options={"index"="not_analyzed"})
      */
     public $message;
 
     /**
      * @var string
      *
-     * @ES\Property(name="domain", type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="string", options={"index"="not_analyzed"})
      */
     public $domain;
 
     /**
      * @var \DateTime
      *
-     * @ES\Property(name="created_at", type="date")
+     * @ES\Property(type="date")
      */
     private $createdAt;
 

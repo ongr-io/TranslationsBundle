@@ -11,7 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Translation;
 
-use ONGR\ElasticsearchDSL\Query\BoolQuery;
+use ONGR\ElasticsearchBundle\Result\Result;
 use ONGR\ElasticsearchDSL\Filter\TermFilter;
 use ONGR\ElasticsearchDSL\Sort\FieldSort;
 use ONGR\ElasticsearchBundle\Service\Repository;
@@ -48,7 +48,7 @@ class HistoryManager
         $search->addFilter(new TermFilter('locale', $content['locale']));
         $search->addSort(new FieldSort('created_at', FieldSort::DESC));
 
-        return $this->repository->execute($search, Repository::RESULTS_ARRAY);
+        return $this->repository->execute($search, Result::RESULTS_ARRAY);
     }
 
     /**
