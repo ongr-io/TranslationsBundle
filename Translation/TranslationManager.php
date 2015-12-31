@@ -12,6 +12,7 @@
 namespace ONGR\TranslationsBundle\Translation;
 
 use Elasticsearch\Common\Exceptions\Missing404Exception;
+use ONGR\ElasticsearchBundle\Result\ObjectIterator;
 use ONGR\ElasticsearchBundle\Result\Result;
 use ONGR\ElasticsearchDSL\Query\ExistsQuery;
 use ONGR\ElasticsearchDSL\Query\TermsQuery;
@@ -142,18 +143,21 @@ class TranslationManager
         $accessor = $this->getAccessor();
         $objects = $accessor->getValue($document, $options['name']);
 
-        $meta = $this->repository->getManager()->getBundlesMapping(['ONGRTranslationsBundle:Translation']);
-        $objectClass = reset($meta)->getAliases()[$options['name']]['namespace'];
+        $meta = $this->repository->getManager()->getMetadataCollector()
+            ->getBundleMapping('ONGRTranslationsBundle:Translation');
+        $objectClass = reset($meta)['aliases'][$options['name']]['namespace'];
 
         $object = new $objectClass();
         $this->setObjectProperties($object, $options['properties']);
 
         $this->updateTimestamp($object);
 
-        if ($objects === null) {
-            $objects = [$object];
-        } else {
+        if ($objects instanceof ObjectIterator) {
+            // TODO: refactor after ESB gives easy way to append object!
+            $objects = iterator_to_array($objects);
             $objects[] = $object;
+        } else {
+            $objects = [$object];
         }
 
         $accessor->setValue($document, $options['name'], $objects);
@@ -170,6 +174,9 @@ class TranslationManager
     {
         $accessor = $this->getAccessor();
         $objects = $accessor->getValue($document, $options['name']);
+        // TODO: refactor after ESB gives easy way to access object!
+        $objects = iterator_to_array($objects);
+
         $key = $this->findObject($objects, $options['findBy']);
 
         if ($key >= 0) {
@@ -188,6 +195,9 @@ class TranslationManager
     {
         $accessor = $this->getAccessor();
         $objects = $accessor->getValue($document, $options['name']);
+
+        // TODO: refactor after ESB gives easy way to access object!
+        $objects = iterator_to_array($objects);
 
         if ($objects === null) {
             $this->addObject($document, $options);

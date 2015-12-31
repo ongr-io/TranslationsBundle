@@ -50,7 +50,7 @@ class ListController extends Controller
     public function listAction(Request $request)
     {
         /** @var SearchResponse $fmr */
-        $fmr = $this->get('ongr_translations.filter_manager')->execute($request);
+        $fmr = $this->get('ongr_translations.filter_manager')->handleRequest($request);
 
         return $this->render(
             'ONGRTranslationsBundle:List:list.html.twig',

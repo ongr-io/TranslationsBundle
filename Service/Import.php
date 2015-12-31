@@ -15,8 +15,6 @@ use Elasticsearch\Common\Exceptions\BadRequest400Exception;
 use ONGR\TranslationsBundle\Storage\StorageInterface;
 use ONGR\TranslationsBundle\Translation\Import\FileImport;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 /**
  * Collects translations.

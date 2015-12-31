@@ -12,7 +12,6 @@
 namespace ONGR\TranslationsBundle\Document;
 
 use ONGR\ElasticsearchBundle\Annotation as ES;
-use ONGR\ElasticsearchBundle\Document\DocumentTrait;
 
 /**
  * Holds translations for certain domain.
@@ -21,9 +20,12 @@ use ONGR\ElasticsearchBundle\Document\DocumentTrait;
  */
 class Translation implements \JsonSerializable
 {
-    use DocumentTrait {
-        DocumentTrait::getId as protected originalGetId;
-    }
+    /**
+     * @var string
+     *
+     * @ES\MetaField(name="_id")
+     */
+    private $id;
 
     /**
      * @var string
@@ -35,14 +37,14 @@ class Translation implements \JsonSerializable
     /**
      * @var Tag[]
      *
-     * @ES\Property(type="object", multiple=true, objectName="ONGRTranslationsBundle:Tag")
+     * @ES\Embedded(class="ONGRTranslationsBundle:Tag", multiple=true)
      */
     private $tags = [];
 
     /**
      * @var Message[]
      *
-     * @ES\Property(type="object", multiple=true, objectName="ONGRTranslationsBundle:Message")
+     * @ES\Embedded(class="ONGRTranslationsBundle:Message", multiple=true)
      */
     private $messages = [];
 
@@ -88,6 +90,34 @@ class Translation implements \JsonSerializable
     {
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
+    }
+
+    /**
+     * Sets document unique id.
+     *
+     * @param string $documentId
+     *
+     * @return $this
+     */
+    public function setId($documentId)
+    {
+        $this->id = $documentId;
+
+        return $this;
+    }
+
+    /**
+     * Returns document id.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        if (!$this->id) {
+            $this->setId(sha1($this->getDomain() . $this->getKey()));
+        }
+
+        return $this->id;
     }
 
     /**
@@ -150,20 +180,6 @@ class Translation implements \JsonSerializable
     public function setKey($key)
     {
         $this->key = $key;
-    }
-
-    /**
-     * Return unique document id.
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        if (!$this->originalGetId()) {
-            $this->setId(sha1($this->getDomain() . $this->getKey()));
-        }
-
-        return $this->originalGetId();
     }
 
     /**
