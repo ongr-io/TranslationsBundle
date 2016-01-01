@@ -11,9 +11,10 @@
 
 namespace ONGR\TranslationsBundle\Controller;
 
+use ONGR\ElasticsearchBundle\Result\Result;
 use ONGR\ElasticsearchDSL\Aggregation\TermsAggregation;
 use ONGR\ElasticsearchBundle\Service\Repository;
-use ONGR\FilterManagerBundle\Filters\ViewData;
+use ONGR\FilterManagerBundle\Filter\ViewData;
 use ONGR\FilterManagerBundle\Search\SearchResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,7 +50,7 @@ class ListController extends Controller
     public function listAction(Request $request)
     {
         /** @var SearchResponse $fmr */
-        $fmr = $this->get('ongr_translations.filters_manager')->execute($request);
+        $fmr = $this->get('ongr_translations.filter_manager')->handleRequest($request);
 
         return $this->render(
             'ONGRTranslationsBundle:List:list.html.twig',
@@ -75,7 +76,7 @@ class ListController extends Controller
         $localeAgg = new TermsAggregation('locale_agg');
         $localeAgg->setField('messages.locale');
         $search->addAggregation($localeAgg);
-        $result = $this->repository->execute($search, Repository::RESULTS_RAW);
+        $result = $this->repository->execute($search, Result::RESULTS_RAW);
         $list = [];
 
         foreach ($result['aggregations']['agg_locale_agg']['buckets'] as $value) {

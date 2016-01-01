@@ -12,68 +12,74 @@
 namespace ONGR\TranslationsBundle\Document;
 
 use ONGR\ElasticsearchBundle\Annotation as ES;
-use ONGR\ElasticsearchBundle\Document\AbstractDocument;
 
 /**
  * Holds translations for certain domain.
  *
  * @ES\Document(type="translation")
  */
-class Translation extends AbstractDocument implements \JsonSerializable
+class Translation implements \JsonSerializable
 {
     /**
      * @var string
      *
-     * @ES\Property(name="domain", type="string", options={"index"="not_analyzed"})
+     * @ES\MetaField(name="_id")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ES\Property(type="string", options={"index"="not_analyzed"})
      */
     private $domain;
 
     /**
      * @var Tag[]
      *
-     * @ES\Property(name="tags", type="object", multiple=true, objectName="ONGRTranslationsBundle:Tag")
+     * @ES\Embedded(class="ONGRTranslationsBundle:Tag", multiple=true)
      */
     private $tags = [];
 
     /**
      * @var Message[]
      *
-     * @ES\Property(name="messages", type="object", multiple=true, objectName="ONGRTranslationsBundle:Message")
+     * @ES\Embedded(class="ONGRTranslationsBundle:Message", multiple=true)
      */
     private $messages = [];
 
     /**
      * @var string
      *
-     * @ES\Property(name="key", type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="string", options={"index"="not_analyzed"})
      */
     private $key;
 
     /**
      * @var string
      *
-     * @ES\Property(name="path", type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="string", options={"index"="not_analyzed"})
      */
     private $path;
 
     /**
      * @var string
      *
-     * @ES\Property(name="format", type="string")
+     * @ES\Property(type="string")
      */
     private $format;
 
     /**
      * @var \DateTime
      *
-     * @ES\Property(name="created_at", type="date")
+     * @ES\Property(type="date")
      */
     private $createdAt;
 
     /**
      * @var \DateTime
      *
-     * @ES\Property(name="updated_at", type="date")
+     * @ES\Property(type="date")
      */
     private $updatedAt;
 
@@ -84,6 +90,34 @@ class Translation extends AbstractDocument implements \JsonSerializable
     {
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
+    }
+
+    /**
+     * Sets document unique id.
+     *
+     * @param string $documentId
+     *
+     * @return $this
+     */
+    public function setId($documentId)
+    {
+        $this->id = $documentId;
+
+        return $this;
+    }
+
+    /**
+     * Returns document id.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        if (!$this->id) {
+            $this->setId(sha1($this->getDomain() . $this->getKey()));
+        }
+
+        return $this->id;
     }
 
     /**
@@ -146,20 +180,6 @@ class Translation extends AbstractDocument implements \JsonSerializable
     public function setKey($key)
     {
         $this->key = $key;
-    }
-
-    /**
-     * Return unique document id.
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        if (!parent::getId()) {
-            $this->setId(sha1($this->getDomain() . $this->getKey()));
-        }
-
-        return parent::getId();
     }
 
     /**

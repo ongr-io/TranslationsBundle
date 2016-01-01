@@ -11,14 +11,14 @@
 
 namespace ONGR\TranslationsBundle\Filter;
 
-use ONGR\ElasticsearchDSL\Filter\TermsFilter;
+use ONGR\ElasticsearchDSL\Query\TermsQuery;
 use ONGR\ElasticsearchDSL\Search;
 use ONGR\ElasticsearchBundle\Result\DocumentIterator;
-use ONGR\FilterManagerBundle\Filters\FilterState;
-use ONGR\FilterManagerBundle\Filters\ViewData;
-use ONGR\FilterManagerBundle\Filters\ViewData\Choice;
-use ONGR\FilterManagerBundle\Filters\ViewData\ChoicesAwareViewData;
-use ONGR\FilterManagerBundle\Filters\Widget\Choice\MultiTermChoice;
+use ONGR\FilterManagerBundle\Filter\FilterState;
+use ONGR\FilterManagerBundle\Filter\ViewData;
+use ONGR\FilterManagerBundle\Filter\ViewData\Choice;
+use ONGR\FilterManagerBundle\Filter\ViewData\ChoicesAwareViewData;
+use ONGR\FilterManagerBundle\Filter\Widget\Choice\MultiTermChoice;
 use ONGR\FilterManagerBundle\Search\SearchRequest;
 
 /**
@@ -33,7 +33,7 @@ class MissingLocaleFilter extends MultiTermChoice
     {
         if ($state && $state->isActive()) {
             $search->addPostFilter(
-                new TermsFilter($this->getField(), $state->getValue(), ['execution' => 'and']),
+                new TermsQuery($this->getField(), $state->getValue(), ['execution' => 'and']),
                 'must_not'
             );
         }

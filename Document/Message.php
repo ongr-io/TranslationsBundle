@@ -12,7 +12,6 @@
 namespace ONGR\TranslationsBundle\Document;
 
 use ONGR\ElasticsearchBundle\Annotation as ES;
-use ONGR\ElasticsearchBundle\Document\AbstractDocument;
 
 /**
  * Object for translations in elasticsearch.
@@ -27,35 +26,35 @@ class Message implements \JsonSerializable
     /**
      * @var string
      *
-     * @ES\Property(name="locale", type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="string", options={"index"="not_analyzed"})
      */
     private $locale;
 
     /**
      * @var string
      *
-     * @ES\Property(name="message", type="string")
+     * @ES\Property(type="string")
      */
     private $message;
 
     /**
      * @var string
      *
-     * @ES\Property(name="status", type="string")
+     * @ES\Property(type="string")
      */
     private $status;
 
     /**
      * @var \DateTime
      *
-     * @ES\Property(name="created_at", type="date")
+     * @ES\Property(type="date")
      */
     private $createdAt;
 
     /**
      * @var \DateTime
      *
-     * @ES\Property(name="updated_at", type="date")
+     * @ES\Property(type="date")
      */
     private $updatedAt;
 

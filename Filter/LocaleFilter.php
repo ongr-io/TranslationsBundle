@@ -13,9 +13,9 @@ namespace ONGR\TranslationsBundle\Filter;
 
 use ONGR\ElasticsearchDSL\Aggregation\TermsAggregation;
 use ONGR\ElasticsearchDSL\Search;
-use ONGR\FilterManagerBundle\Filters\FilterInterface;
-use ONGR\FilterManagerBundle\Filters\FilterState;
-use ONGR\FilterManagerBundle\Filters\Widget\Choice\MultiTermChoice;
+use ONGR\FilterManagerBundle\Filter\FilterInterface;
+use ONGR\FilterManagerBundle\Filter\FilterState;
+use ONGR\FilterManagerBundle\Filter\Widget\Choice\MultiTermChoice;
 use ONGR\FilterManagerBundle\Search\SearchRequest;
 
 /**

@@ -115,14 +115,14 @@ class ONGRTranslationsExtension extends Extension
     private function setFiltersManager($repositoryId, ContainerBuilder $container)
     {
         $definition = new Definition(
-            'ONGR\FilterManagerBundle\Search\FiltersManager',
+            'ONGR\FilterManagerBundle\Search\FilterManager',
             [
                 new Reference('ongr_translations.filters_container'),
                 new Reference($repositoryId),
             ]
         );
 
-        $container->setDefinition('ongr_translations.filters_manager', $definition);
+        $container->setDefinition('ongr_translations.filter_manager', $definition);
     }
 
     /**

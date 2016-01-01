@@ -12,8 +12,9 @@
 namespace ONGR\TranslationsBundle\Translation;
 
 use Elasticsearch\Common\Exceptions\Missing404Exception;
-use ONGR\ElasticsearchBundle\Document\DocumentInterface;
-use ONGR\ElasticsearchDSL\Filter\ExistsFilter;
+use ONGR\ElasticsearchBundle\Result\ObjectIterator;
+use ONGR\ElasticsearchBundle\Result\Result;
+use ONGR\ElasticsearchDSL\Query\ExistsQuery;
 use ONGR\ElasticsearchDSL\Query\TermsQuery;
 use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\TranslationsBundle\Event\Events;
@@ -111,7 +112,7 @@ class TranslationManager
         $search = $this
             ->repository
             ->createSearch()
-            ->addFilter(new ExistsFilter($content['name']));
+            ->addFilter(new ExistsQuery($content['name']));
 
         if (array_key_exists('properties', $content)) {
             foreach ($content['properties'] as $property) {
@@ -128,32 +129,35 @@ class TranslationManager
             }
         }
 
-        return $this->repository->execute($search, Repository::RESULTS_ARRAY);
+        return $this->repository->execute($search, Result::RESULTS_ARRAY);
     }
 
     /**
      * Adds object to translation.
      *
-     * @param DocumentInterface $document
-     * @param array             $options
+     * @param object $document
+     * @param array  $options
      */
-    private function addObject(DocumentInterface $document, $options)
+    private function addObject($document, $options)
     {
         $accessor = $this->getAccessor();
         $objects = $accessor->getValue($document, $options['name']);
 
-        $meta = $this->repository->getManager()->getBundlesMapping(['ONGRTranslationsBundle:Translation']);
-        $objectClass = reset($meta)->getAliases()[$options['name']]['namespace'];
+        $meta = $this->repository->getManager()->getMetadataCollector()
+            ->getBundleMapping('ONGRTranslationsBundle:Translation');
+        $objectClass = reset($meta)['aliases'][$options['name']]['namespace'];
 
         $object = new $objectClass();
         $this->setObjectProperties($object, $options['properties']);
 
         $this->updateTimestamp($object);
 
-        if ($objects === null) {
-            $objects = [$object];
-        } else {
+        if ($objects instanceof ObjectIterator) {
+            // TODO: refactor after ESB gives easy way to append object!
+            $objects = iterator_to_array($objects);
             $objects[] = $object;
+        } else {
+            $objects = [$object];
         }
 
         $accessor->setValue($document, $options['name'], $objects);
@@ -163,13 +167,16 @@ class TranslationManager
     /**
      * Removes message from document based on options.
      *
-     * @param DocumentInterface $document
-     * @param array             $options
+     * @param object $document
+     * @param array  $options
      */
-    private function deleteObject(DocumentInterface $document, $options)
+    private function deleteObject($document, $options)
     {
         $accessor = $this->getAccessor();
         $objects = $accessor->getValue($document, $options['name']);
+        // TODO: refactor after ESB gives easy way to access object!
+        $objects = iterator_to_array($objects);
+
         $key = $this->findObject($objects, $options['findBy']);
 
         if ($key >= 0) {
@@ -181,13 +188,16 @@ class TranslationManager
     /**
      * Edits message from document based on options.
      *
-     * @param DocumentInterface $document
-     * @param array             $options
+     * @param object $document
+     * @param array  $options
      */
-    private function editObject(DocumentInterface $document, $options)
+    private function editObject($document, $options)
     {
         $accessor = $this->getAccessor();
         $objects = $accessor->getValue($document, $options['name']);
+
+        // TODO: refactor after ESB gives easy way to access object!
+        $objects = iterator_to_array($objects);
 
         if ($objects === null) {
             $this->addObject($document, $options);
@@ -256,9 +266,9 @@ class TranslationManager
     /**
      * Commits document into elasticsearch client.
      *
-     * @param DocumentInterface $document
+     * @param object $document
      */
-    private function commitTranslation(DocumentInterface $document)
+    private function commitTranslation($document)
     {
         $this->repository->getManager()->persist($document);
         $this->repository->getManager()->commit();
@@ -269,7 +279,7 @@ class TranslationManager
      *
      * @param string $id
      *
-     * @return DocumentInterface
+     * @return object
      *
      * @throws BadRequestHttpException
      */

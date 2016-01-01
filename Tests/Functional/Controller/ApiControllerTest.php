@@ -11,9 +11,9 @@
 
 namespace ONGR\TranslationsBundle\Tests\Functional\Controller;
 
+use ONGR\ElasticsearchBundle\Result\Result;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;
 use ONGR\ElasticsearchDSL\Filter\TermFilter;
-use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
 use ONGR\TranslationsBundle\Document\History;
 use ONGR\TranslationsBundle\Document\Message;
@@ -210,8 +210,9 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
         $this->assertTrue($client->getResponse()->isOk(), 'Controller response should be 200.');
 
         $translation = $this->getTranslation($id);
+        $tags = iterator_to_array($translation->getTags());
 
-        $this->assertEquals('updated_foo_tag', $translation->getTags()[0]->getName(), 'tag should be updated.');
+        $this->assertEquals('updated_foo_tag', $tags[0]->getName(), 'tag should be updated.');
     }
 
     /**
@@ -238,7 +239,8 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
             ]
         );
         $translation = $this->getTranslation($id);
-        $oldMessage = $translation->getMessages()[0]->getMessage();
+        $messages = iterator_to_array($translation->getMessages());
+        $oldMessage = $messages[0]->getMessage();
         $historyId = sha1($id . $oldMessage);
 
         $client->request(
@@ -253,8 +255,9 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
         $this->assertTrue($client->getResponse()->isOk(), 'Controller response should be 200.');
 
         $translation = $this->getTranslation($id);
+        $messages = iterator_to_array($translation->getMessages());
 
-        $this->assertEquals('updated_foo', $translation->getMessages()[0]->getMessage(), 'Message should be updated.');
+        $this->assertEquals('updated_foo', $messages[0]->getMessage(), 'Message should be updated.');
 
         $history = $this->getHistory($historyId);
 
@@ -289,22 +292,26 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
         );
 
         $this->assertTrue($client->getResponse()->isOk(), 'Controller response should be 200.');
-        $this->assertEquals(
+        $expected = [
             [
-                [
-                    'tags' => [
-                        ['name' => 'baz_tag'],
-                    ],
-                ],
-                [
-                    'tags' => [
-                        ['name' => 'foo_tag'],
-                        ['name' => 'tuna_tag'],
-                    ],
+                'tags' => [
+                    ['name' => 'baz_tag'],
                 ],
             ],
-            json_decode($client->getResponse()->getContent(), true)
-        );
+            [
+                'tags' => [
+                    ['name' => 'foo_tag'],
+                    ['name' => 'tuna_tag'],
+                ],
+            ],
+        ];
+        $actual = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertCount(count($expected), $actual);
+
+        foreach ($actual as $item) {
+            $this->assertContains($item, $expected);
+        }
     }
 
     /**
@@ -381,7 +388,7 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
         $boolFilter->add(new TermFilter('locale', 'en'));
         $search = $repository->createSearch()->addFilter($boolFilter);
 
-        $results = $repository->execute($search, Repository::RESULTS_ARRAY);
+        $results = $repository->execute($search, Result::RESULTS_ARRAY);
 
         $this->assertEquals(
             $results,
@@ -459,7 +466,8 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
         $this->assertEquals(['baz.key' => 'baz'], $dumpedData, 'Translations should be the same.');
         $document = $this->getTranslation(sha1('bazbaz.key'));
 
-        $this->assertEquals(Message::FRESH, $document->getMessages()[0]->getStatus(), 'Message should be refreshed');
+        $messages = iterator_to_array($document->getMessages());
+        $this->assertEquals(Message::FRESH, $messages[0]->getStatus(), 'Message should be refreshed');
         $this->assertEquals($currentDir, getcwd());
 
         rmdir($webDir);
@@ -468,14 +476,13 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
     /**
      * @param string $id
      *
-     * @return \ONGR\ElasticsearchBundle\Document\DocumentInterface|Translation
+     * @return Translation
      */
     private function getTranslation($id)
     {
         $translation = $this
             ->getManager('default', false)
-            ->getRepository('ONGRTranslationsBundle:Translation')
-            ->find($id);
+            ->find('ONGRTranslationsBundle:Translation', $id);
 
         return $translation;
     }
@@ -483,14 +490,13 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
     /**
      * @param string $id
      *
-     * @return \ONGR\ElasticsearchBundle\Document\DocumentInterface|History
+     * @return History
      */
     private function getHistory($id)
     {
         $history = $this
             ->getManager('default', false)
-            ->getRepository('ONGRTranslationsBundle:History')
-            ->find($id);
+            ->find('ONGRTranslationsBundle:History', $id);
 
         return $history;
     }

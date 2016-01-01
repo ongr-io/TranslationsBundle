@@ -11,7 +11,6 @@
 
 namespace ONGR\TranslationsBundle\Event;
 
-use ONGR\ElasticsearchBundle\Document\DocumentInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -26,15 +25,15 @@ class TranslationEditMessageEvent extends Event
     private $request;
 
     /**
-     * @var DocumentInterface
+     * @var object
      */
     private $document;
 
     /**
-     * @param Request           $request
-     * @param DocumentInterface $document
+     * @param Request $request
+     * @param object  $document
      */
-    public function __construct(Request $request, DocumentInterface $document)
+    public function __construct(Request $request, $document)
     {
         $this->request = $request;
         $this->document = $document;
@@ -51,7 +50,7 @@ class TranslationEditMessageEvent extends Event
     /**
      * Returns document associated with the event.
      *
-     * @return DocumentInterface
+     * @return object
      */
     public function getDocument()
     {

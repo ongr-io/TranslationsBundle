@@ -12,7 +12,6 @@
 namespace ONGR\TranslationsBundle\Document;
 
 use ONGR\ElasticsearchBundle\Annotation as ES;
-use ONGR\ElasticsearchBundle\Document\AbstractDocument;
 
 /**
  * Object used for translation tags.
@@ -24,7 +23,7 @@ class Tag
     /**
      * @var string
      *
-     * @ES\Property(name="name", type="string")
+     * @ES\Property(type="string")
      */
     private $name;
 
