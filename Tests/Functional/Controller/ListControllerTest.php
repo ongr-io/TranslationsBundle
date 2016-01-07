@@ -23,6 +23,7 @@ class ListControllerTest extends AbstractElasticsearchTestCase
      */
     public function testListAction()
     {
+        // Trigger index creation
         $this->getManager();
 
         $client = self::createClient();

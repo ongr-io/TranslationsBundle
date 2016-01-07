@@ -12,7 +12,6 @@
 namespace ONGR\TranslationsBundle\Document;
 
 use ONGR\ElasticsearchBundle\Annotation as ES;
-use ONGR\ElasticsearchBundle\Document\DocumentTrait;
 
 /**
  * Holds translations history.
@@ -21,7 +20,12 @@ use ONGR\ElasticsearchBundle\Document\DocumentTrait;
  */
 class History
 {
-    use DocumentTrait;
+    /**
+     * @var string
+     *
+     * @ES\Id()
+     */
+    private $id;
 
     /**
      * @var string
@@ -64,6 +68,30 @@ class History
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+    }
+
+    /**
+     * Sets document ID.
+     *
+     * @param string $id
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * Returns document ID.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**

@@ -168,8 +168,6 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
      */
     public function testActionStatusCode($method, $url, $statusCode, $content = '')
     {
-        $this->getManager();
-
         $client = self::createClient();
         $client->request($method, $url, [], [], [], $content);
         $this->assertEquals($statusCode, $client->getResponse()->getStatusCode());
@@ -180,8 +178,6 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
      */
     public function testEditTagAction()
     {
-        $this->getManager();
-
         $client = self::createClient();
         $id = sha1('foofoo.key');
 
@@ -220,8 +216,6 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
      */
     public function testEditMessageAction()
     {
-        $this->getManager();
-
         $client = self::createClient();
         $id = sha1('foofoo.key');
 
@@ -269,8 +263,6 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
      */
     public function testGetTagsAction()
     {
-        $this->getManager();
-
         $client = self::createClient();
         $id = sha1('foofoo.key');
 
@@ -319,8 +311,6 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
      */
     public function testRemoveAction()
     {
-        $this->getManager();
-
         $client = self::createClient();
         $id = sha1('foofoo.key');
 
@@ -357,8 +347,6 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
      */
     public function testHistoryAction()
     {
-        $this->getManager();
-
         $client = self::createClient();
 
         $requestContent = json_encode(
@@ -380,7 +368,7 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
 
         $this->assertTrue($client->getResponse()->isOk(), 'Controller response should be 200.');
 
-        $manager = $this->getManager('default', false);
+        $manager = $this->getManager();
         $repository = $manager->getRepository('ONGRTranslationsBundle:History');
         $boolFilter = new BoolQuery();
         $boolFilter->add(new TermFilter('key', 'foo'));
@@ -402,8 +390,6 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
      */
     public function testAddAction()
     {
-        $this->getManager();
-
         $client = self::createClient();
         $id = sha1('foofoo.key');
 
@@ -445,8 +431,6 @@ class ApiControllerTest extends AbstractElasticsearchTestCase
      */
     public function testExportAction()
     {
-        $this->getManager();
-
         $client = self::createClient();
         $currentDir = getcwd();
         $webDir = $currentDir . DIRECTORY_SEPARATOR . 'web';

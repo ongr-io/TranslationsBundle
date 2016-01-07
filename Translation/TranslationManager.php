@@ -150,17 +150,8 @@ class TranslationManager
         $object = new $objectClass();
         $this->setObjectProperties($object, $options['properties']);
 
+        $objects[] = $object;
         $this->updateTimestamp($object);
-
-        if ($objects instanceof ObjectIterator) {
-            // TODO: refactor after ESB gives easy way to append object!
-            $objects = iterator_to_array($objects);
-            $objects[] = $object;
-        } else {
-            $objects = [$object];
-        }
-
-        $accessor->setValue($document, $options['name'], $objects);
         $this->updateTimestamp($document);
     }
 
@@ -174,8 +165,6 @@ class TranslationManager
     {
         $accessor = $this->getAccessor();
         $objects = $accessor->getValue($document, $options['name']);
-        // TODO: refactor after ESB gives easy way to access object!
-        $objects = iterator_to_array($objects);
 
         $key = $this->findObject($objects, $options['findBy']);
 
@@ -195,9 +184,6 @@ class TranslationManager
     {
         $accessor = $this->getAccessor();
         $objects = $accessor->getValue($document, $options['name']);
-
-        // TODO: refactor after ESB gives easy way to access object!
-        $objects = iterator_to_array($objects);
 
         if ($objects === null) {
             $this->addObject($document, $options);

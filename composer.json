@@ -24,6 +24,7 @@
         "satooshi/php-coveralls": "~0.7"
     },
     "autoload": {
-        "psr-4": { "ONGR\\TranslationsBundle\\": "" }
+        "psr-4": { "ONGR\\TranslationsBundle\\": "" },
+        "exclude-from-classmap": ["/Tests/", "/Test/"]
     }
 }

@@ -31,7 +31,6 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
         parent::setUp();
 
         $this->manager = $this->getContainer()->get('ongr_translations.translation_manager');
-        $this->getManager();
     }
 
     /**
@@ -115,7 +114,7 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
         $request = new Request([], [], [], [], [], [], json_encode($body));
         $this->manager->add($request);
 
-        $translation = $this->getManager('default', false)->find('ONGRTranslationsBundle:Translation', 'foo');
+        $translation = $this->getManager()->find('ONGRTranslationsBundle:Translation', 'foo');
         $this->assertNotNull($translation);
 
         $this->assertCount(3, $translation->getTags());
@@ -135,7 +134,7 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
         $request = new Request([], [], [], [], [], [], json_encode($body));
         $this->manager->edit($request);
 
-        $translation = $this->getManager('default', false)->find('ONGRTranslationsBundle:Translation', 'foo');
+        $translation = $this->getManager()->find('ONGRTranslationsBundle:Translation', 'foo');
         $this->assertNotNull($translation);
 
         $tags = [];
@@ -160,7 +159,7 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
         $request = new Request([], [], [], [], [], [], json_encode($body));
         $this->manager->delete($request);
 
-        $translation = $this->getManager('default', false)->find('ONGRTranslationsBundle:Translation', 'foo');
+        $translation = $this->getManager()->find('ONGRTranslationsBundle:Translation', 'foo');
         $this->assertNotNull($translation);
 
         $tags = [];
