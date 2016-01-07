@@ -43,6 +43,9 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
 
         $this->command = $app->find('ongr:translations:import');
         $this->commandTester = new CommandTester($this->command);
+
+        // Trigger index creation
+        $this->getManager();
     }
 
     /**
@@ -50,8 +53,6 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
      */
     public function testImportAllCommand()
     {
-        $this->getManager();
-
         $this->commandTester->execute(
             [
                 'command' => $this->command->getName(),
@@ -103,8 +104,6 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
      */
     public function testDomainsImport()
     {
-        $this->getManager();
-
         $this->commandTester->execute(
             [
                 'command' => $this->command->getName(),
@@ -124,8 +123,6 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
      */
     public function testConfigOnlyOptionImport()
     {
-        $this->getManager();
-
         $this->commandTester->execute(
             [
                 'command' => $this->command->getName(),

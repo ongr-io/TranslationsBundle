@@ -70,8 +70,6 @@ class Export
     public function export($domains = [])
     {
         foreach ($this->readStorage($domains) as $file => $translations) {
-            // TODO: refactor after ESB gives easy way to access object!
-            $translations = $translations instanceof \Traversable ? iterator_to_array($translations) : $translations;
             if (!file_exists($file)) {
                 $this->getFilesystem()->touch($file);
             }
@@ -123,8 +121,6 @@ class Export
         /** @var Translation $translation */
         foreach ($translations as $translation) {
             $messages = $translation->getMessages();
-            // TODO: refactor after ESB gives easy way to access object!
-            $messages = $messages instanceof \Traversable ? iterator_to_array($messages) : $messages;
             $wasDirty = false;
 
             foreach ($messages as $key => $message) {

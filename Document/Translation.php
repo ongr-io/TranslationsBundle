@@ -12,6 +12,7 @@
 namespace ONGR\TranslationsBundle\Document;
 
 use ONGR\ElasticsearchBundle\Annotation as ES;
+use ONGR\ElasticsearchBundle\Collection;
 
 /**
  * Holds translations for certain domain.
@@ -23,7 +24,7 @@ class Translation implements \JsonSerializable
     /**
      * @var string
      *
-     * @ES\MetaField(name="_id")
+     * @ES\Id()
      */
     private $id;
 
@@ -88,6 +89,8 @@ class Translation implements \JsonSerializable
      */
     public function __construct()
     {
+        $this->tags = new Collection();
+        $this->messages = new Collection();
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
     }
@@ -139,9 +142,9 @@ class Translation implements \JsonSerializable
     /**
      * Sets tags.
      *
-     * @param Tag[] $tags
+     * @param Tag[]|Collection $tags
      */
-    public function setTags($tags)
+    public function setTags(Collection $tags = null)
     {
         $this->tags = $tags;
     }
@@ -199,9 +202,9 @@ class Translation implements \JsonSerializable
     }
 
     /**
-     * @param Message[] $messages
+     * @param Message[]|Collection $messages
      */
-    public function setMessages($messages)
+    public function setMessages(Collection $messages = null)
     {
         $this->messages = $messages;
     }
