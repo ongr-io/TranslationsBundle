@@ -91,9 +91,10 @@ class ImportCommand extends ContainerAwareCommand
             $import->importBundlesTranslationFiles($import->getConfigBundles());
         } else {
             if ($bundleName) {
-                $this->validateBundleNamespace($bundleName);
+                $this->validateBundle($bundleName, true);
                 $this->output->writeln("<info>*** Importing {$bundleName} translation files ***</info>");
-                $import->importBundlesTranslationFiles([$bundleName]);
+                $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
+                $import->importBundlesTranslationFiles([$bundle], true);
             } else {
                 $this->output->writeln('<info>*** Importing application translation files ***</info>');
                 $import->importAppTranslationFiles();
@@ -111,14 +112,27 @@ class ImportCommand extends ContainerAwareCommand
     }
 
     /**
-     * Check if provided bundles namespace is correct.
+     * Check if provided bundles is correct.
      *
      * @param string $bundleName
+     * @param bool   $isShortName
      *
      * @throws InvalidArgumentException
      */
-    private function validateBundleNamespace($bundleName)
+    private function validateBundle($bundleName, $isShortName = false)
     {
+        if ($isShortName) {
+            $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
+
+            if (!$bundle) {
+                throw new InvalidArgumentException(
+                    "Invalid bundle '{$bundleName}'"
+                );
+            }
+
+            return 1;
+        }
+
         if (!class_exists($bundleName)) {
             throw new InvalidArgumentException(
                 "Invalid bundle namespace '{$bundleName}'"

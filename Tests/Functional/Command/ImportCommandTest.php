@@ -73,7 +73,7 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
         $this->commandTester->execute(
             [
                 'command' => $this->command->getName(),
-                'bundle' => 'ONGR\TranslationsBundle\Tests\app\fixture\Acme\TestBundle\AcmeTestBundle',
+                'bundle' => 'AcmeTestBundle',
             ]
         );
 
