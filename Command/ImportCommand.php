@@ -11,7 +11,6 @@
 
 namespace ONGR\TranslationsBundle\Command;
 
-use InvalidArgumentException;
 use ONGR\TranslationsBundle\Service\Import;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -91,9 +90,9 @@ class ImportCommand extends ContainerAwareCommand
             $import->importBundlesTranslationFiles($import->getConfigBundles());
         } else {
             if ($bundleName) {
-                $this->validateBundleNamespace($bundleName);
                 $this->output->writeln("<info>*** Importing {$bundleName} translation files ***</info>");
-                $import->importBundlesTranslationFiles([$bundleName]);
+                $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
+                $import->importBundlesTranslationFiles([$bundle], true);
             } else {
                 $this->output->writeln('<info>*** Importing application translation files ***</info>');
                 $import->importAppTranslationFiles();
@@ -108,21 +107,5 @@ class ImportCommand extends ContainerAwareCommand
             }
         }
         $import->writeToStorage();
-    }
-
-    /**
-     * Check if provided bundles namespace is correct.
-     *
-     * @param string $bundleName
-     *
-     * @throws InvalidArgumentException
-     */
-    private function validateBundleNamespace($bundleName)
-    {
-        if (!class_exists($bundleName)) {
-            throw new InvalidArgumentException(
-                "Invalid bundle namespace '{$bundleName}'"
-            );
-        }
     }
 }

@@ -142,12 +142,14 @@ class Import
      * Imports translation files form all bundles.
      *
      * @param array $bundles
+     * @param bool  $isBundle
      */
-    public function importBundlesTranslationFiles($bundles)
+    public function importBundlesTranslationFiles($bundles, $isBundle = false)
     {
         foreach ($bundles as $bundle) {
-            $reflection = new \ReflectionClass($bundle);
-            $dir = dirname($reflection->getFilename());
+            $dir = $isBundle?
+                dir($bundle->getPath())->path :
+                dirname((new \ReflectionClass($bundle))->getFilename());
 
             $this->importBundleTranslationFiles($dir);
         }
