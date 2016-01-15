@@ -118,25 +118,25 @@ class ImportCommand extends ContainerAwareCommand
      * @param bool   $isShortName
      *
      * @throws InvalidArgumentException
+     * @return bool
      */
     private function validateBundle($bundleName, $isShortName = false)
     {
         if ($isShortName) {
             $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
-
             if (!$bundle) {
                 throw new InvalidArgumentException(
                     "Invalid bundle '{$bundleName}'"
                 );
             }
-
-            return 1;
+        } else {
+            if (!class_exists($bundleName)) {
+                throw new InvalidArgumentException(
+                    "Invalid bundle namespace '{$bundleName}'"
+                );
+            }
         }
 
-        if (!class_exists($bundleName)) {
-            throw new InvalidArgumentException(
-                "Invalid bundle namespace '{$bundleName}'"
-            );
-        }
+        return true;
     }
 }
