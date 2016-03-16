@@ -12,7 +12,7 @@
 namespace ONGR\TranslationsBundle\Document;
 
 use ONGR\ElasticsearchBundle\Annotation as ES;
-use ONGR\ElasticsearchBundle\Collection;
+use ONGR\ElasticsearchBundle\Collection\Collection;
 
 /**
  * Holds translations for certain domain.

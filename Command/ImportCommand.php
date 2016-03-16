@@ -91,7 +91,7 @@ class ImportCommand extends ContainerAwareCommand
         } else {
             if ($bundleName) {
                 $this->output->writeln("<info>*** Importing {$bundleName} translation files ***</info>");
-                $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
+                $bundle = $this->getContainer()->get('kernel')->getBundle($bundleName);
                 $import->importBundlesTranslationFiles([$bundle], true);
             } else {
                 $this->output->writeln('<info>*** Importing application translation files ***</info>');

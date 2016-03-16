@@ -12,7 +12,7 @@
 namespace ONGR\TranslationsBundle\Translation;
 
 use ONGR\ElasticsearchBundle\Result\Result;
-use ONGR\ElasticsearchDSL\Filter\TermFilter;
+use ONGR\ElasticsearchDSL\Query\TermQuery;
 use ONGR\ElasticsearchDSL\Sort\FieldSort;
 use ONGR\ElasticsearchBundle\Service\Repository;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,9 +43,9 @@ class HistoryManager
         $content = $this->parseJsonContent($request);
 
         $search = $this->repository->createSearch();
-        $search->addFilter(new TermFilter('key', $content['key']));
-        $search->addFilter(new TermFilter('domain', $content['domain']));
-        $search->addFilter(new TermFilter('locale', $content['locale']));
+        $search->addFilter(new TermQuery('key', $content['key']));
+        $search->addFilter(new TermQuery('domain', $content['domain']));
+        $search->addFilter(new TermQuery('locale', $content['locale']));
         $search->addSort(new FieldSort('created_at', FieldSort::DESC));
 
         return $this->repository->execute($search, Result::RESULTS_ARRAY);

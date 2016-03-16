@@ -79,7 +79,7 @@ class ListController extends Controller
         $result = $this->repository->execute($search, Result::RESULTS_RAW);
         $list = [];
 
-        foreach ($result['aggregations']['agg_locale_agg']['buckets'] as $value) {
+        foreach ($result['aggregations']['locale_agg']['buckets'] as $value) {
             $list[$value['key']] = true;
         }
         ksort($list);

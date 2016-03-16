@@ -1,11 +1,11 @@
 ongr_translations_list_page:
-    pattern: /list
+    path: /list
     methods: [GET]
     defaults:
         _controller: ongr_translations.controller.list:listAction
 
 ongr_translations_api_edit:
-    pattern: /_api/edit
+    path: /_api/edit
     methods: [POST]
     defaults:
         _controller: ONGRTranslationsBundle:Api:edit
@@ -13,7 +13,7 @@ ongr_translations_api_edit:
         expose: true
             
 ongr_translations_api_delete:
-    pattern: /_api/delete
+    path: /_api/delete
     methods: [POST]
     defaults:
         _controller: ONGRTranslationsBundle:Api:delete
@@ -21,7 +21,7 @@ ongr_translations_api_delete:
         expose: true
 
 ongr_translations_api_add:
-    pattern: /_api/add
+    path: /_api/add
     methods: [POST]
     defaults:
         _controller: ONGRTranslationsBundle:Api:add
@@ -29,7 +29,7 @@ ongr_translations_api_add:
         expose: true
 
 ongr_translations_api_get:
-    pattern: /_api/get
+    path: /_api/get
     methods: [POST]
     defaults:
         _controller: ONGRTranslationsBundle:Api:get
@@ -37,7 +37,7 @@ ongr_translations_api_get:
         expose: true
 
 ongr_translations_api_check:
-    pattern: /_api/check
+    path: /_api/check
     methods: [POST]
     defaults:
         _controller: ONGRTranslationsBundle:Api:check
@@ -45,7 +45,7 @@ ongr_translations_api_check:
         expose: true
 
 ongr_translations_api_export:
-    pattern: /_api/export
+    path: /_api/export
     methods: [POST]
     defaults:
         _controller: ONGRTranslationsBundle:Api:export
@@ -53,7 +53,7 @@ ongr_translations_api_export:
         expose: true
 
 ongr_translations_api_history:
-    pattern: /_api/history
+    path: /_api/history
     methods: [POST]
     defaults:
         _controller: ONGRTranslationsBundle:Api:history
