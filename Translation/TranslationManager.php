@@ -12,7 +12,6 @@
 namespace ONGR\TranslationsBundle\Translation;
 
 use Elasticsearch\Common\Exceptions\Missing404Exception;
-use ONGR\ElasticsearchBundle\Result\ObjectIterator;
 use ONGR\ElasticsearchBundle\Result\Result;
 use ONGR\ElasticsearchDSL\Query\ExistsQuery;
 use ONGR\ElasticsearchDSL\Query\TermsQuery;
