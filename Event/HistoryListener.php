@@ -55,7 +55,7 @@ class HistoryListener
      *
      * @return string
      */
-    private function getLocale($event)
+    private function getLocale(TranslationEditMessageEvent $event)
     {
         $request = $event->getRequest();
         $content = json_decode($request->getContent());
