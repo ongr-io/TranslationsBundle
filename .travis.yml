@@ -13,6 +13,8 @@ env:
   - SYMFONY="~3.0"
 services:
   - elasticsearch
+before_install:
+  - composer self-update
 install:
   - composer require --no-update symfony/symfony:${SYMFONY}
 before_script:
