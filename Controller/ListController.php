@@ -71,19 +71,12 @@ class ListController extends Controller
      */
     private function buildLocalesList($filter)
     {
-        $search = $this->repository->createSearch();
-
-        $localeAgg = new TermsAggregation('locale_agg');
-        $localeAgg->setField('messages.locale');
-        $search->addAggregation($localeAgg);
-        $result = $this->repository->execute($search, Result::RESULTS_RAW);
+        $locales = $this->container->getParameter('ongr_translations.managed_locales');
         $list = [];
-
-        foreach ($result['aggregations']['agg_locale_agg']['buckets'] as $value) {
-            $list[$value['key']] = true;
+        foreach ($locales as $locale) {
+            $list[$locale] = true;
         }
         ksort($list);
-
         $activeLocales = [];
 
         if ($filter->getState()->isActive()) {

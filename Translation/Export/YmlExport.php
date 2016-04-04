@@ -32,7 +32,6 @@ class YmlExport implements ExporterInterface
 
         if (pathinfo($file, PATHINFO_EXTENSION) === 'yml') {
             $ymlDumper = new Dumper();
-            $ymlDumper->setIndentation(0);
             $ymlContent = '';
             $ymlContent .= $ymlDumper->dump($translations, 10);
             $bytes = file_put_contents($file, $ymlContent);
