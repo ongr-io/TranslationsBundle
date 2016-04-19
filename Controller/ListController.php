@@ -12,7 +12,6 @@
 namespace ONGR\TranslationsBundle\Controller;
 
 use ONGR\ElasticsearchBundle\Result\Result;
-use ONGR\ElasticsearchDSL\Aggregation\TermsAggregation;
 use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\FilterManagerBundle\Filter\ViewData;
 use ONGR\FilterManagerBundle\Search\SearchResponse;
@@ -51,7 +50,6 @@ class ListController extends Controller
     {
         /** @var SearchResponse $fmr */
         $fmr = $this->get('ongr_translations.filter_manager')->handleRequest($request);
-
         return $this->render(
             'ONGRTranslationsBundle:List:list.html.twig',
             [
@@ -71,10 +69,10 @@ class ListController extends Controller
      */
     private function buildLocalesList($filter)
     {
-        $locales = $this->container->getParameter('ongr_translations.managed_locales');
         $list = [];
-        foreach ($locales as $locale) {
-            $list[$locale] = true;
+
+        foreach ($this->getParameter('ongr_translations.managed_locales') as $value) {
+            $list[$value] = true;
         }
         ksort($list);
         $activeLocales = [];
@@ -87,5 +85,33 @@ class ListController extends Controller
         }
 
         return $list;
+    }
+
+    /**
+     * Renders out a page with all the info about a translation
+     *
+     * @param Request $request
+     * @param String  $translation
+     * @param String  $domain
+     *
+     * @return Response
+     */
+    public function translationAction(Request $request, $translation, $domain)
+    {
+        $cache = $this->get('es.cache_engine');
+        $params = [];
+        if ($cache->contains('translations_edit')) {
+            $params = $cache->fetch('translations_edit');
+            $cache->delete('translations_edit');
+        }
+        $fmr = $this->get('ongr_translations.filter_manager')->handleRequest($request);
+        $translation = $this->repository->findOneBy(['key' => $translation, 'domain' => $domain]);
+        $params['translation'] = $translation;
+        $params['locales'] = $this->buildLocalesList($fmr->getFilters()['locale']);
+
+        return $this->render(
+            'ONGRTranslationsBundle:List:translation.html.twig',
+            $params
+        );
     }
 }

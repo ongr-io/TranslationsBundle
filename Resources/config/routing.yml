@@ -4,6 +4,12 @@ ongr_translations_list_page:
     defaults:
         _controller: ongr_translations.controller.list:listAction
 
+ongr_translations_translation_page:
+    path: /translation/{domain}/{translation}
+    methods: [GET]
+    defaults:
+        _controller: ongr_translations.controller.list:translationAction
+
 ongr_translations_api_edit:
     path: /_api/edit
     methods: [POST]
@@ -57,5 +63,21 @@ ongr_translations_api_history:
     methods: [POST]
     defaults:
         _controller: ONGRTranslationsBundle:Api:history
+    options:
+        expose: true
+
+ongr_translations_translation_add_tag:
+    path: /translation/add/tag
+    methods: [POST]
+    defaults:
+        _controller: ongr_translations.controller.translation:addTagAction
+    options:
+        expose: true
+
+ongr_translations_translation_messages_edit:
+    path: /translation/messages/edit
+    methods: [POST]
+    defaults:
+        _controller: ongr_translations.controller.translation:editAction
     options:
         expose: true

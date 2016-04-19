@@ -1,0 +1,108 @@
+{% extends 'ONGRTranslationsBundle::layout1.html.twig' %}
+
+{% block body_attr %}ng-app="ongr.translations" ng-controller="list"{% endblock %}
+
+{% block content %}
+    <div ng-keydown="keyPress($event)" tabindex="0" class="container-fluid">
+        {% verbatim %}
+            <div class="row" ng-show="barVisible">
+                <div class="col-lg-12">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Key: <strong>{{ barTranslation.key }}</strong>
+                            <button class="btn btn-danger btn-xs pull-right" ng-click="closeBar()">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-3 col-lg-3">
+                                    {% endverbatim %}
+                                        <p><strong>{% trans from 'ONGRTranslations' %}label.tag{% endtrans %}:</strong></p>
+                                    {% verbatim %}
+                                    <tags-input on-tag-added="tag.add(barTranslation.id, $tag)" on-tag-removed="tag.remove(barTranslation.id, $tag)" min-length="2" ng-model="barTranslation.tags"></tags-input>
+                                </div>
+                                <div class="col-xs-6 col-md-3 col-lg-3">
+                                    {% endverbatim %}
+                                        <p><strong>{% trans from 'ONGRTranslations' %}label.timestamp{% endtrans %}</strong></p>
+                                    {% verbatim %}
+                                    <ul class="list-unstyled">
+                                        <li>
+                                            {% endverbatim %}<strong>{% trans from 'ONGRTranslations' %}label.created_at{% endtrans %}:</strong>{% verbatim %} {{ barTranslation.createdAt }}
+                                        </li>
+                                        <li>
+                                            {% endverbatim %}<strong>{% trans from 'ONGRTranslations' %}label.updated_at{% endtrans %}:</strong>{% verbatim %} {{ barTranslation.updatedAt }}
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-xs-6 col-md-3 col-lg-3">
+                                    {% endverbatim %}
+                                        <p><strong>{% trans from 'ONGRTranslations' %}label.status{% endtrans %}</strong></p>
+                                    {% verbatim %}
+                                    <ul class="list-inline">
+                                        <li ng-cloak ng-repeat="(locale, enabled) in locales" ng-show="barTranslation.messages[locale]">
+                                            <strong>{{ locale }}:</strong>
+                                            <span class="label" ng-class="getLabelClass(barTranslation.messages[locale].status)">{{ barTranslation.messages[locale].status }}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endverbatim %}
+        
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table table-hover translations-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans from 'ONGRTranslations' %}label.domain{% endtrans %}</th>
+                            <th>{% trans from 'ONGRTranslations' %}label.key{% endtrans %}</th>
+                            {% verbatim %}
+                                <th ng-cloak ng-repeat="(locale, enabled) in locales" ng-show="locales[locale]">
+                                    {{ locale }}
+                                </th>
+                            {% endverbatim %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% verbatim %}
+                        <tr class="pointer" ng-cloak ng-class="{'highlight': isCurrent($index)}" ng-repeat="trans in translations" ng-click="selectCurrent($index, $event)">
+                            <td width="10%">{{ trans.domain }}</td>
+                            <td width="20%">{{ trans.key }}</td>
+                            <td width="{{ transColWidth }}" ng-repeat="(locale, enabled) in locales" ng-show="locales[locale]">
+                                <div inline translation="trans" locale="{{ locale }}"></div>
+                            </td>
+                        </tr>
+                    {% endverbatim %}
+                    </tbody>
+                </table>
+                {% if filters_manager.filters.pager is defined %}
+                    <div class="text-center">{{ ongr_paginate(filters_manager.filters.pager.pager, 'ongr_translations_list_page', filters_manager.filters.pager.getUrlParameters()) }}</div>
+                    <div class="clearfix"></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {#{{ dump(filters_manager) }}#}
+{% endblock %}
+
+{% block footer_javascript %}
+    <script type="text/javascript">
+        var translations = {{ data | json_encode | raw }};
+        var locales = {{ locales | json_encode | raw }};
+    </script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+
+    <script src="{{ asset('bundles/ongrtranslations/js/controller/listController.js') }}"></script>
+    <script src="{{ asset('bundles/ongrtranslations/js/controller/exportController.js') }}"></script>
+    <script src="{{ asset('bundles/ongrtranslations/js/controller/historyController.js') }}"></script>
+    <script src="{{ asset('bundles/ongrtranslations/js/directive/InlineDirective.js') }}"></script>
+    <script src="{{ asset('bundles/ongrtranslations/js/service/TagService.js') }}"></script>
+    <script src="{{ asset('bundles/ongrtranslations/js/utils/AssetService.js') }}"></script>
+    <script src="{{ asset('bundles/ongrtranslations/js/app-translations.js') }}"></script>
+    {{ parent() }}
+{% endblock %}

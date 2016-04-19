@@ -36,3 +36,6 @@ services:
 
   ongr_translations.loaders_container:
     class: ONGR\TranslationsBundle\Service\LoadersContainer
+
+  ongr_translations.request_handler:
+    class: ONGR\TranslationsBundle\Service\RequestHandler
