@@ -15,6 +15,36 @@ $(document).ready(function(){
         var key = $(this).attr('key');
         messageEdit(event, $(this), key, message, locale);
     });
+
+    $('.remove-button').on('click', function(event){
+        event.preventDefault();
+        var $li = $(this).parent();
+        var $form = $('#translationAddTagForm');
+        var tagName = $(this).siblings('span').text();
+        var requestData = {
+            id : $form.find('#translationId').val(),
+            name : $form.find('#translationActionName').val(),
+            properties : {name : tagName},
+            findBy : {name : tagName}
+        };
+        requestData = JSON.stringify(requestData);
+        $.ajax({
+            url : $(this).attr('url'),
+            type : 'POST',
+            data : requestData,
+            success : function() {
+                $li.remove();
+                var $successElement = $('.alert-success');
+                $successElement.removeClass('hidden');
+                $successElement.text('Tag successfully removed');
+            },
+            error : function() {
+                var $successElement = $('.alert-danger');
+                $successElement.removeClass('hidden');
+                $successElement.text('Could not remove the Tag');
+            }
+        });
+    });
 });
 
 function messageUpdate(el, message, locale)
