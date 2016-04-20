@@ -72,10 +72,10 @@
         <div class="row">
             <div class="col-sm-10 translation-messages">
                 <p class="alert alert-success no-margin-bottom
-                    {% if success is not defined %}hidden{% endif %}">{% if success is defined %}{{ success }} {% endif %}</p>
+                    {% if success is not defined or success == false %}hidden{% endif %}">{% if success is defined %}{{ success }} {% endif %}</p>
                 <p class="alert alert-danger no-margin-bottom
-                    {% if errors is not defined %}hidden{% endif %}">
-                    <strong>Error</strong>. <span class="error-message">{% if errors is defined %}{{ errors }} {% endif %}</span></p>
+                    {% if error is not defined %}hidden{% endif %}">
+                    <strong>Error</strong>. <span class="error-message">{% if error is defined %}{{ error }} {% endif %}</span></p>
             </div>
         </div>
     </div>
