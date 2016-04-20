@@ -10,6 +10,12 @@ ongr_translations_translation_page:
     defaults:
         _controller: ongr_translations.controller.list:translationAction
 
+ongr_translations_export_page:
+    path: /export
+    methods: [GET]
+    defaults:
+        _controller: ongr_translations.controller.list:exportAction
+
 ongr_translations_api_edit:
     path: /_api/edit
     methods: [POST]
@@ -79,5 +85,13 @@ ongr_translations_translation_messages_edit:
     methods: [POST]
     defaults:
         _controller: ongr_translations.controller.translation:editAction
+    options:
+        expose: true
+
+ongr_translations_export_submit:
+    path: /export/submit
+    methods: [POST]
+    defaults:
+        _controller: ongr_translations.controller.translation:exportAction
     options:
         expose: true

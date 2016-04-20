@@ -114,4 +114,34 @@ class ListController extends Controller
             $params
         );
     }
+
+    /**
+     * Renders out a page for exporting translations
+     *
+     * @return Response
+     */
+    public function exportAction()
+    {
+        $cache = $this->get('es.cache_engine');
+        $params = [];
+        if ($cache->contains('translations_edit')) {
+            $params = $cache->fetch('translations_edit');
+            $cache->delete('translations_edit');
+        }
+        $request = [
+            'name' => 'messages',
+            'findBy' => [
+                'status' => 'dirty'
+            ]
+        ];
+        $request = json_encode($request);
+        $request = new Request([], [], [], [], [], [], $request);
+        $translations = $this->get('ongr_translations.translation_manager')
+            ->get($request);
+        $params['translations'] = $translations;
+        return $this->render(
+            'ONGRTranslationsBundle:List:export.html.twig',
+            $params
+        );
+    }
 }

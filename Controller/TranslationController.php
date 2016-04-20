@@ -17,6 +17,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
 
 /**
  * Controller used for working with individual translation
@@ -107,6 +109,32 @@ class TranslationController extends Controller
                     'domain' => $translation->getDomain(),
                 ]
             )
+        );
+    }
+
+    /**
+     * Exports the messages with 'dirty' status
+     */
+    public function exportAction()
+    {
+        $response = [];
+        $cache = $this->get('es.cache_engine');
+        $cwd = getcwd();
+        if (substr($cwd, -3) === 'web') {
+            chdir($cwd . DIRECTORY_SEPARATOR . '..');
+        }
+        try {
+            $this->get('ongr_translations.command.export')
+                ->run(new ArrayInput([]), new NullOutput());
+        } catch (\Exception $e) {
+            $response['error'] = $e->getMessage();
+        }
+        !isset($response['error']) ?
+            $response['success'] = 'Messages exported successfully' :
+            $response['success'] = false;
+        $cache->save('translations_edit', $response);
+        return new RedirectResponse(
+            $this->generateUrl('ongr_translations_export_page')
         );
     }
 }
