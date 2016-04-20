@@ -11,6 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Service;
 
+use Elasticsearch\Common\Exceptions\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 use ONGR\TranslationsBundle\Document\Translation;
 
@@ -61,6 +62,12 @@ class RequestHandler
         $content['findBy'] = $request->request->get('findBy');
         if ($request->request->has('locales')) {
             return $this->turnToArray($request, $content);
+        }
+        if (
+            $content['name'] == 'tags' &&
+            $this->sameTagExists($content['properties']['name'])
+        ) {
+            throw new \InvalidArgumentException('Tag already set');
         }
         $content = json_encode($content);
         return new Request([], [], [], [], [], [], $content);
@@ -120,5 +127,25 @@ class RequestHandler
             }
         }
         return $return;
+    }
+
+    /**
+     * Checks if the same tag exists
+     *
+     *  @param string $name
+     *
+     * @return bool
+     */
+    private function sameTagExists($name)
+    {
+        if (!isset($this->translation)) {
+            throw new \InvalidArgumentException('translation is not set in RequestHandler.php');
+        }
+        foreach ($this->translation->getTags() as $tag) {
+            if ($tag->getName() == $name) {
+                return true;
+            }
+        }
+        return false;
     }
 }
