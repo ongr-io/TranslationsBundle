@@ -124,14 +124,9 @@ function messageHistory(key, locale, domain)
         success: function (data) {
             var content = '<tr><td>Message</td><td>Created at</td></tr>';
             for (var i in data) {
-                var date = new Date(data[i].created_at);
-                var dateOutput = date.getFullYear()+'-'+
-                    pad(date.getMonth())+'-'+
-                    pad(date.getDay())+'  '+
-                    date.getHours()+':'+
-                    date.getMinutes()+':'+
-                    date.getSeconds();
-                content = content + '<tr><td>' + data[i].message + '</td><td>'+dateOutput + '</td></tr>';
+                var date = data[i].created_at.substring(0, data[i].created_at.length-5);
+                date = date.replace('T', ' ');
+                content = content + '<tr><td>' + data[i].message + '</td><td>'+date + '</td></tr>';
             }
             $('#history-modal-content').html(content);
             $('#historyModal').modal();
@@ -140,8 +135,4 @@ function messageHistory(key, locale, domain)
 
         }
     });
-}
-
-function pad(n) {
-    return n<10 ? '0'+n : n
 }
