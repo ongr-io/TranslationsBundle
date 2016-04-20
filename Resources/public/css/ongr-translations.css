@@ -21,14 +21,39 @@
     background-color: rgb(245, 245, 245);
 }
 
-.pointer {
-    cursor: pointer;
-}
-
 .danger-font {
     color: #d9534f;
 }
 
 .danger-font:hover {
     color: rgb(201, 48, 44);
+}
+
+.tag-list {
+    padding: 0px;
+}
+
+.tag-item {
+    font-size: 12px;
+    margin: 2px;
+    display: inline-block;
+}
+
+.pointer a {
+    cursor: pointer;
+}
+
+.tag-item a {
+    font-size: 18px;
+    cursor: pointer;
+    color: white;
+}
+
+.tag-item a:hover{
+    color: #e3e3e3;
+    text-decoration: none;
+}
+
+.translation-messages {
+    margin-top: 10px;
 }

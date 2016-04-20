@@ -139,6 +139,9 @@ class TranslationManager
      */
     private function addObject($document, $options)
     {
+        $accessor = $this->getAccessor();
+        $objects = $accessor->getValue($document, $options['name']);
+
         $meta = $this->repository->getManager()->getMetadataCollector()
             ->getBundleMapping('ONGRTranslationsBundle:Translation');
         $objectClass = reset($meta)['aliases'][$options['name']]['namespace'];
@@ -146,6 +149,7 @@ class TranslationManager
         $object = new $objectClass();
         $this->setObjectProperties($object, $options['properties']);
 
+        $objects[] = $object;
         $this->updateTimestamp($object);
         $this->updateTimestamp($document);
     }

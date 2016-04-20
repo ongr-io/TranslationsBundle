@@ -1,0 +1,44 @@
+{% extends 'ONGRTranslationsBundle::layout.html.twig' %}
+
+{% block content %}
+    <div class="container">
+        <div class="header">
+            <h3 class="modal-title">Pending changes</h3>
+        </div>
+        <div class="body">
+            <form action="{{ path('ongr_translations_export_submit') }}" method="post">
+                <div>
+                    <table class="table">
+                        <tr>
+                            <th>Domain</th>
+                            <th>Key</th>
+                            <th>Locale</th>
+                            <th>Message</th>
+                        </tr>
+
+                        {% for translation in translations %}
+                            {% for message in translation.messages if message.status == 'dirty'%}
+                                <tr>
+                                    <td>{{ translation.domain }}</td>
+                                    <td>{{ translation.key }}</td>
+                                    <td>{{ message.locale }}</td>
+                                    <td>{{ message.message }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </table>
+                </div>
+                <input type="submit" value="Export" class="btn btn-primary" data-size="xs" data-style="expand-right" data-color="blue">
+            </form>
+        </div>
+        <div class="row">
+            <div class="col-sm-10 translation-messages">
+                <p class="alert alert-success no-margin-bottom
+                    {% if success is not defined or success == false %}hidden{% endif %}">{% if success is defined %}{{ success }} {% endif %}</p>
+                <p class="alert alert-danger no-margin-bottom
+                    {% if error is not defined %}hidden{% endif %}">
+                    <strong>Error</strong>. <span class="error-message">{% if error is defined %}{{ error }} {% endif %}</span></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

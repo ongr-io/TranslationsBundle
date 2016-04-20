@@ -45,6 +45,7 @@ class ONGRTranslationsExtension extends Extension
         $this->setFiltersManager($config['repository'], $container);
         $this->setTranslationManager($config['repository'], $container);
         $this->setControllerManager($config['repository'], 'list', $container);
+        $this->setControllerManager($config['repository'], 'translation', $container);
         $this->setHistoryManager($this->editRepositoryName($config['repository']), $container);
         if ($config['history']) {
             $this->setEditMessageEvent($this->editRepositoryName($config['repository']), $container);

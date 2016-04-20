@@ -43,9 +43,9 @@ class HistoryManager
         $content = $this->parseJsonContent($request);
 
         $search = $this->repository->createSearch();
-        $search->addFilter(new TermQuery('key', $content['key']));
-        $search->addFilter(new TermQuery('domain', $content['domain']));
-        $search->addFilter(new TermQuery('locale', $content['locale']));
+        $search->addQuery(new TermQuery('key', $content['key']));
+        $search->addQuery(new TermQuery('domain', $content['domain']));
+        $search->addQuery(new TermQuery('locale', $content['locale']));
         $search->addSort(new FieldSort('created_at', FieldSort::DESC));
 
         return $this->repository->execute($search, Result::RESULTS_ARRAY);

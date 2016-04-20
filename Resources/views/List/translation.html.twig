@@ -1,0 +1,88 @@
+{% extends 'ONGRTranslationsBundle::layout.html.twig' %}
+
+{% block content %}
+    <div class="container">
+        <div class="col-md-6">
+            <h3>Information</h3>
+            <p><strong>Key:</strong> {{ translation.key }}</p>
+            <p><strong>{% trans from 'ONGRTranslations' %}label.timestamp{% endtrans %}</strong></p>
+            <ul class="list-unstyled">
+                <li>
+                    <strong>{% trans from 'ONGRTranslations' %}label.created_at{% endtrans %}:</strong> {{ translation.createdAt|date("Y m d H:i") }}
+                </li>
+                <li>
+                    <strong>{% trans from 'ONGRTranslations' %}label.updated_at{% endtrans %}:</strong> {{ translation.updatedAt|date("Y m d H:i") }}
+                </li>
+            </ul>
+            <p><strong>{% trans from 'ONGRTranslations' %}label.tag{% endtrans %}:</strong></p>
+            <ul class="tag-list">
+                {% for tag in translation.getTags() %}
+                    <li class="tag-item label label-primary">
+                        <span>{{ tag.getName() }}</span>
+                        <a class="remove-button" url="{{ path('ongr_translations_api_delete') }}">×</a>
+                    </li>
+                {% endfor %}
+            </ul>
+            <form id="translationAddTagForm" action="{{ path('ongr_translations_translation_add_tag') }}" method="post">
+                <p><input type="text" name="properties[name]"></p>
+                <input type="text" class="hidden" name="id" id="translationId" value="{{ translation.id }}">
+                <input type="text" class="hidden" name="name" id="translationActionName" value="tags">
+                <input type="submit" class="btn btn-primary" value="Add a tag">
+            </form>
+        </div>
+        <div class="col-md-6">
+            <h3>{% trans from 'ONGRTranslations' %}label.message{% endtrans %}</h3>
+            <form action="{{ path('ongr_translations_translation_messages_edit') }}" method="post">
+                <input type="text" class="hidden" name="id" id="translationId" value="{{ translation.id }}">
+                <input type="text" class="hidden" name="name" id="translationActionName" value="messages">
+                <ul class="list-inline">
+                    {% for locale,active in locales %}
+                        <li class="col-md-12">
+                            <div class="col-sm-2">
+                                <strong>{{ locale }}:</strong>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" class="hidden" name="locales[]" id="translationKey" value="{{ locale }}">
+                                <input type="text" class="hidden" name="findBy[{{ locale }}][locale]" id="translationKey" value="{{ locale }}">
+                                {% if not translation.hasMessage(locale) %}
+                                    <input type="text" name="messages[{{ locale }}]"value="">
+                                    <input class="hidden" type="text" name="statuses[{{ locale }}]"value="dirty">
+                                        <p>{% trans from 'ONGRTranslations' %}label.status{% endtrans %}: </p>
+                                {% endif %}
+                                {% for message in translation.getMessages() %}
+                                    {% if message.locale == locale %}
+                                        <input type="text" name="messages[{{ locale }}]"value="{{ message.message }}">
+                                        <input class="hidden" type="text" name="statuses[{{ locale }}]"value="{{ message.status }}">
+                                        <p>{% trans from 'ONGRTranslations' %}label.status{% endtrans %}: <span
+                                        {% if message.getStatus() == 'fresh' %}
+                                            class="label label-success">
+                                        {% else %}
+                                            class="label label-danger">
+                                        {% endif %}
+                                        {{ message.getStatus() }}</span></p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <input type="submit" class="btn btn-primary" value="Update">
+            </form>
+        </div>
+        <div class="row">
+            <div class="col-sm-10 translation-messages">
+                <p class="alert alert-success no-margin-bottom
+                    {% if success is not defined or success == false %}hidden{% endif %}">{% if success is defined %}{{ success }} {% endif %}</p>
+                <p class="alert alert-danger no-margin-bottom
+                    {% if error is not defined %}hidden{% endif %}">
+                    <strong>Error</strong>. <span class="error-message">{% if error is defined %}{{ error }} {% endif %}</span></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_javascript %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="{{ asset('bundles/ongrtranslations/js/ongr_translations.js') }}"></script>
+{% endblock %}

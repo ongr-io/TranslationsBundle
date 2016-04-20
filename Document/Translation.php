@@ -266,6 +266,21 @@ class Translation implements \JsonSerializable
     }
 
     /**
+     * @param string $locale
+     *
+     * @return bool
+     */
+    public function hasMessage($locale)
+    {
+        foreach ($this->messages as $message) {
+            if ($message->getLocale() == $locale) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @param \DateTime $updatedAt
      */
     public function setUpdatedAt($updatedAt)
