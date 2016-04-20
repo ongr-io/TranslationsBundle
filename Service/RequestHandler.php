@@ -12,12 +12,36 @@
 namespace ONGR\TranslationsBundle\Service;
 
 use Symfony\Component\HttpFoundation\Request;
+use ONGR\TranslationsBundle\Document\Translation;
 
 /**
 * Remakes requests to be compatible with TranslationManager.
 */
 class RequestHandler
 {
+    /**
+     * Translation that is modified by the request
+     *
+     * @var Translation
+     */
+    private $translation;
+
+    /**
+     * @return Translation
+     */
+    public function getTranslation()
+    {
+        return $this->translation;
+    }
+
+    /**
+     * @param Translation $translation
+     */
+    public function setTranslation(Translation $translation)
+    {
+        $this->translation = $translation;
+    }
+
     /**
      * Remakes a request to have json content
      * of a single object. If there is a number of
@@ -55,18 +79,46 @@ class RequestHandler
         $requests = [];
         $locales = $request->request->get('locales');
         $messages = $request->request->get('messages');
-        $statuses = $request->request->get('statuses');
         $findBy = $request->request->get('findBy');
         foreach ($locales as $locale) {
-            if ($messages[$locale] == '') {
-                break;
+            if (
+                $messages[$locale] == '' ||
+                $this->sameMessageExists($locale, $messages[$locale])
+            ) {
+                continue;
             }
             $content['properties']['locale'] = $locale;
             $content['properties']['message'] = $messages[$locale];
-            $content['properties']['status'] = $statuses[$locale];
+            $content['properties']['status'] = 'dirty';
             $content['findBy'] = $findBy[$locale];
             $requests[] = new Request([], [], [], [], [], [], json_encode($content));
         }
         return $requests;
+    }
+
+    /**
+     * Checks if the given message matches the
+     * message set in the given locale of the translation
+     *
+     * @param string $locale
+     * @param string $message
+     *
+     * @return bool
+     */
+    private function sameMessageExists($locale, $message)
+    {
+        if (!isset($this->translation)) {
+            throw new \InvalidArgumentException('translation is not set in RequestHandler.php');
+        }
+        $return = false;
+        foreach ($this->translation->getMessages() as $translationMessage) {
+            if (
+                $translationMessage->getLocale() == $locale &&
+                $translationMessage->getMessage() == $message
+            ) {
+                $return = true;
+            }
+        }
+        return $return;
     }
 }

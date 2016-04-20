@@ -85,8 +85,9 @@ class TranslationController extends Controller
         $translation = $this->repository->find($request->request->get('id'));
         $cache = $this->get('es.cache_engine');
         $requestHandler = $this->get('ongr_translations.request_handler');
-        $requests = $requestHandler->remakeRequest($request);
+        $requestHandler->setTranslation($translation);
         try {
+            $requests = $requestHandler->remakeRequest($request);
             foreach ($requests as $messageRequest) {
                 $this->get('ongr_translations.translation_manager')
                     ->edit($messageRequest);
