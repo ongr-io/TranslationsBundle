@@ -145,6 +145,7 @@ class TranslationManager
 
         $object = new $objectClass();
         $this->setObjectProperties($object, $options['properties']);
+        $document->{'add'.(new \ReflectionClass($objectClass))->getShortName()}($object);
 
         $this->updateTimestamp($object);
         $this->updateTimestamp($document);
