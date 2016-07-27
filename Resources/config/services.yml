@@ -25,12 +25,15 @@ services:
   ongr_translations.export.yaml:
     class: ONGR\TranslationsBundle\Translation\Export\YmlExport
 
+  ongr_translations.export.xliff:
+    class: ONGR\TranslationsBundle\Translation\Export\XlfExport
+
   ongr_translations.export:
     class: ONGR\TranslationsBundle\Service\Export
     arguments:
       - "@ongr_translations.loaders_container"
       - "@ongr_translations.storage"
-      - "@ongr_translations.export.yaml"
+      - "@ongr_translations.export.xliff"
     calls:
       - ["setManagedLocales", ["%ongr_translations.managed_locales%"]]
 

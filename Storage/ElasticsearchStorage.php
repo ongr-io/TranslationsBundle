@@ -53,7 +53,7 @@ class ElasticsearchStorage implements StorageInterface
         }
 
         if (!empty($domains)) {
-            $search->addFilter(new TermsQuery('domain', $domains));
+            $search->addFilter(new TermsQuery('messages.domain', $domains));
         }
 
         return $this->getRepository()->execute($search);
