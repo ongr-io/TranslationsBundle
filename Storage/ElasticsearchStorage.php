@@ -50,11 +50,11 @@ class ElasticsearchStorage implements StorageInterface
             ->addQuery(new MatchAllQuery());
 
         if (!empty($locales)) {
-            $search->addFilter(new TermsFilter('locale', $locales));
+            $search->addFilter(new TermsFilter('messages.locale', $locales));
         }
 
         if (!empty($domains)) {
-            $search->addFilter(new TermsFilter('domain', $domains));
+            $search->addFilter(new TermsFilter('messages.domain', $domains));
         }
 
         return $this->getRepository()->execute($search, Repository::RESULTS_OBJECT);
