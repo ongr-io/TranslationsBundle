@@ -119,6 +119,7 @@ class ONGRTranslationsExtension extends Extension
             [
                 new Reference('ongr_translations.filters_container'),
                 new Reference($repositoryId),
+                new Reference('event_dispatcher'),
             ]
         );
 
