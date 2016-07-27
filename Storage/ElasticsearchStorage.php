@@ -11,9 +11,10 @@
 
 namespace ONGR\TranslationsBundle\Storage;
 
-use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
-use ONGR\ElasticsearchBundle\Service\Repository;
-use ONGR\ElasticsearchDSL\Query\TermsQuery;
+use ONGR\ElasticsearchBundle\DSL\Filter\TermsFilter;
+use ONGR\ElasticsearchBundle\DSL\Query\MatchAllQuery;
+use ONGR\ElasticsearchBundle\ORM\Manager;
+use ONGR\ElasticsearchBundle\ORM\Repository;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 
@@ -49,14 +50,14 @@ class ElasticsearchStorage implements StorageInterface
             ->addQuery(new MatchAllQuery());
 
         if (!empty($locales)) {
-            $search->addFilter(new TermsQuery('messages.locale', $locales));
+            $search->addFilter(new TermsFilter('messages.locale', $locales));
         }
 
         if (!empty($domains)) {
-            $search->addFilter(new TermsQuery('domain', $domains));
+            $search->addFilter(new TermsFilter('messages.domain', $domains));
         }
 
-        return $this->getRepository()->execute($search);
+        return $this->getRepository()->execute($search, Repository::RESULTS_OBJECT);
     }
 
     /**
@@ -89,10 +90,7 @@ class ElasticsearchStorage implements StorageInterface
         foreach ($translations as $path => $domains) {
             foreach ($domains as $domain => $transMeta) {
                 foreach ($transMeta['translations'] as $key => $keyTrans) {
-
-                    /** @var Translation $document */
-                    $document = new Translation();
-
+                    $document = $this->getRepository()->createDocument();
                     $document->setDomain($domain);
                     $document->setKey($key);
                     $document->setPath($path);

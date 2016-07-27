@@ -16,6 +16,7 @@ use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\TranslationsBundle\Storage\StorageInterface;
 use ONGR\TranslationsBundle\Translation\Export\ExporterInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Translation\MessageCatalogue;
 
 /**
  * Class Export.
@@ -75,11 +76,16 @@ class Export
             }
             list($domain, $locale, $extension) = explode('.', $file);
             if ($this->loadersContainer && $this->loadersContainer->has($extension)) {
+                /** @var MessageCatalogue $messageCatalogue */
                 $messageCatalogue = $this->loadersContainer->get($extension)->load($file, $locale, $domain);
                 $translations = array_merge($messageCatalogue->all($domain), $translations);
+                $messageCatalogue->replace($translations, $domain);
+            } else {
+                $messageCatalogue = new MessageCatalogue($locale);
+                $messageCatalogue->add($translations, $domain);
             }
 
-            $this->exporter->export($file, $translations);
+            $this->exporter->export($file, $messageCatalogue, $domain);
         }
 
         if (!empty($this->refresh)) {
