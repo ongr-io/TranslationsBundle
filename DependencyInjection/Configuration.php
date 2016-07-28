@@ -59,6 +59,10 @@ class Configuration implements ConfigurationInterface
                     ->info('History enable/disable. Default is enable.')
                     ->defaultTrue()
                 ->end()
+                ->scalarNode('exporter')
+                    ->info('Exporter service used for exporting translations from ES.')
+                    ->isRequired()
+                ->end()
             ->end()
         ->end();
 
