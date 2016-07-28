@@ -61,7 +61,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('exporter')
                     ->info('Exporter service used for exporting translations from ES.')
-                    ->isRequired()
+                    ->defaultValue('@ongr_translations.export.yaml')
                 ->end()
             ->end()
         ->end();
