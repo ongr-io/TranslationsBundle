@@ -11,6 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Translation\Export;
 
+use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Yaml\Dumper;
 
 /**
@@ -21,19 +22,20 @@ class YmlExport implements ExporterInterface
     /**
      * Export translations in to the given file.
      *
-     * @param string $file
-     * @param array  $translations
+     * @param string           $file
+     * @param MessageCatalogue $translations
+     * @param string           $domain
      *
      * @return bool
      */
-    public function export($file, $translations)
+    public function export($file, MessageCatalogue $translations, $domain)
     {
         $bytes = false;
 
         if (pathinfo($file, PATHINFO_EXTENSION) === 'yml') {
             $ymlDumper = new Dumper();
             $ymlContent = '';
-            $ymlContent .= $ymlDumper->dump($translations, 10);
+            $ymlContent .= $ymlDumper->dump($translations->all($domain), 10);
             $bytes = file_put_contents($file, $ymlContent);
         }
 

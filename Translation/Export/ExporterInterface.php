@@ -11,6 +11,8 @@
 
 namespace ONGR\TranslationsBundle\Translation\Export;
 
+use Symfony\Component\Translation\MessageCatalogue;
+
 /**
  * This interface should be implemented by file exporters.
  */
@@ -19,10 +21,11 @@ interface ExporterInterface
     /**
      * Export translations in to the given file.
      *
-     * @param string $file
-     * @param array  $translations
+     * @param string           $file
+     * @param MessageCatalogue $translations
+     * @param string           $domain
      *
      * @return bool
      */
-    public function export($file, $translations);
+    public function export($file, MessageCatalogue $translations, $domain);
 }

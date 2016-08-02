@@ -39,6 +39,7 @@ class ONGRTranslationsExtension extends Extension
         $container->setParameter('ongr_translations.managed_locales', $config['managed_locales']);
         $container->setParameter('ongr_translations.formats', $config['formats']);
         $container->setParameter('ongr_translations.domains', $config['domains']);
+        $container->setParameter('ongr_translations.exporter', $config['exporter']);
         $this->validateBundles($container, $config['bundles']);
 
         $this->setElasticsearchStorage($config['repository'], $container);
@@ -119,6 +120,7 @@ class ONGRTranslationsExtension extends Extension
             [
                 new Reference('ongr_translations.filters_container'),
                 new Reference($repositoryId),
+                new Reference('event_dispatcher'),
             ]
         );
 

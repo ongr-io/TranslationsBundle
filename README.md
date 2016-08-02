@@ -109,12 +109,14 @@ This bundle requires minimal configuration to get started:
 ongr_translations:
     managed_locales: ["en", "de", "lt"]
     repository: 'es.manager.default.translation'
+    exporter: ONGR\TranslationsBundle\Translation\Export\YmlExport
 ```
 
-In the example above `managed_locales` defines locales we are working with and
+In the example above `managed_locales` defines locales we are working with,
 `repository` defines repository service for `Translation` document. (Your
 repository ID may be different depending on what manager name you configured in
-`ongr_elasticsearch` section.)
+`ongr_elasticsearch` section.) and `exporter` defines which format we want to
+ export (Yaml by default).
 
 Enable Symfony translations component if you don not have it enabled yet:
 
