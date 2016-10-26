@@ -4,6 +4,22 @@ ongr_translations_list_page:
     defaults:
         _controller: ongr_translations.controller.list:listAction
 
+ongr_translations_list_get_locales:
+    path: /list/locales/_all
+    methods: [GET]
+    defaults:
+        _controller: ongr_translations.controller.list:getLocalesAction
+    options:
+        expose: true
+
+ongr_translations_list_get_translations:
+    path: /list/translations/_all
+    methods: [GET]
+    defaults:
+        _controller: ongr_translations.controller.list:getTranslationsAction
+    options:
+        expose: true
+
 ongr_translations_api_edit:
     path: /_api/edit
     methods: [POST]

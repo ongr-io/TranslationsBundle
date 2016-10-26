@@ -1,0 +1,1 @@
+{"version":3,"sources":["style.scss"],"names":[],"mappings":"AAAA,wBACE,YAAa,KACd,qBAGC,gBAAiB,UACjB,OAAQ,QACR,MAAO","file":"style.css","sourcesContent":["#new-translation-button {\n  margin-left: 10px;\n}\n\n.translation-message {\n  text-decoration: underline;\n  cursor: pointer;\n  color: #2e6da4;\n}"]}
