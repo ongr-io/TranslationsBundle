@@ -29,7 +29,8 @@ $(document).ready(function() {
                 "targets": translationColumns,
                 "orderable": false,
                 "render": function ( data, type, full, meta ) {
-                    return getColumnDefinitions(data);
+                    // alert(JSON.stringify(type));
+                    return '<span class="translation-message">'+data+'</span>';
                 }
             },
             {
@@ -55,13 +56,26 @@ $(document).ready(function() {
         return data;
     }
 
-    function getColumnDefinitions(translation) {
-        var message = '<span class="translation-message" onclick="toggleMessage(\''+translation+'\')">'+translation+'</span>';
-
-        return message;
+    function toggleMessage(element, message, action) {
+        if (action == 'input') {
+            element.html('');
+            element.append('<input class="translation-input" value="'+message+'">');
+            element.find('input').focus();
+        } else {
+            element.html('');
+            element.append('<span class="translation-message">'+message+'</span>');
+        }
     }
-} );
 
-function toggleMessage(message) {
-    alert(message);
-}
+    $('#translations tbody').on('click', 'span.translation-message', function() {
+        toggleMessage($(this).parent(), $(this).text(), 'input')
+    });
+
+    $('#translations tbody').on('keyup', 'input.translation-input', function(e) {
+        if (e.keyCode == 13) {
+            toggleMessage($(this).parent(), $(this).val(), 'span');
+        } else if(e.keyCode == 27) {
+            toggleMessage($(this).parent(), $(this).val(), 'span');
+        }
+    });
+} );
