@@ -11,12 +11,15 @@
 
 namespace ONGR\TranslationsBundle\Controller;
 
+use ONGR\ElasticsearchBundle\Result\DocumentIterator;
 use ONGR\ElasticsearchBundle\Result\Result;
 use ONGR\ElasticsearchDSL\Aggregation\TermsAggregation;
 use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\FilterManagerBundle\Filter\ViewData;
 use ONGR\FilterManagerBundle\Search\SearchResponse;
+use ONGR\TranslationsBundle\Document\Translation;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -41,6 +44,40 @@ class ListController extends Controller
     }
 
     /**
+     * Returns a JsonResponse with available locales
+     * @return JsonResponse
+     */
+    public function getLocalesAction()
+    {
+        return new JsonResponse($this->getParameter('ongr_translations.managed_locales'));
+    }
+
+    /**
+     * Returns a JsonResponse with available locales
+     * @return JsonResponse
+     */
+    public function getTranslationsAction()
+    {
+        $documentArray = [];
+        $locales = $this->getParameter('ongr_translations.managed_locales');
+
+        /** @var Translation $doc */
+        foreach ($this->get('ongr_translations.translation_manager')->getAllTranslations() as $doc) {
+            $doc = $doc->jsonSerialize();
+
+            foreach ($locales as $locale) {
+                if (!isset($doc['messages'][$locale])) {
+                    $doc['messages'][$locale]['message'] = '';
+                }
+            }
+
+            $documentArray[] = $doc;
+        }
+
+        return new JsonResponse($documentArray);
+    }
+
+    /**
      * Renders view with filter manager response.
      *
      * @param Request $request Request.
@@ -56,7 +93,7 @@ class ListController extends Controller
             'ONGRTranslationsBundle:List:list.html.twig',
             [
                 'data' => iterator_to_array($fmr->getResult()),
-                'locales' => $this->buildLocalesList($fmr->getFilters()['locale']),
+                'locales' => $this->getParameter('ongr_translations.managed_locales'),//$this->buildLocalesList($fmr->getFilters()['locale']),
                 'filters_manager' => $fmr,
             ]
         );
