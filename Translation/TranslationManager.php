@@ -12,8 +12,10 @@
 namespace ONGR\TranslationsBundle\Translation;
 
 use Elasticsearch\Common\Exceptions\Missing404Exception;
+use ONGR\ElasticsearchBundle\Result\DocumentIterator;
 use ONGR\ElasticsearchBundle\Result\Result;
 use ONGR\ElasticsearchDSL\Query\ExistsQuery;
+use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
 use ONGR\ElasticsearchDSL\Query\TermsQuery;
 use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\TranslationsBundle\Event\Events;
@@ -129,6 +131,18 @@ class TranslationManager
         }
 
         return $this->repository->execute($search, Result::RESULTS_ARRAY);
+    }
+
+    /**
+     * @return DocumentIterator
+     */
+    public function getAllTranslations()
+    {
+        $search = $this->repository->createSearch();
+        $search->addQuery(new MatchAllQuery());
+        $search->setSize(1000);
+
+        return $this->repository->findDocuments($search);
     }
 
     /**
