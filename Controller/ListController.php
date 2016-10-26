@@ -67,7 +67,7 @@ class ListController extends Controller
 
             foreach ($locales as $locale) {
                 if (!isset($doc['messages'][$locale])) {
-                    $doc['messages'][$locale]['message'] = '';
+                    $doc['messages'][$locale]['message'] = '[No message]';
                 }
             }
 
