@@ -18,6 +18,8 @@ use ONGR\ElasticsearchDSL\Query\ExistsQuery;
 use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
 use ONGR\ElasticsearchDSL\Query\TermsQuery;
 use ONGR\ElasticsearchBundle\Service\Repository;
+use ONGR\TranslationsBundle\Document\Message;
+use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\TranslationsBundle\Event\Events;
 use ONGR\TranslationsBundle\Event\TranslationEditMessageEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -84,6 +86,44 @@ class TranslationManager
         }
         $this->editObject($document, $content);
         $this->commitTranslation($document);
+    }
+
+    /**
+     * Edits object from translation.
+     *
+     * @param Request $request Http request object.
+     */
+    public function editMessage(Request $request)
+    {
+        $content = $this->parseJsonContent($request);
+
+        if (!isset($content['locale']) || !isset($content['message'])) {
+            return;
+        }
+
+        $document = $this->getTranslation($content['id']);
+        $message = null;
+
+        foreach ($document->getMessages() as $currentMessage) {
+            if ($currentMessage->getLocale() == $content['locale']) {
+                $message = $currentMessage;
+                break;
+            }
+        }
+
+        if ($message === null) {
+            $message = new Message();
+            $message->setLocale($content['locale']);
+            $document->addMessage($message);
+        }
+
+        $message->setMessage($content['message']);
+        $message->setUpdatedAt(new \DateTime());
+        $message->setStatus('dirty');
+//        $this->dispatcher->dispatch(Events::ADD_HISTORY, new TranslationEditMessageEvent($request, $document));
+        $this->commitTranslation($document);
+
+        return $document;
     }
 
     /**
@@ -274,7 +314,7 @@ class TranslationManager
      *
      * @param string $id
      *
-     * @return object
+     * @return Translation
      *
      * @throws BadRequestHttpException
      */

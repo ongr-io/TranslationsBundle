@@ -73,9 +73,25 @@ $(document).ready(function() {
 
     $('#translations tbody').on('keyup', 'input.translation-input', function(e) {
         if (e.keyCode == 13) {
-            toggleMessage($(this).parent(), $(this).val(), 'span');
+            var data = translationsTable.row( $(this).parents('tr') ).data();
+            var locale = $(translationsTable.column($(this).parents('td')).header()).html();
+            var value = $(this).val();
+            var context = this;
+            $.ajax({
+                url: Routing.generate('ongr_translations_api_edit_message'),
+                data: JSON.stringify({message: value, id: data.id, locale: locale}),
+                method: 'post',
+                async: false,
+                success: function() {
+                    toggleMessage($(context).parent(), value, 'span');
+                }
+            });
         } else if(e.keyCode == 27) {
             toggleMessage($(this).parent(), $(this).val(), 'span');
         }
+    });
+
+    $('#translations tbody').on('blur', 'input.translation-input', function(e) {
+        toggleMessage($(this).parent(), $(this).val(), 'span');
     });
 } );
