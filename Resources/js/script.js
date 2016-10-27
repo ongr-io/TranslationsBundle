@@ -1,6 +1,7 @@
 $(document).ready(function() {
     var locales;
     var translationColumns;
+    var currentMessageValue;
 
     $.ajax({
         url: Routing.generate('ongr_translations_list_get_locales'),
@@ -56,14 +57,15 @@ $(document).ready(function() {
     }
 
     function toggleMessage(element, message, action) {
+        element.html('');
+
         if (action == 'input') {
-            element.html('');
             message = message == '[No message]' ? '' : message;
             element.append('<input class="translation-input" value="'+message+'">');
+            currentMessageValue =message;
             element.find('input').focus();
         } else {
-            element.html('');
-            message = message == '' ? '[No message]' : message;
+            message = message == '' ? '[No message]' : currentMessageValue;
             element.append('<span class="translation-message">'+message+'</span>');
         }
     }
@@ -73,8 +75,9 @@ $(document).ready(function() {
     });
 
     $('#translations tbody').on('keyup', 'input.translation-input', function(e) {
-        if (e.keyCode == 13) {
+        if ([13, 38, 40].indexOf(e.keyCode) != -1) {
             var data = translationsTable.row( $(this).parents('tr') ).data();
+            var column = translationsTable.column( $(this).parents('td') ).index();
             var locale = $(translationsTable.column($(this).parents('td')).header()).html();
             var value = $(this).val();
             var context = this;
@@ -83,7 +86,23 @@ $(document).ready(function() {
                 data: JSON.stringify({message: value, id: data.id, locale: locale}),
                 method: 'post',
                 success: function() {
-                    toggleMessage($(context).parent(), value, 'span');
+                    currentMessageValue = value;
+                    var nextInput;
+                    switch (e.keyCode) {
+                        case 13:
+                            toggleMessage($(context).parent(), value, 'span');
+                            break;
+                        case 38:
+                            nextInput = $(context).parents('tr').prev().find('td')[column];
+                            toggleMessage($(context).parent(), value, 'span');
+                            toggleMessage($(nextInput), $(nextInput).find('span').text(), 'input');
+                            break;
+                        case 40:
+                            nextInput = $(context).parents('tr').next().find('td')[column];
+                            toggleMessage($(context).parent(), value, 'span');
+                            toggleMessage($(nextInput), $(nextInput).find('span').text(), 'input');
+                            break;
+                    }
                 }
             });
         } else if(e.keyCode == 27) {
