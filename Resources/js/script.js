@@ -29,7 +29,6 @@ $(document).ready(function() {
                 "targets": translationColumns,
                 "orderable": false,
                 "render": function ( data, type, full, meta ) {
-                    // alert(JSON.stringify(type));
                     return '<span class="translation-message">'+data+'</span>';
                 }
             },
