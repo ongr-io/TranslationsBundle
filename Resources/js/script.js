@@ -59,10 +59,12 @@ $(document).ready(function() {
     function toggleMessage(element, message, action) {
         if (action == 'input') {
             element.html('');
+            message = message == '[No message]' ? '' : message;
             element.append('<input class="translation-input" value="'+message+'">');
             element.find('input').focus();
         } else {
             element.html('');
+            message = message == '' ? '[No message]' : message;
             element.append('<span class="translation-message">'+message+'</span>');
         }
     }
@@ -81,7 +83,6 @@ $(document).ready(function() {
                 url: Routing.generate('ongr_translations_api_edit_message'),
                 data: JSON.stringify({message: value, id: data.id, locale: locale}),
                 method: 'post',
-                async: false,
                 success: function() {
                     toggleMessage($(context).parent(), value, 'span');
                 }
