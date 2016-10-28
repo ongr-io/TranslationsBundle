@@ -47,9 +47,12 @@ class ListController extends Controller
      * Returns a JsonResponse with available locales
      * @return JsonResponse
      */
-    public function getLocalesAction()
+    public function getInitialDataAction()
     {
-        return new JsonResponse($this->getParameter('ongr_translations.managed_locales'));
+        $out = [];
+        $out['locales'] = $this->getParameter('ongr_translations.managed_locales');
+        $out['tags'] = $this->get('ongr_translations.translation_manager')->getTags();
+        return new JsonResponse($out);
     }
 
     /**

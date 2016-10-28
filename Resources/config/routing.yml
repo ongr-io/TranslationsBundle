@@ -4,11 +4,11 @@ ongr_translations_list_page:
     defaults:
         _controller: ongr_translations.controller.list:listAction
 
-ongr_translations_list_get_locales:
-    path: /list/locales/_all
+ongr_translations_list_get_initial_data:
+    path: /list/get/initial-data/
     methods: [GET]
     defaults:
-        _controller: ongr_translations.controller.list:getLocalesAction
+        _controller: ongr_translations.controller.list:getInitialDataAction
     options:
         expose: true
 

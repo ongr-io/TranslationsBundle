@@ -2,14 +2,16 @@ $(document).ready(function() {
     var locales;
     var translationColumns;
     var currentMessageValue;
+    var tags;
 
     $.ajax({
-        url: Routing.generate('ongr_translations_list_get_locales'),
+        url: Routing.generate('ongr_translations_list_get_initial_data'),
         success: function(data) {
-            locales = data;
+            locales = data.locales;
+            tags = data.tags;
             var columnNumbers = [];
 
-            for (var i = 2; i < (data.length + 2); i++) {
+            for (var i = 2; i < (data.locales.length + 2); i++) {
                 columnNumbers.push(i);
             }
 
@@ -70,6 +72,26 @@ $(document).ready(function() {
         }
     }
 
+    function reloadTags(select) {
+        $('#tags-container .checkbox').html('');
+        tags.forEach(function (element) {
+            if ($.inArray(element, select) >  -1) {
+                appendNewTag(element, true);
+            } else {
+                appendNewTag(element, false);
+            }
+        });
+    }
+
+    function appendNewTag(element, check) {
+        var checked = '';
+        if (check) {
+            checked = 'checked="checked"';
+        }
+        var input = '<label class="tag-choice"><input type="checkbox" '+checked+' name="translation[tags][]" value="'+element+'">'+element+'</label>';
+        $('#tags-container .checkbox').append(input);
+    }
+
     $('#translations tbody').on('click', 'span.translation-message', function() {
         toggleMessage($(this).parent(), $(this).text(), 'input')
     });
@@ -118,22 +140,46 @@ $(document).ready(function() {
 
     $('#translations tbody').on( 'click', 'a.edit', function () {
         var data = translationsTable.row( $(this).parents('tr') ).data();
+        $('#translation-id').val(data.id);
         $('#translation-name-input').val(data.key);
         $('#translation-domain-input').val(data.domain);
         $('#translation-created-at-input').val(data.createdAt);
         $('#translation-updated-at-input').val(data.updatedAt);
         $('#messages-container').html('');
+        reloadTags(data.tags);
         var messages = '';
         $.each(data.messages, function(locale, message){
             var label = message.status == 'fresh' ? 'label-success' : 'label-danger';
             var messageText = message.message == '[No message]' ? '' : message.message;
             messages += '<label class="col-sm-2 control-label" for="translation_'+locale+'">'+locale+'</label>'+
                 '<div class="col-sm-10">'+
-                '<input type="text" name="translation[messages]['+locale+']" value="'+messageText+'" class="form-control"/></div>';
-            messages += '<label class="col-sm-2 control-label">status</label><div class="col-sm-10 translation-form-div"><span class="label '+label+' translation-message-status">'+message.status+'</span></div>';
+                    '<input type="text" name="translation[messages]['+locale+']" value="'+messageText+'" class="form-control"/>' +
+                '</div>';
+            messages += '<label class="col-sm-2 control-label">status</label>' +
+                '<div class="col-sm-10 translation-form-div">' +
+                    '<span class="label '+label+' translation-message-status">'+message.status+'</span>' +
+                '</div>';
         });
         $('#messages-container').append(messages);
 
         $('#translation-form-modal').modal();
     } );
+
+    $('#add-new-tag-show-form').on('click', function () {
+        $(this).hide();
+        $('#add-new-tag-container').show();
+        $('#add-new-tag-input').focus();
+    });
+
+    $('#select-all-tags').on('click', function(){
+        $('#tags-container .checkbox input[type="checkbox"]').prop('checked',true);
+    });
+
+    $('#add-new-tag').on('click', function(){
+        var input = $('#add-new-tag-input');
+        var value = input.val();
+        appendNewTag(value);
+        tags.push(value);
+        input.val('');
+    });
 } );
