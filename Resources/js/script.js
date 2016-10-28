@@ -115,4 +115,25 @@ $(document).ready(function() {
     $('#translations tbody').on('blur', 'input.translation-input', function(e) {
         toggleMessage($(this).parent(), $(this).val(), 'span');
     });
+
+    $('#translations tbody').on( 'click', 'a.edit', function () {
+        var data = translationsTable.row( $(this).parents('tr') ).data();
+        $('#translation-name-input').val(data.key);
+        $('#translation-domain-input').val(data.domain);
+        $('#translation-created-at-input').val(data.createdAt);
+        $('#translation-updated-at-input').val(data.updatedAt);
+        $('#messages-container').html('');
+        var messages = '';
+        $.each(data.messages, function(locale, message){
+            var label = message.status == 'fresh' ? 'label-success' : 'label-danger';
+            var messageText = message.message == '[No message]' ? '' : message.message;
+            messages += '<label class="col-sm-2 control-label" for="translation_'+locale+'">'+locale+'</label>'+
+                '<div class="col-sm-10">'+
+                '<input type="text" name="translation[messages]['+locale+']" value="'+messageText+'" class="form-control"/></div>';
+            messages += '<label class="col-sm-2 control-label">status</label><div class="col-sm-10 translation-form-div"><span class="label '+label+' translation-message-status">'+message.status+'</span></div>';
+        });
+        $('#messages-container').append(messages);
+
+        $('#translation-form-modal').modal();
+    } );
 } );
