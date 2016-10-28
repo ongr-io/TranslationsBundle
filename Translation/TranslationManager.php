@@ -14,6 +14,7 @@ namespace ONGR\TranslationsBundle\Translation;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use ONGR\ElasticsearchBundle\Result\DocumentIterator;
 use ONGR\ElasticsearchBundle\Result\Result;
+use ONGR\ElasticsearchDSL\Aggregation\Bucketing\TermsAggregation;
 use ONGR\ElasticsearchDSL\Query\ExistsQuery;
 use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
 use ONGR\ElasticsearchDSL\Query\TermsQuery;
@@ -183,6 +184,21 @@ class TranslationManager
         $search->setSize(1000);
 
         return $this->repository->findDocuments($search);
+    }
+
+    public function getTags()
+    {
+        $search = $this->repository->createSearch();
+        $search->addAggregation(new TermsAggregation('tags', 'messages.tags'));
+        $result = $this->repository->findDocuments($search);
+        $tagAggregation = $result->getAggregation('tags');
+        $tags = [];
+
+        foreach ($tagAggregation as $tag) {
+            $tags[] = $tag;
+        }
+
+        return $tags;
     }
 
     /**
