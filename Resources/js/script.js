@@ -62,7 +62,7 @@ $(document).ready(function() {
         if (action == 'input') {
             message = message == '[No message]' ? '' : message;
             element.append('<input class="translation-input" value="'+message+'">');
-            currentMessageValue =message;
+            currentMessageValue = message;
             element.find('input').focus();
         } else {
             message = message == '' ? '[No message]' : currentMessageValue;
@@ -81,30 +81,32 @@ $(document).ready(function() {
             var locale = $(translationsTable.column($(this).parents('td')).header()).html();
             var value = $(this).val();
             var context = this;
-            $.ajax({
-                url: Routing.generate('ongr_translations_api_edit_message'),
-                data: JSON.stringify({message: value, id: data.id, locale: locale}),
-                method: 'post',
-                success: function() {
-                    currentMessageValue = value;
-                    var nextInput;
-                    switch (e.keyCode) {
-                        case 13:
-                            toggleMessage($(context).parent(), value, 'span');
-                            break;
-                        case 38:
-                            nextInput = $(context).parents('tr').prev().find('td')[column];
-                            toggleMessage($(context).parent(), value, 'span');
-                            toggleMessage($(nextInput), $(nextInput).find('span').text(), 'input');
-                            break;
-                        case 40:
-                            nextInput = $(context).parents('tr').next().find('td')[column];
-                            toggleMessage($(context).parent(), value, 'span');
-                            toggleMessage($(nextInput), $(nextInput).find('span').text(), 'input');
-                            break;
-                    }
-                }
-            });
+
+            if (currentMessageValue != value) {
+                $.ajax({
+                    url: Routing.generate('ongr_translations_api_edit_message'),
+                    data: JSON.stringify({message: value, id: data.id, locale: locale}),
+                    method: 'post'
+                });
+                currentMessageValue = value;
+            }
+
+            var nextInput;
+            switch (e.keyCode) {
+                case 13:
+                    toggleMessage($(context).parent(), value, 'span');
+                    break;
+                case 38:
+                    nextInput = $(context).parents('tr').prev().find('td')[column];
+                    toggleMessage($(context).parent(), value, 'span');
+                    toggleMessage($(nextInput), $(nextInput).find('span').text(), 'input');
+                    break;
+                case 40:
+                    nextInput = $(context).parents('tr').next().find('td')[column];
+                    toggleMessage($(context).parent(), value, 'span');
+                    toggleMessage($(nextInput), $(nextInput).find('span').text(), 'input');
+                    break;
+            }
         } else if(e.keyCode == 27) {
             toggleMessage($(this).parent(), $(this).val(), 'span');
         }
