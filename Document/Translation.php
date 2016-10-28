@@ -36,9 +36,9 @@ class Translation implements \JsonSerializable
     private $domain;
 
     /**
-     * @var Tag[]
+     * @var array
      *
-     * @ES\Embedded(class="ONGRTranslationsBundle:Tag", multiple=true)
+     * @ES\Property(type="string", options={"index"="not_analyzed"})
      */
     private $tags = [];
 
@@ -89,7 +89,6 @@ class Translation implements \JsonSerializable
      */
     public function __construct()
     {
-        $this->tags = new Collection();
         $this->messages = new Collection();
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
@@ -142,17 +141,21 @@ class Translation implements \JsonSerializable
     /**
      * Sets tags.
      *
-     * @param Tag[]|Collection $tags
+     * @param array|string $tags
      */
-    public function setTags(Collection $tags = null)
+    public function setTags($tags)
     {
+        if (is_string($tags)) {
+            $tags = [$tags];
+        }
+
         $this->tags = $tags;
     }
 
     /**
      * Returns all tags.
      *
-     * @return Tag[]
+     * @return array
      */
     public function getTags()
     {
@@ -283,7 +286,7 @@ class Translation implements \JsonSerializable
             [
                 'id' => $this->getId(),
                 'messages' => $this->getMessagesArray(),
-                'tags' => $this->getTagsArray(),
+                'tags' => $this->getTags(),
                 'createdAt' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
                 'updatedAt' => $this->getUpdatedAt()->format('Y-m-d H:i:s'),
             ]
@@ -302,25 +305,6 @@ class Translation implements \JsonSerializable
         $result = [];
         foreach ($this->getMessages() as $message) {
             $result[$message->getLocale()] = $message;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Returns tags array.
-     *
-     * @return array
-     */
-    private function getTagsArray()
-    {
-        if ($this->tags === null) {
-            return [];
-        }
-
-        $result = [];
-        foreach ($this->tags as $tag) {
-            $result[] = $tag->getName();
         }
 
         return $result;
