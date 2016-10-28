@@ -44,6 +44,18 @@ $(document).ready(function() {
         ]
     } );
 
+    var tagSelect = $('<select multiple name="tags[]"/>').attr(
+        {
+            'id': 'tag-select',
+        }
+    );
+
+    var tagOptions = '';
+    $.each(tags, function(key, tag) {
+        tagOptions += '<option value="'+tag+'">'+tag+'</option>>';
+    });
+    tagSelect.append(tagOptions);
+
     function getColumnData() {
         var data = [
             { data: 'domain' },
@@ -133,6 +145,10 @@ $(document).ready(function() {
             toggleMessage($(this).parent(), $(this).val(), 'span');
         }
     });
+
+    $('#translations_filter').append('<label class="tags-label">Tags: </label>');
+    $('#translations_filter').append(tagSelect.prop('outerHTML'));
+    $('#tag-select').multiselect();
 
     $('#translations tbody').on('blur', 'input.translation-input', function(e) {
         toggleMessage($(this).parent(), $(this).val(), 'span');
