@@ -130,6 +130,7 @@ class TranslationManager
             foreach ($messages as $locale => $messageText) {
                 if (!empty($messageText)) {
                     $message = new Message();
+                    $message->setLocale($locale);
                     $message->setStatus(Message::DIRTY);
                     $message->setMessage($messageText);
                     $documentMessages[] = $message;

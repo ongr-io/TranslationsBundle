@@ -16,13 +16,14 @@ use ONGR\ElasticsearchDSL\Search;
 use ONGR\FilterManagerBundle\Filter\FilterInterface;
 use ONGR\FilterManagerBundle\Filter\FilterState;
 use ONGR\FilterManagerBundle\Filter\Widget\Choice\MultiTermChoice;
+use ONGR\FilterManagerBundle\Filter\Widget\Search\AbstractSingleValue;
 use ONGR\FilterManagerBundle\Search\SearchRequest;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Locale filter for constructing custom locale filter.
  */
-class SizeFilter extends MultiTermChoice implements FilterInterface
+class SizeFilter extends AbstractSingleValue
 {
     /**
      * {@inheritdoc}

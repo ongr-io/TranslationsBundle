@@ -34,7 +34,7 @@ class ApiController extends Controller
      */
     public function editAction(Request $request, $id)
     {
-        $response = [];
+        $response = ['error' => false];
 
         try {
             $this->get('ongr_translations.translation_manager')->edit($id, $request);

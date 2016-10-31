@@ -234,7 +234,6 @@ $(document).ready(function() {
         var id = $('#translation-id').val();
         var data = $.deparam($('#translation-form').serialize());
         data = JSON.stringify(data);
-        alert(data);
         $.ajax({
             url: Routing.generate('ongr_translations_api_edit', {id: id}),
             method: 'post',
@@ -244,7 +243,7 @@ $(document).ready(function() {
             success: function (response) {
                 if (response.error == false) {
                     translationsTable.ajax.reload();
-                    $('#translations-form-modal').modal('hide')
+                    $('#translation-form-modal').modal('hide')
                 } else {
                     $('#translation-form-error-message').html(response.message);
                     $('#translation-form-error').show();
