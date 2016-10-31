@@ -20,19 +20,19 @@ ongr_translations_list_get_translations:
     options:
         expose: true
 
-ongr_translations_api_edit:
-    path: /_api/edit
-    methods: [POST]
-    defaults:
-        _controller: ONGRTranslationsBundle:Api:edit
-    options:
-        expose: true
-
 ongr_translations_api_edit_message:
     path: /_api/edit/message
     methods: [POST]
     defaults:
         _controller: ONGRTranslationsBundle:Api:editMessage
+    options:
+        expose: true
+
+ongr_translations_api_edit:
+    path: /_api/edit/{id}
+    methods: [POST]
+    defaults:
+        _controller: ONGRTranslationsBundle:Api:edit
     options:
         expose: true
             

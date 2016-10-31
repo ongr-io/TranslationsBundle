@@ -108,7 +108,7 @@ $(document).ready(function() {
         if (check) {
             checked = 'checked="checked"';
         }
-        var input = '<label class="tag-choice"><input type="checkbox" '+checked+' name="translation[tags][]" value="'+element+'">'+element+'</label>';
+        var input = '<label class="tag-choice"><input type="checkbox" '+checked+' name="tags[]" value="'+element+'">'+element+'</label>';
         $('#tags-container .checkbox').append(input);
     }
 
@@ -118,7 +118,7 @@ $(document).ready(function() {
         var messageText = message.message == '[No message]' ? '' : message.message;
         result += '<label class="col-sm-2 control-label" for="translation_'+locale+'">'+locale+'</label>'+
             '<div class="col-sm-10">'+
-            '<input type="text" name="translation[messages]['+locale+']" value="'+messageText+'" class="form-control"/>' +
+            '<input type="text" name="messages['+locale+']" value="'+messageText+'" class="form-control"/>' +
             '</div>';
         result += '<label class="col-sm-2 control-label">status</label>' +
             '<div class="col-sm-10 translation-form-div">' +
@@ -227,5 +227,29 @@ $(document).ready(function() {
 
     $('#tag-select').change(function() {
         translationsTable.ajax.reload();
+    });
+
+    $('#translation-form-submit').on('click', function (e) {
+        e.preventDefault();
+        var id = $('#translation-id').val();
+        var data = $.deparam($('#translation-form').serialize());
+        data = JSON.stringify(data);
+        alert(data);
+        $.ajax({
+            url: Routing.generate('ongr_translations_api_edit', {id: id}),
+            method: 'post',
+            data: data,
+            contentType: "application/json; charset=utf-8",
+            dataType   : "json",
+            success: function (response) {
+                if (response.error == false) {
+                    translationsTable.ajax.reload();
+                    $('#translations-form-modal').modal('hide')
+                } else {
+                    $('#translation-form-error-message').html(response.message);
+                    $('#translation-form-error').show();
+                }
+            }
+        });
     });
 } );

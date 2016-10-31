@@ -69,24 +69,75 @@ class TranslationManager
         $content = $this->parseJsonContent($request);
         $document = $this->getTranslation($content['id']);
         $this->addObject($document, $content);
-        $this->commitTranslation($document);
+
+        $this->repository->getManager()->persist($document);
+        $this->repository->getManager()->commit();
     }
 
     /**
      * Edits object from translation.
      *
+     * @param string $id
      * @param Request $request Http request object.
      */
-    public function edit(Request $request)
+    public function edit($id, Request $request)
     {
         $content = $this->parseJsonContent($request);
-        $document = $this->getTranslation($content['id']);
+        $document = $this->getTranslation($id);
 
-        if ($content['name'] == 'messages') {
-            $this->dispatcher->dispatch(Events::ADD_HISTORY, new TranslationEditMessageEvent($request, $document));
+        if (isset($content['messages'])) {
+//            $this->dispatcher->dispatch(Events::ADD_HISTORY, new TranslationEditMessageEvent($request, $document));
+            $this->updateMessages($document, $content['messages']);
+            unset($content['messages']);
         }
-        $this->editObject($document, $content);
+
+        try {
+            foreach ($content as $key => $value) {
+                $document->{'set'.ucfirst($key)}($value);
+            }
+
+            $document->setUpdatedAt(new \DateTime());
+        } catch (\Exception $e) {
+            throw new \LogicException('Illegal variable provided for translation');
+        }
+
         $this->commitTranslation($document);
+    }
+
+    /**
+     * @param Translation $document
+     * @param array $messages
+     */
+    private function updateMessages(Translation $document, array $messages)
+    {
+        $documentMessages = $document->getMessages();
+
+        foreach ($documentMessages as $message) {
+            $locale = $message->getLocale();
+
+            if (isset($messages[$locale])) {
+                if ($messages[$locale] != $message->getMessage() && !empty($messages[$locale])) {
+                    $message->setMessage($messages[$locale]);
+                    $message->setUpdatedAt(new \DateTime());
+                    $message->setStatus(Message::DIRTY);
+                }
+
+                unset($messages[$message->getLocale()]);
+            }
+        }
+
+        if (!empty($messages)) {
+            foreach ($messages as $locale => $messageText) {
+                if (!empty($messageText)) {
+                    $message = new Message();
+                    $message->setStatus(Message::DIRTY);
+                    $message->setMessage($messageText);
+                    $documentMessages[] = $message;
+                }
+            }
+        }
+
+        $document->setMessages($documentMessages);
     }
 
     /**
@@ -318,8 +369,6 @@ class TranslationManager
     }
 
     /**
-     * Commits document into elasticsearch client.
-     *
      * @param object $document
      */
     private function commitTranslation($document)

@@ -28,14 +28,21 @@ class ApiController extends Controller
      * Action for editing translation objects.
      *
      * @param Request $request Http request object.
+     * @param string  $id
      *
      * @return JsonResponse
      */
-    public function editAction(Request $request)
+    public function editAction(Request $request, $id)
     {
-        $this->get('ongr_translations.translation_manager')->edit($request);
+        $response = [];
 
-        return new JsonResponse();
+        try {
+            $this->get('ongr_translations.translation_manager')->edit($id, $request);
+        } catch (\LogicException $e) {
+            $response = ['error' => true, 'message' => $id];
+        }
+
+        return new JsonResponse($response);
     }
 
     /**
