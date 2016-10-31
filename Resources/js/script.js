@@ -1,3 +1,7 @@
+Array.prototype.diff = function(e) {
+    return this.filter(function(i) {return e.indexOf(i) < 0;});
+};
+
 $(document).ready(function() {
     var locales;
     var translationColumns;
@@ -108,6 +112,22 @@ $(document).ready(function() {
         $('#tags-container .checkbox').append(input);
     }
 
+    function addTranslationMessage (locale, message) {
+        var result = '';
+        var label = message.status != null && message.status == 'fresh' ? 'label-success' : 'label-danger';
+        var messageText = message.message == '[No message]' ? '' : message.message;
+        result += '<label class="col-sm-2 control-label" for="translation_'+locale+'">'+locale+'</label>'+
+            '<div class="col-sm-10">'+
+            '<input type="text" name="translation[messages]['+locale+']" value="'+messageText+'" class="form-control"/>' +
+            '</div>';
+        result += '<label class="col-sm-2 control-label">status</label>' +
+            '<div class="col-sm-10 translation-form-div">' +
+            '<span class="label '+label+' translation-message-status">'+message.status+'</span>' +
+            '</div>';
+
+        return result
+    }
+
     $('#translations tbody').on('click', 'span.translation-message', function() {
         toggleMessage($(this).parent(), $(this).text(), 'input')
     });
@@ -168,18 +188,20 @@ $(document).ready(function() {
         $('#messages-container').html('');
         reloadTags(data.tags);
         var messages = '';
+        var translationLocales = [];
         $.each(data.messages, function(locale, message){
-            var label = message.status == 'fresh' ? 'label-success' : 'label-danger';
-            var messageText = message.message == '[No message]' ? '' : message.message;
-            messages += '<label class="col-sm-2 control-label" for="translation_'+locale+'">'+locale+'</label>'+
-                '<div class="col-sm-10">'+
-                    '<input type="text" name="translation[messages]['+locale+']" value="'+messageText+'" class="form-control"/>' +
-                '</div>';
-            messages += '<label class="col-sm-2 control-label">status</label>' +
-                '<div class="col-sm-10 translation-form-div">' +
-                    '<span class="label '+label+' translation-message-status">'+message.status+'</span>' +
-                '</div>';
+            translationLocales.push(locale);
+            messages += addTranslationMessage(locale, message);
         });
+
+        var unsupportedLocales = locales.diff(translationLocales);
+
+        if (unsupportedLocales.length > 0) {
+            $.each(unsupportedLocales, function(i, locale) {
+                messages += addTranslationMessage(locale, {message: '', status: 'fresh'});
+            });
+        }
+
         $('#messages-container').append(messages);
 
         $('#translation-form-modal').modal();
