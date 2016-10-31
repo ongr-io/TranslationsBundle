@@ -186,16 +186,19 @@ class TranslationManager
         return $this->repository->findDocuments($search);
     }
 
+    /**
+     * @return array
+     */
     public function getTags()
     {
         $search = $this->repository->createSearch();
-        $search->addAggregation(new TermsAggregation('tags', 'messages.tags'));
+        $search->addAggregation(new TermsAggregation('tags', 'tags'));
         $result = $this->repository->findDocuments($search);
         $tagAggregation = $result->getAggregation('tags');
         $tags = [];
 
         foreach ($tagAggregation as $tag) {
-            $tags[] = $tag;
+            $tags[] = $tag['key'];
         }
 
         return $tags;

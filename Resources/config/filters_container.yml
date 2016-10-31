@@ -1,136 +1,18 @@
-parameters:
-    ongr_translations.filter.pager.class: ONGR\FilterManagerBundle\Filter\Widget\Pager\Pager
-    ongr_translations.filter.pager.request_field: page
-    ongr_translations.filter.pager.count_per_page: 20
-    ongr_translations.filter.pager.max_pages: 5
-    
-    ongr_translations.filter.sort.class: ONGR\FilterManagerBundle\Filter\Widget\Sort\Sort
-    ongr_translations.filter.sort.request_field: sort
-    ongr_translations.filter.sort.choices:
-        msgAsc:
-            label: "sort.message.asc"
-            field: "message"
-            order: "asc"
-            default: false
-            mode: ~
-        msgDesc:
-            label: "sort.message.desc"
-            field: "message"
-            order: "desc"
-            default: false
-            mode: ~
-        keyAsc:
-            label: "sort.key.asc"
-            field: "key"
-            order: "asc"
-            default: false
-            mode: ~
-        keyDesc:
-            label: "sort.key.desc"
-            field: "key"
-            order: "desc"
-            default: false
-            mode: ~
-        dateDesc:
-            label: "sort.date.desc"
-            field: "updated_at"
-            order: "desc"
-            default: true
-            mode: ~
-        dateAsc:
-            label: "sort.date.asc"
-            field: "updated_at"
-            order: "asc"
-            default: false
-            mode: ~
-    
-    ongr_translations.filter.match_search.class: ONGR\FilterManagerBundle\Filter\Widget\Search\MatchSearch
-    ongr_translations.filter.match_search.request_field: q
-    ongr_translations.filter.match_search.field: "message,key"
-    
-    ongr_translations.filter.single_term.class: ONGR\FilterManagerBundle\Filter\Widget\Choice\SingleTermChoice
-    ongr_translations.filter.single_term.domain.request_field: domain
-    ongr_translations.filter.single_term.domain.field: domain
-
-    ongr_translations.filter.locale.class: ONGR\TranslationsBundle\Filter\LocaleFilter
-    ongr_translations.filter.locale.request_field: locale
-    ongr_translations.filter.locale.field: locale
-
-    ongr_translations.filter.missing_locale.class: ONGR\TranslationsBundle\Filter\MissingLocaleFilter
-    ongr_translations.filter.missing_locale.request_field: missing_locale
-    ongr_translations.filter.missing_locale.field: locale
-    
-    ongr_translations.filter.tag.class: ONGR\FilterManagerBundle\Filter\Widget\Choice\SingleTermChoice
-    ongr_translations.filter.tag.request_field: tag
-    ongr_translations.filter.tag.field: tags.name
-    
-    ongr_translations.filter.status.class: ONGR\FilterManagerBundle\Filter\Widget\Choice\SingleTermChoice
-    ongr_translations.filter.status.request_field: status
-    ongr_translations.filter.status.field: status
-
 services:
-    ongr_translations.filter.status:
-        class: "%ongr_translations.filter.status.class%"
+    ongr_translations.filter.domain:
+        class: ONGR\FilterManagerBundle\Filter\Widget\Choice\MultiTermChoice
         calls:
-            - ["setRequestField", ["%ongr_translations.filter.status.request_field%"]]
-            - ["setField", ["%ongr_translations.filter.status.field%"]]
+            - ["setRequestField", ["domain"]]
+            - ["setField", ["domain"]]
 
     ongr_translations.filter.tag:
-        class: "%ongr_translations.filter.tag.class%"
+        class: ONGR\FilterManagerBundle\Filter\Widget\Choice\MultiTermChoice
         calls:
-            - ["setRequestField", ["%ongr_translations.filter.tag.request_field%"]]
-            - ["setField", ["%ongr_translations.filter.tag.field%"]]
-
-    ongr_translations.filter.pager:
-        class: "%ongr_translations.filter.pager.class%"
-        calls:
-            - ["setRequestField", ["%ongr_translations.filter.pager.request_field%"]]
-            - ["setCountPerPage", ["%ongr_translations.filter.pager.count_per_page%"]]
-            - ["setMaxPages", ["%ongr_translations.filter.pager.max_pages%"]]
-
-    ongr_translations.filter.sort:
-        class: "%ongr_translations.filter.sort.class%"
-        calls:
-            - ["setRequestField", ["%ongr_translations.filter.sort.request_field%"]]
-            - ["setChoices", ["%ongr_translations.filter.sort.choices%"]]
-    
-    ongr_translations.filter.match_search:
-        class: "%ongr_translations.filter.match_search.class%"
-        calls:
-            - ["setRequestField", ["%ongr_translations.filter.match_search.request_field%"]]
-            - ["setField", ["%ongr_translations.filter.match_search.field%"]]
-            
-    ongr_translations.filter.single_term.domain:
-        class: "%ongr_translations.filter.single_term.class%"
-        calls:
-            - ["setRequestField", ["%ongr_translations.filter.single_term.domain.request_field%"]]
-            - ["setField", ["%ongr_translations.filter.single_term.domain.field%"]]
-
-    ongr_translations.filter.locale:
-        class: "%ongr_translations.filter.locale.class%"
-        calls:
-            - ["setRequestField", ["%ongr_translations.filter.locale.request_field%"]]
-            - ["setField", ["%ongr_translations.filter.locale.field%"]]
-        tags:
-            - { name: ongr_filter_manager.filter, filter_name: locale }
-
-    ongr_translations.filter.missing_locale:
-            class: "%ongr_translations.filter.missing_locale.class%"
-            calls:
-                - ["setRequestField", ["%ongr_translations.filter.missing_locale.request_field%"]]
-                - ["setField", ["%ongr_translations.filter.missing_locale.field%"]]
-            tags:
-                - { name: ongr_filter_manager.filter, filter_name: missing_locale }
-
+            - ["setRequestField", ["tags"]]
+            - ["setField", ["tags"]]
 
     ongr_translations.filters_container:
         class: ONGR\FilterManagerBundle\Search\FilterContainer
         calls:
-            - ["set", ["pager", "@ongr_translations.filter.pager"]]
-            - ["set", ["sort", "@ongr_translations.filter.sort"]]
-            - ["set", ["search", "@ongr_translations.filter.match_search"]]
-            - ["set", ["domain", "@ongr_translations.filter.single_term.domain"]]
-            - ["set", ["locale", "@ongr_translations.filter.locale"]]
-            - ["set", ["missing_locale", "@ongr_translations.filter.missing_locale"]]
+            - ["set", ["domain", "@ongr_translations.filter.domain"]]
             - ["set", ["tag", "@ongr_translations.filter.tag"]]
-            - ["set", ["status", "@ongr_translations.filter.status"]]

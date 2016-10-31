@@ -57,27 +57,35 @@ class ListController extends Controller
 
     /**
      * Returns a JsonResponse with available locales
+     * @param Request $request
      * @return JsonResponse
      */
-    public function getTranslationsAction()
+    public function getTranslationsAction(Request $request)
     {
-        $documentArray = [];
-        $locales = $this->getParameter('ongr_translations.managed_locales');
+//        $documentArray = [];
+        $filterResponse = $this->get('ongr_translations.filter_manager')->handleRequest($request);
 
-        /** @var Translation $doc */
-        foreach ($this->get('ongr_translations.translation_manager')->getAllTranslations() as $doc) {
-            $doc = $doc->jsonSerialize();
 
-            foreach ($locales as $locale) {
-                if (!isset($doc['messages'][$locale])) {
-                    $doc['messages'][$locale]['message'] = '[No message]';
-                }
-            }
 
-            $documentArray[] = $doc;
-        }
 
-        return new JsonResponse($documentArray);
+
+
+//        $locales = $this->getParameter('ongr_translations.managed_locales');
+
+//        /** @var Translation $doc */
+//        foreach ($this->get('ongr_translations.translation_manager')->getAllTranslations() as $doc) {
+//            $doc = $doc->jsonSerialize();
+//
+//            foreach ($locales as $locale) {
+//                if (!isset($doc['messages'][$locale])) {
+//                    $doc['messages'][$locale]['message'] = '[No message]';
+//                }
+//            }
+//
+//            $documentArray[] = $doc;
+//        }
+
+        return new JsonResponse(iterator_to_array($filterResponse->getResult()));
     }
 
     /**

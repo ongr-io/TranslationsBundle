@@ -23,6 +23,9 @@ $(document).ready(function() {
     var translationsTable = $('#translations').DataTable( {
         ajax: {
             url: Routing.generate('ongr_translations_list_get_translations'),
+            data: function() {
+                return {tags: $('#tag-select').val()}
+            },
             dataSrc: ''
         },
         stateSave: true,
@@ -197,5 +200,9 @@ $(document).ready(function() {
         appendNewTag(value);
         tags.push(value);
         input.val('');
+    });
+
+    $('#tag-select').change(function() {
+        translationsTable.ajax.reload();
     });
 } );
