@@ -19,4 +19,4 @@ services:
         calls:
             - ["set", ["domain", "@ongr_translations.filter.domain"]]
             - ["set", ["tag", "@ongr_translations.filter.tag"]]
-            - ["set", ["tag", "@ongr_translations.filter.size"]]
+            - ["set", ["size", "@ongr_translations.filter.size"]]
