@@ -62,28 +62,7 @@ class ListController extends Controller
      */
     public function getTranslationsAction(Request $request)
     {
-//        $documentArray = [];
         $filterResponse = $this->get('ongr_translations.filter_manager')->handleRequest($request);
-
-
-
-
-
-
-//        $locales = $this->getParameter('ongr_translations.managed_locales');
-
-//        /** @var Translation $doc */
-//        foreach ($this->get('ongr_translations.translation_manager')->getAllTranslations() as $doc) {
-//            $doc = $doc->jsonSerialize();
-//
-//            foreach ($locales as $locale) {
-//                if (!isset($doc['messages'][$locale])) {
-//                    $doc['messages'][$locale]['message'] = '[No message]';
-//                }
-//            }
-//
-//            $documentArray[] = $doc;
-//        }
 
         return new JsonResponse(iterator_to_array($filterResponse->getResult()));
     }
@@ -97,43 +76,9 @@ class ListController extends Controller
      */
     public function listAction(Request $request)
     {
-        /** @var SearchResponse $fmr */
-        $fmr = $this->get('ongr_translations.filter_manager')->handleRequest($request);
-
         return $this->render(
             'ONGRTranslationsBundle:List:list.html.twig',
-            [
-                'data' => iterator_to_array($fmr->getResult()),
-                'locales' => $this->getParameter('ongr_translations.managed_locales'),//$this->buildLocalesList($fmr->getFilters()['locale']),
-                'filters_manager' => $fmr,
-            ]
+            ['locales' => $this->getParameter('ongr_translations.managed_locales')]
         );
-    }
-
-    /**
-     * Creates locales list.
-     *
-     * @param ViewData\ChoicesAwareViewData $filter
-     *
-     * @return array
-     */
-    private function buildLocalesList($filter)
-    {
-        $locales = $this->container->getParameter('ongr_translations.managed_locales');
-        $list = [];
-        foreach ($locales as $locale) {
-            $list[$locale] = true;
-        }
-        ksort($list);
-        $activeLocales = [];
-
-        if ($filter->getState()->isActive()) {
-            foreach ($filter->getChoices() as $choice) {
-                $activeLocales[$choice->getLabel()] = $choice->isActive();
-            }
-            $list = array_merge($list, $activeLocales);
-        }
-
-        return $list;
     }
 }

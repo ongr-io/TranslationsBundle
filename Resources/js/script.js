@@ -35,6 +35,7 @@ $(document).ready(function() {
                 "targets": translationColumns,
                 "orderable": false,
                 "render": function ( data, type, full, meta ) {
+                    data = data == null ? '[No message]' : data;
                     return '<span class="translation-message">'+data+'</span>';
                 }
             },
