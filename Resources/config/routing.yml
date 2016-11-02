@@ -2,13 +2,13 @@ ongr_translations_list_page:
     path: /list
     methods: [GET]
     defaults:
-        _controller: ongr_translations.controller.list:listAction
+        _controller: ONGRTranslationsBundle:List:list
 
 ongr_translations_list_get_initial_data:
     path: /list/get/initial-data/
     methods: [GET]
     defaults:
-        _controller: ongr_translations.controller.list:getInitialDataAction
+        _controller: ONGRTranslationsBundle:List:getInitialData
     options:
         expose: true
 
@@ -16,7 +16,7 @@ ongr_translations_list_get_translations:
     path: /list/translations/_all
     methods: [GET]
     defaults:
-        _controller: ongr_translations.controller.list:getTranslationsAction
+        _controller: ONGRTranslationsBundle:List:getTranslations
     options:
         expose: true
 

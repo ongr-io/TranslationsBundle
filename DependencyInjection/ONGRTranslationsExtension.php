@@ -44,7 +44,6 @@ class ONGRTranslationsExtension extends Extension
         $this->setElasticsearchStorage($config['repository'], $container);
         $this->setFiltersManager($config['repository'], $container);
         $this->setTranslationManager($config['repository'], $container);
-        $this->setControllerManager($config['repository'], 'list', $container);
         $this->setHistoryManager($this->editRepositoryName($config['repository']), $container);
         if ($config['history']) {
             $this->setEditMessageEvent($this->editRepositoryName($config['repository']), $container);
@@ -123,26 +122,6 @@ class ONGRTranslationsExtension extends Extension
         );
 
         $container->setDefinition('ongr_translations.filter_manager', $definition);
-    }
-
-    /**
-     * Injects elasticsearch repository to controller and sets it into service container.
-     *
-     * @param string           $repositoryId   Elasticsearch repository id.
-     * @param string           $controllerName Controller name to which add repository.
-     * @param ContainerBuilder $container      Service container.
-     */
-    private function setControllerManager($repositoryId, $controllerName, ContainerBuilder $container)
-    {
-        $definition = new Definition(
-            sprintf('ONGR\TranslationsBundle\Controller\%sController', ucfirst($controllerName)),
-            [
-                new Reference($repositoryId),
-            ]
-        );
-        $definition->addMethodCall('setContainer', [new Reference('service_container')]);
-
-        $container->setDefinition(sprintf('ongr_translations.controller.%s', $controllerName), $definition);
     }
 
     /**

@@ -29,22 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ListController extends Controller
 {
     /**
-     * @var Repository
-     */
-    private $repository;
-
-    /**
-     * Injects elasticsearch repository for listing actions.
-     *
-     * @param Repository $repository Elasticsearch repository.
-     */
-    public function __construct(Repository $repository)
-    {
-        $this->repository = $repository;
-    }
-
-    /**
-     * Returns a JsonResponse with available locales
+     * Returns a JsonResponse with available locales and active tags
      * @return JsonResponse
      */
     public function getInitialDataAction()
@@ -56,7 +41,6 @@ class ListController extends Controller
     }
 
     /**
-     * Returns a JsonResponse with available locales
      * @param Request $request
      * @return JsonResponse
      */
