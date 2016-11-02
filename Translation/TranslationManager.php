@@ -142,44 +142,6 @@ class TranslationManager
     }
 
     /**
-     * Edits object from translation.
-     *
-     * @param Request $request Http request object.
-     */
-    public function editMessage(Request $request)
-    {
-        $content = $this->parseJsonContent($request);
-
-        if (!isset($content['locale']) || !isset($content['message'])) {
-            return;
-        }
-
-        $document = $this->getTranslation($content['id']);
-        $message = null;
-
-        foreach ($document->getMessages() as $currentMessage) {
-            if ($currentMessage->getLocale() == $content['locale']) {
-                $message = $currentMessage;
-                break;
-            }
-        }
-
-        if ($message === null) {
-            $message = new Message();
-            $message->setLocale($content['locale']);
-            $document->addMessage($message);
-        }
-
-        $message->setMessage($content['message']);
-        $message->setUpdatedAt(new \DateTime());
-        $message->setStatus('dirty');
-//        $this->dispatcher->dispatch(Events::ADD_HISTORY, new TranslationEditMessageEvent($request, $document));
-        $this->commitTranslation($document);
-
-        return $document;
-    }
-
-    /**
      * Removes object from translations.
      *
      * @param Request $request Http request object.
@@ -239,6 +201,7 @@ class TranslationManager
     }
 
     /**
+     * Returns all active tags from translations
      * @return array
      */
     public function getTags()
@@ -291,33 +254,6 @@ class TranslationManager
         if ($key >= 0) {
             unset($objects[$key]);
             $accessor->setValue($document, $options['name'], $objects);
-        }
-    }
-
-    /**
-     * Edits message from document based on options.
-     *
-     * @param object $document
-     * @param array  $options
-     */
-    private function editObject($document, $options)
-    {
-        $accessor = $this->getAccessor();
-        $objects = $accessor->getValue($document, $options['name']);
-
-        if ($objects === null) {
-            $this->addObject($document, $options);
-        } else {
-            $key = $this->findObject($objects, $options['findBy']);
-
-            if ($key < 0) {
-                $this->addObject($document, $options);
-            } else {
-                $this->setObjectProperties($objects[$key], $options['properties']);
-                $this->updateTimestamp($objects[$key]);
-                $this->updateTimestamp($document);
-                $accessor->setValue($document, $options['name'], $objects);
-            }
         }
     }
 

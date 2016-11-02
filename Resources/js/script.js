@@ -142,9 +142,11 @@ $(document).ready(function() {
 
             if (currentMessageValue != value) {
                 $.ajax({
-                    url: Routing.generate('ongr_translations_api_edit_message'),
-                    data: JSON.stringify({message: value, id: data.id, locale: locale}),
-                    method: 'post'
+                    url: Routing.generate('ongr_translations_api_edit', {id: data.id}),
+                    data: '{"messages": {"'+locale+'": "'+value+'"}}',
+                    method: 'post',
+                    contentType: "application/json; charset=utf-8",
+                    dataType   : "json",
                 });
                 currentMessageValue = value;
             }
