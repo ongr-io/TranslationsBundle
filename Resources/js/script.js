@@ -210,7 +210,7 @@ $(document).ready(function() {
     } );
 
     $('#translations tbody').on( 'click', '.history', function () {
-        alert('Aloha');
+        $('#history-modal').modal();
     } );
 
     $('#add-new-tag-show-form').on('click', function () {
