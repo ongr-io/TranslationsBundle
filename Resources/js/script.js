@@ -33,6 +33,7 @@ $(document).ready(function() {
             dataSrc: ''
         },
         stateSave: true,
+        scrollX: true,
         columns: getColumnData(),
         columnDefs: [
             {
@@ -45,8 +46,9 @@ $(document).ready(function() {
             },
             {
                 "targets": -1,
+                "orderable": false,
                 "render":function ( data, type, row ) {
-                    return '<a class="edit btn btn-primary btn-xs" data-toggle="modal" data-target="#setting-edit">Edit</a>&nbsp;<a class="history btn btn-warning btn-xs" data-name="'+row['name']+'">History</a>'
+                    return '<div class="action-container"><a class="edit btn btn-primary btn-xs" data-toggle="modal" data-target="#setting-edit">Edit</a>&nbsp;<a class="history btn btn-warning btn-xs" data-name="'+row['name']+'">History</a></div>'
                 }
             }
         ]
@@ -120,8 +122,8 @@ $(document).ready(function() {
             '<div class="col-sm-10">'+
             '<input type="text" name="messages['+locale+']" value="'+messageText+'" class="form-control"/>' +
             '</div>';
-        result += '<label class="col-sm-2 control-label">status</label>' +
-            '<div class="col-sm-10 translation-form-div">' +
+        result += '<label class="col-sm-2 control-label"></label>' +
+            '<div class="col-sm-10 translation-form-div">Status: ' +
             '<span class="label '+label+' translation-message-status">'+message.status+'</span>' +
             '</div>';
 
