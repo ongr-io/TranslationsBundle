@@ -46,7 +46,7 @@ $(document).ready(function() {
             {
                 "targets": -1,
                 "render":function ( data, type, row ) {
-                    return '<a class="edit btn btn-primary btn-xs" data-toggle="modal" data-target="#setting-edit">Edit</a>&nbsp;<a class="delete delete-setting btn btn-danger btn-xs" data-name="'+row['name']+'">Delete</a>'
+                    return '<a class="edit btn btn-primary btn-xs" data-toggle="modal" data-target="#setting-edit">Edit</a>&nbsp;<a class="history btn btn-warning btn-xs" data-name="'+row['name']+'">History</a>'
                 }
             }
         ]
@@ -207,6 +207,10 @@ $(document).ready(function() {
         $('#messages-container').append(messages);
 
         $('#translation-form-modal').modal();
+    } );
+
+    $('#translations tbody').on( 'click', '.history', function () {
+        alert('Aloha');
     } );
 
     $('#add-new-tag-show-form').on('click', function () {
