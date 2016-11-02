@@ -41,7 +41,6 @@ class ONGRTranslationsExtension extends Extension
         $container->setParameter('ongr_translations.domains', $config['domains']);
         $this->validateBundles($container, $config['bundles']);
 
-        $this->setElasticsearchStorage($config['repository'], $container);
         $this->setFiltersManager($config['repository'], $container);
         $this->setTranslationManager($config['repository'], $container);
         $this->setHistoryManager($this->editRepositoryName($config['repository']), $container);
@@ -85,24 +84,6 @@ class ONGRTranslationsExtension extends Extension
         );
 
         $container->setDefinition('ongr_translations.history_manager', $definition);
-    }
-
-    /**
-     * Sets elasticsearch storage for translations.
-     *
-     * @param string           $repositoryId Elasticsearch repository id.
-     * @param ContainerBuilder $container    Service container.
-     */
-    private function setElasticsearchStorage($repositoryId, ContainerBuilder $container)
-    {
-        $definition = new Definition(
-            'ONGR\TranslationsBundle\Storage\ElasticsearchStorage',
-            [
-                new Reference($repositoryId),
-            ]
-        );
-
-        $container->setDefinition('ongr_translations.storage', $definition);
     }
 
     /**
