@@ -60,20 +60,6 @@ class ApiController extends Controller
     }
 
     /**
-     * Action for adding translation objects.
-     *
-     * @param Request $request Http request object.
-     *
-     * @return JsonResponse
-     */
-    public function addAction(Request $request)
-    {
-        $this->get('ongr_translations.translation_manager')->add($request);
-
-        return new JsonResponse();
-    }
-
-    /**
      * Action for getting specific values from objects.
      *
      * @param Request $request Http request object.

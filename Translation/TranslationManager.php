@@ -60,21 +60,6 @@ class TranslationManager
     }
 
     /**
-     * Adds object to translations.
-     *
-     * @param Request $request
-     */
-    public function add(Request $request)
-    {
-        $content = $this->parseJsonContent($request);
-        $document = $this->getTranslation($content['id']);
-        $this->addObject($document, $content);
-
-        $this->repository->getManager()->persist($document);
-        $this->repository->getManager()->commit();
-    }
-
-    /**
      * Edits object from translation.
      *
      * @param string $id
@@ -220,25 +205,6 @@ class TranslationManager
     }
 
     /**
-     * Adds object to translation.
-     *
-     * @param object $document
-     * @param array  $options
-     */
-    private function addObject($document, $options)
-    {
-        $meta = $this->repository->getManager()->getMetadataCollector()
-            ->getBundleMapping('ONGRTranslationsBundle:Translation');
-        $objectClass = reset($meta)['aliases'][$options['name']]['namespace'];
-
-        $object = new $objectClass();
-        $this->setObjectProperties($object, $options['properties']);
-
-        $this->updateTimestamp($object);
-        $this->updateTimestamp($document);
-    }
-
-    /**
      * Removes message from document based on options.
      *
      * @param object $document
@@ -328,10 +294,6 @@ class TranslationManager
         try {
             $document = $this->repository->find($id);
         } catch (Missing404Exception $e) {
-            $document = null;
-        }
-
-        if ($document === null) {
             throw new BadRequestHttpException('Invalid translation Id.');
         }
 
@@ -353,32 +315,5 @@ class TranslationManager
         }
 
         return $this->accessor;
-    }
-
-    /**
-     * Sets `updated_at` property.
-     *
-     * @param object $object
-     */
-    private function updateTimestamp($object)
-    {
-        $accessor = $this->getAccessor();
-
-        if ($accessor->isWritable($object, 'updated_at')) {
-            $accessor->setValue($object, 'updated_at', new \DateTime());
-        }
-    }
-
-    /**
-     * Sets object properties into provided object.
-     *
-     * @param object $object     Object to set properties into.
-     * @param array  $properties Array of properties to set.
-     */
-    private function setObjectProperties($object, $properties)
-    {
-        foreach ($properties as $property => $value) {
-            $this->getAccessor()->setValue($object, $property, $value);
-        }
     }
 }
