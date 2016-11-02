@@ -35,14 +35,6 @@ ongr_translations_api_edit:
         _controller: ONGRTranslationsBundle:Api:edit
     options:
         expose: true
-            
-ongr_translations_api_delete:
-    path: /_api/delete
-    methods: [POST]
-    defaults:
-        _controller: ONGRTranslationsBundle:Api:delete
-    options:
-        expose: true
 
 ongr_translations_api_add:
     path: /_api/add

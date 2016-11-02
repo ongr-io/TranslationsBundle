@@ -46,20 +46,6 @@ class ApiController extends Controller
     }
 
     /**
-     * Action for removing translation objects.
-     *
-     * @param Request $request Http request object.
-     *
-     * @return JsonResponse
-     */
-    public function deleteAction(Request $request)
-    {
-        $this->get('ongr_translations.translation_manager')->delete($request);
-
-        return new JsonResponse();
-    }
-
-    /**
      * Action for getting specific values from objects.
      *
      * @param Request $request Http request object.

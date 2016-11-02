@@ -40,11 +40,6 @@ class TranslationManager
     private $repository;
 
     /**
-     * @var PropertyAccessorInterface
-     */
-    private $accessor;
-
-    /**
      * @var EventDispatcherInterface
      */
     private $dispatcher;
@@ -127,19 +122,6 @@ class TranslationManager
     }
 
     /**
-     * Removes object from translations.
-     *
-     * @param Request $request Http request object.
-     */
-    public function delete(Request $request)
-    {
-        $content = $this->parseJsonContent($request);
-        $document = $this->getTranslation($content['id']);
-        $this->deleteObject($document, $content);
-        $this->commitTranslation($document);
-    }
-
-    /**
      * Returns specific values from objects.
      *
      * @param Request $request Http request object.
@@ -205,53 +187,6 @@ class TranslationManager
     }
 
     /**
-     * Removes message from document based on options.
-     *
-     * @param object $document
-     * @param array  $options
-     */
-    private function deleteObject($document, $options)
-    {
-        $accessor = $this->getAccessor();
-        $objects = $accessor->getValue($document, $options['name']);
-
-        $key = $this->findObject($objects, $options['findBy']);
-
-        if ($key >= 0) {
-            unset($objects[$key]);
-            $accessor->setValue($document, $options['name'], $objects);
-        }
-    }
-
-    /**
-     * Finds object by property and its value from iterator and returns key.
-     *
-     * @param \Iterator $objects
-     * @param array     $options
-     *
-     * @return int
-     */
-    private function findObject($objects, $options)
-    {
-        foreach ($objects as $key => $object) {
-            $fit = true;
-
-            foreach ($options as $property => $value) {
-                if ($this->getAccessor()->getValue($object, $property) !== $value) {
-                    $fit = false;
-                    break;
-                }
-            }
-
-            if ($fit) {
-                return $key;
-            }
-        }
-
-        return -1;
-    }
-
-    /**
      * Parses http request content from json to array.
      *
      * @param Request $request Http request object.
@@ -298,22 +233,5 @@ class TranslationManager
         }
 
         return $document;
-    }
-
-    /**
-     * Returns property accessor instance.
-     *
-     * @return PropertyAccessorInterface
-     */
-    private function getAccessor()
-    {
-        if (!$this->accessor) {
-            $this->accessor = PropertyAccess::createPropertyAccessorBuilder()
-                ->enableExceptionOnInvalidIndex()
-                ->enableMagicCall()
-                ->getPropertyAccessor();
-        }
-
-        return $this->accessor;
     }
 }
