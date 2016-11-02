@@ -12,6 +12,8 @@
 namespace ONGR\TranslationsBundle\Tests\Functional\Command;
 
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
+use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
+use ONGR\ElasticsearchDSL\Query\TermsQuery;
 use ONGR\TranslationsBundle\Command\ImportCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -62,7 +64,7 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
         $this->assertGreaterThan(0, $this->getTranslationsCount(['en'], ['validators']));
         $this->assertGreaterThan(0, $this->getTranslationsCount(['en'], ['ONGRTranslations']));
         $this->assertGreaterThan(0, $this->getTranslationsCount(['en'], ['messages']));
-        $this->assertGreaterThan(0, $this->getTranslationsCount(['en'], ['security']));
+        $this->assertEquals(0, $this->getTranslationsCount(['en'], ['security']));
     }
 
     /**
@@ -107,14 +109,14 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
         $this->commandTester->execute(
             [
                 'command' => $this->command->getName(),
-                '--locales' => ['lt'],
+                '--locales' => ['lt', 'lv'],
                 '--domains' => ['messages', 'security'],
             ]
         );
 
         $this->assertEquals(0, $this->getTranslationsCount(['lt'], ['validators']));
         $this->assertEquals(0, $this->getTranslationsCount(['lt'], ['ONGRTranslation']));
-        $this->assertGreaterThan(0, $this->getTranslationsCount(['lt'], ['security']));
+        $this->assertGreaterThan(0, $this->getTranslationsCount(['lv'], ['security']));
         $this->assertGreaterThan(0, $this->getTranslationsCount(['lt'], ['messages']));
     }
 
@@ -160,9 +162,19 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
      */
     private function getTranslationsCount(array $locales = [], array $domains = [])
     {
-        $esStorage = $this->getContainer()->get('ongr_translations.storage');
+        $repository = $this->getContainer()->get('ongr_translations.repository');
 
-        $result = $esStorage->read($locales, $domains);
+        $search = $repository
+            ->createSearch()
+            ->setScroll('2m')
+            ->addQuery(new MatchAllQuery());
+        if (!empty($locales)) {
+            $search->addFilter(new TermsQuery('messages.locale', $locales));
+        }
+        if (!empty($domains)) {
+            $search->addFilter(new TermsQuery('domain', $domains));
+        }
+        $result =  $repository->findDocuments($search);
 
         return $result->count();
     }

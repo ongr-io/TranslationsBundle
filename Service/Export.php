@@ -11,9 +11,11 @@
 
 namespace ONGR\TranslationsBundle\Service;
 
+use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
+use ONGR\ElasticsearchDSL\Query\TermsQuery;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
-use ONGR\TranslationsBundle\Storage\StorageInterface;
+use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\TranslationsBundle\Translation\Export\ExporterInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -23,9 +25,9 @@ use Symfony\Component\Filesystem\Filesystem;
 class Export
 {
     /**
-     * @var StorageInterface
+     * @var Repository
      */
-    private $storage;
+    private $repository;
 
     /**
      * @var ExporterInterface
@@ -49,15 +51,15 @@ class Export
 
     /**
      * @param LoadersContainer  $loadersContainer
-     * @param StorageInterface  $storage
+     * @param Repository        $repository
      * @param ExporterInterface $exporter
      */
     public function __construct(
         LoadersContainer $loadersContainer,
-        StorageInterface $storage,
+        Repository $repository,
         ExporterInterface $exporter
     ) {
-        $this->storage = $storage;
+        $this->repository = $repository;
         $this->exporter = $exporter;
         $this->loadersContainer = $loadersContainer;
     }
@@ -83,7 +85,12 @@ class Export
         }
 
         if (!empty($this->refresh)) {
-            $this->storage->write($this->refresh);
+            foreach ($this->refresh as $translation) {
+                $this->repository->getManager()->persist($translation);
+            }
+
+            $this->repository->getManager()->commit();
+
             $this->refresh = [];
         }
     }
@@ -116,12 +123,11 @@ class Export
     private function readStorage($domains)
     {
         $data = [];
-        $translations = $this->storage->read($this->getManagedLocales(), $domains);
+        $translations = $this->read($this->getManagedLocales(), $domains);
 
         /** @var Translation $translation */
         foreach ($translations as $translation) {
             $messages = $translation->getMessages();
-            $wasDirty = false;
 
             foreach ($messages as $key => $message) {
                 if ($message->getStatus() === Message::DIRTY) {
@@ -135,14 +141,8 @@ class Export
                     $data[$path][$translation->getKey()] = $message->getMessage();
 
                     $message->setStatus(Message::FRESH);
-                    $messages[$key] = $message;
-                    $wasDirty = true;
+                    $this->refresh[] = $translation;
                 }
-            }
-
-            if ($wasDirty) {
-                $translation->setMessages($messages);
-                $this->refresh[] = $translation;
             }
         }
 
@@ -155,5 +155,23 @@ class Export
     protected function getFilesystem()
     {
         return new Filesystem();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function read($locales = [], $domains = [])
+    {
+        $search = $this->repository
+            ->createSearch()
+            ->setScroll('2m')
+            ->addQuery(new MatchAllQuery());
+        if (!empty($locales)) {
+            $search->addFilter(new TermsQuery('messages.locale', $locales));
+        }
+        if (!empty($domains)) {
+            $search->addFilter(new TermsQuery('domain', $domains));
+        }
+        return $this->repository->findDocuments($search);
     }
 }

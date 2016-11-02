@@ -13,7 +13,7 @@ services:
     class: ONGR\TranslationsBundle\Service\Import
     arguments:
       - "@ongr_translations.file_import"
-      - "@ongr_translations.storage"
+      - "@es.manager"
       - %kernel.root_dir%
       - %kernel.bundles%
       - %ongr_translations.bundles%
@@ -29,7 +29,7 @@ services:
     class: ONGR\TranslationsBundle\Service\Export
     arguments:
       - "@ongr_translations.loaders_container"
-      - "@ongr_translations.storage"
+      - "@ongr_translations.repository"
       - "@ongr_translations.export.yaml"
     calls:
       - ["setManagedLocales", ["%ongr_translations.managed_locales%"]]

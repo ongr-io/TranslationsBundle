@@ -12,7 +12,9 @@
 namespace ONGR\TranslationsBundle\Service;
 
 use Elasticsearch\Common\Exceptions\BadRequest400Exception;
-use ONGR\TranslationsBundle\Storage\StorageInterface;
+use ONGR\ElasticsearchBundle\Service\Manager;
+use ONGR\TranslationsBundle\Document\Message;
+use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\TranslationsBundle\Translation\Import\FileImport;
 use Symfony\Component\Finder\Finder;
 
@@ -57,9 +59,9 @@ class Import
     private $translations = [];
 
     /**
-     * @var StorageInterface
+     * @var Manager
      */
-    private $storage;
+    private $esManager;
 
     /**
      * @var array
@@ -67,21 +69,21 @@ class Import
     private $configBundles;
 
     /**
-     * @param FileImport       $fileImport
-     * @param StorageInterface $storage
-     * @param string           $kernelDir
-     * @param array            $kernelBundles
-     * @param array            $configBundles
+     * @param FileImport $fileImport
+     * @param Manager    $esManager
+     * @param string     $kernelDir
+     * @param array      $kernelBundles
+     * @param array      $configBundles
      */
     public function __construct(
         FileImport $fileImport,
-        StorageInterface $storage,
+        Manager $esManager,
         $kernelDir,
         $kernelBundles,
         $configBundles
     ) {
         $this->fileImport = $fileImport;
-        $this->storage = $storage;
+        $this->esManager = $esManager;
         $this->kernelDir = $kernelDir;
         $this->bundles = $kernelBundles;
         $this->configBundles = $configBundles;
@@ -118,11 +120,27 @@ class Import
      */
     public function writeToStorage()
     {
-        try {
-            $this->storage->write($this->translations);
-        } catch (BadRequest400Exception $e) {
-            // Empty bulk commit exception.
+        foreach ($this->translations as $path => $domains) {
+            foreach ($domains as $domain => $transMeta) {
+                foreach ($transMeta['translations'] as $key => $keyTrans) {
+                    /** @var Translation $document */
+                    $document = new Translation();
+                    $document->setDomain($domain);
+                    $document->setKey($key);
+                    $document->setPath($path);
+                    $document->setFormat($transMeta['format']);
+                    foreach ($keyTrans as $locale => $trans) {
+                        $message = new Message();
+                        $message->setLocale($locale);
+                        $message->setMessage($trans);
+                        $document->addMessage($message);
+                    }
+                    $this->esManager->persist($document);
+                }
+            }
         }
+
+        $this->esManager->commit();
     }
 
     /**
@@ -172,7 +190,7 @@ class Import
     public function importComponentTranslationFiles()
     {
         $classes = [
-            'Symfony\Component\Validator\Validator' => '/Resources/translations',
+            'Symfony\Component\Validator\ValidatorBuilder' => '/Resources/translations',
             'Symfony\Component\Form\Form' => '/Resources/translations',
             'Symfony\Component\Security\Core\Exception\AuthenticationException' => '/../../Resources/translations',
         ];
