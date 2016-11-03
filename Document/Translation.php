@@ -300,7 +300,7 @@ class Translation implements \JsonSerializable
      *
      * @return array
      */
-    private function getMessagesArray()
+    public function getMessagesArray()
     {
         $result = [];
         foreach ($this->getMessages() as $message) {

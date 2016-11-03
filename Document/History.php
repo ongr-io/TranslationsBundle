@@ -32,7 +32,7 @@ class History
      *
      * @ES\Property(type="string", options={"index"="not_analyzed"})
      */
-    private $key;
+    private $translation;
 
     /**
      * @var string
@@ -44,31 +44,16 @@ class History
     /**
      * @var string
      *
-     * @ES\Property(type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="string")
      */
     private $message;
-
-    /**
-     * @var string
-     *
-     * @ES\Property(type="string", options={"index"="not_analyzed"})
-     */
-    private $domain;
 
     /**
      * @var \DateTime
      *
      * @ES\Property(type="date")
      */
-    private $createdAt;
-
-    /**
-     * Sets timestamps.
-     */
-    public function __construct()
-    {
-        $this->createdAt = new \DateTime();
-    }
+    private $updatedAt;
 
     /**
      * Sets document ID.
@@ -95,13 +80,13 @@ class History
     }
 
     /**
-     * @param string $key
+     * @param string $translation
      *
      * @return History
      */
-    public function setKey($key)
+    public function setTranslation($translation)
     {
-        $this->key = $key;
+        $this->translation = $translation;
 
         return $this;
     }
@@ -109,9 +94,9 @@ class History
     /**
      * @return string
      */
-    public function getKey()
+    public function getTranslation()
     {
-        return $this->key;
+        return $this->translation;
     }
 
     /**
@@ -155,38 +140,18 @@ class History
     }
 
     /**
-     * @param string $domain
-     *
-     * @return History
-     */
-    public function setDomain($domain)
-    {
-        $this->domain = $domain;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDomain()
-    {
-        return $this->domain;
-    }
-
-    /**
      * @return \DateTime
      */
-    public function getCreatedAt()
+    public function getUpdatedAt()
     {
-        return $this->createdAt;
+        return $this->updatedAt;
     }
 
     /**
-     * @param \DateTime $createdAt
+     * @param \DateTime $updatedAt
      */
-    public function setCreatedAt($createdAt)
+    public function setUpdatedAt($updatedAt)
     {
-        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
     }
 }
