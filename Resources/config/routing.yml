@@ -20,14 +20,6 @@ ongr_translations_list_get_translations:
     options:
         expose: true
 
-ongr_translations_api_edit_message:
-    path: /_api/edit/message
-    methods: [POST]
-    defaults:
-        _controller: ONGRTranslationsBundle:Api:editMessage
-    options:
-        expose: true
-
 ongr_translations_api_edit:
     path: /_api/edit/{id}
     methods: [POST]
@@ -36,17 +28,9 @@ ongr_translations_api_edit:
     options:
         expose: true
 
-ongr_translations_api_add:
-    path: /_api/add
-    methods: [POST]
-    defaults:
-        _controller: ONGRTranslationsBundle:Api:add
-    options:
-        expose: true
-
 ongr_translations_api_get:
     path: /_api/get
-    methods: [POST]
+    methods: [GET]
     defaults:
         _controller: ONGRTranslationsBundle:Api:get
     options:
@@ -69,8 +53,8 @@ ongr_translations_api_export:
         expose: true
 
 ongr_translations_api_history:
-    path: /_api/history
-    methods: [POST]
+    path: /_api/history/{id}
+    methods: [GET]
     defaults:
         _controller: ONGRTranslationsBundle:Api:history
     options:

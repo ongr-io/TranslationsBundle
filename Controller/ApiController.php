@@ -103,11 +103,12 @@ class ApiController extends Controller
      * Action for executing history command.
      *
      * @param Request $request Http request object.
+     * @param string  $id
      *
      * @return JsonResponse
      */
-    public function historyAction(Request $request)
+    public function historyAction(Request $request, $id)
     {
-        return new JsonResponse($this->get('ongr_translations.history_manager')->history($request));
+        return new JsonResponse(iterator_to_array($this->get('ongr_translations.history_manager')->getHistory($id)));
     }
 }
