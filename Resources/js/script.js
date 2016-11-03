@@ -241,6 +241,11 @@ $(document).ready(function() {
         $('#history-modal').modal();
     } );
 
+    $('#translation-export').on('click', function(e){
+        e.preventDefault();
+        $('#export-modal').modal();
+    });
+
     $('#add-new-tag-show-form').on('click', function () {
         $(this).hide();
         $('#add-new-tag-container').show();
