@@ -108,7 +108,7 @@ class TranslationManager
 
                 if (in_array($locale, $setMessagesLocales)) {
                     foreach ($documentMessages as $message) {
-                        if ($message->getLocale() == $locale) {
+                        if ($message->getLocale() == $locale && $message->getMessage() != $messageText) {
                             $this->historyManager->addHistory($message, $document->getId(), $locale);
                             $this->updateMessageData($message, $locale, $messages[$locale], new \DateTime());
                             break;
