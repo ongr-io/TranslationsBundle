@@ -243,7 +243,33 @@ $(document).ready(function() {
 
     $('#translation-export').on('click', function(e){
         e.preventDefault();
+        $('#export-loading').show();
+        var table = $('#export-table');
+        var header = '<tr><th>Domain</th><th>Key</th><th>Locale</th><th>Message</th></tr>';
+        var dirtyTranslations = header;
+        var data = translationsTable.rows().data();
+        table.html('');
         $('#export-modal').modal();
+
+        $.each(data, function(i, translation) {
+            $.each(locales, function(i, locale){
+                if (typeof translation.messages[locale] != 'undefined' && translation.messages[locale].status == 'dirty') {
+                    dirtyTranslations += '<tr class="dirty-translaiton-row">' +
+                        '<td>'+translation.domain+'</td>' +
+                        '<td>'+translation.key+'</td>' +
+                        '<td>'+locale+'</td>' +
+                        '<td>'+translation.messages[locale].message+'</td></tr>';
+                }
+            });
+        });
+
+        $('#export-loading').hide();
+
+        if (dirtyTranslations != header) {
+            $('#export-table').append(dirtyTranslations);
+        } else {
+            $('#export-table').parent().append('<h4>Nothing to export</h4>');
+        }
     });
 
     $('#add-new-tag-show-form').on('click', function () {
