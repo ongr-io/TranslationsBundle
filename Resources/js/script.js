@@ -212,6 +212,27 @@ $(document).ready(function() {
     } );
 
     $('#translations tbody').on( 'click', '.history', function () {
+        var data = translationsTable.row( $(this).parents('tr') ).data();
+        var container = $('#history-container');
+        $('#history-key').text(data.key);
+        container.html('');
+        $.get(Routing.generate('ongr_translations_api_history', {id: data.id}), function(historyData) {
+            $.each(historyData, function(locale, histories) {
+                var localeSection = $('<div class="form-group"></div>');
+                var tableDiv = $('<div class="col-sm-10"></div>');
+                var table = $('<table class="table"></table>');
+                table.append('<tr style="width: 50%"><th>Message</th><th style="width: 50%">Updated at</th></tr>');
+                localeSection.append('<label class="col-sm-2 control-label">'+locale+'</label>');
+
+                $.each(histories, function(i, history) {
+                    table.append('<tr><td>'+history.message+'</td><td>'+history.updatedAt+'</td></tr>');
+                });
+
+                tableDiv.append(table);
+                localeSection.append(tableDiv);
+                container.append(localeSection);
+            })
+        });
         $('#history-modal').modal();
     } );
 

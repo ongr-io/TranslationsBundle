@@ -11,14 +11,12 @@
 
 namespace ONGR\TranslationsBundle\Translation;
 
-use ONGR\ElasticsearchBundle\Result\Result;
+use ONGR\ElasticsearchBundle\Result\DocumentIterator;
 use ONGR\ElasticsearchDSL\Query\TermQuery;
 use ONGR\ElasticsearchDSL\Sort\FieldSort;
 use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\TranslationsBundle\Document\History;
 use ONGR\TranslationsBundle\Document\Message;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * History handler.
@@ -43,7 +41,7 @@ class HistoryManager
      *
      * @param string $id
      *
-     * @return array
+     * @return DocumentIterator
      */
     public function getHistory($id)
     {
@@ -54,6 +52,22 @@ class HistoryManager
         return $this->repository->findDocuments($search);
     }
 
+    /**
+     * @param $id
+     * @return array
+     */
+    public function getOrderedHistory($id)
+    {
+        $ordered = [];
+        $histories = $this->getHistory($id);
+
+        /** @var History $history */
+        foreach ($histories as $history) {
+            $ordered[$history->getLocale()][] = $history;
+        }
+
+        return $ordered;
+    }
 
     /**
      * @param Message $message

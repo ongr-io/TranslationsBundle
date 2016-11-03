@@ -109,6 +109,6 @@ class ApiController extends Controller
      */
     public function historyAction(Request $request, $id)
     {
-        return new JsonResponse(iterator_to_array($this->get('ongr_translations.history_manager')->getHistory($id)));
+        return new JsonResponse($this->get('ongr_translations.history_manager')->getOrderedHistory($id));
     }
 }

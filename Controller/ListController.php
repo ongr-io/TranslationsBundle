@@ -46,6 +46,7 @@ class ListController extends Controller
      */
     public function getTranslationsAction(Request $request)
     {
+        /** @var SearchResponse $filterResponse */
         $filterResponse = $this->get('ongr_translations.filter_manager')->handleRequest($request);
 
         return new JsonResponse(iterator_to_array($filterResponse->getResult()));
