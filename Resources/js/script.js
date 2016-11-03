@@ -217,6 +217,11 @@ $(document).ready(function() {
         $('#history-key').text(data.key);
         container.html('');
         $.get(Routing.generate('ongr_translations_api_history', {id: data.id}), function(historyData) {
+            if (historyData instanceof Array && historyData.length < 1) {
+                container.append('<h4>No history</h4>');
+                return;
+            }
+
             $.each(historyData, function(locale, histories) {
                 var localeSection = $('<div class="form-group"></div>');
                 var tableDiv = $('<div class="col-sm-10"></div>');
