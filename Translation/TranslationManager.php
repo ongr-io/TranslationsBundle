@@ -66,7 +66,6 @@ class TranslationManager
         $document = $this->getTranslation($id);
 
         if (isset($content['messages'])) {
-//            $this->dispatcher->dispatch(Events::ADD_HISTORY, new TranslationEditMessageEvent($request, $document));
             $this->updateMessages($document, $content['messages']);
             unset($content['messages']);
         }
@@ -90,35 +89,51 @@ class TranslationManager
      */
     private function updateMessages(Translation $document, array $messages)
     {
+        $setMessagesLocales = array_keys($document->getMessagesArray());
         $documentMessages = $document->getMessages();
 
-        foreach ($documentMessages as $message) {
-            $locale = $message->getLocale();
+        foreach ($messages as $locale => $messageText) {
+            if (!empty($messageText) && is_string($messageText)) {
+                $this->dispatcher->dispatch(
+                    Events::ADD_HISTORY,
+                    new TranslationEditMessageEvent($document, $locale)
+                );
 
-            if (isset($messages[$locale])) {
-                if ($messages[$locale] != $message->getMessage() && !empty($messages[$locale])) {
-                    $message->setMessage($messages[$locale]);
-                    $message->setUpdatedAt(new \DateTime());
-                    $message->setStatus(Message::DIRTY);
-                }
-
-                unset($messages[$message->getLocale()]);
-            }
-        }
-
-        if (!empty($messages)) {
-            foreach ($messages as $locale => $messageText) {
-                if (!empty($messageText)) {
-                    $message = new Message();
-                    $message->setLocale($locale);
-                    $message->setStatus(Message::DIRTY);
-                    $message->setMessage($messageText);
-                    $documentMessages[] = $message;
+                if (in_array($locale, $setMessagesLocales)) {
+                    foreach ($documentMessages as $message) {
+                        if ($message->getLocale() == $locale) {
+                            $this->updateMessageData($message, $locale, $messages[$locale], new \DateTime());
+                            break;
+                        }
+                    }
+                } else {
+                    $documentMessages[] = $this->updateMessageData(new Message(), $locale, $messageText);
                 }
             }
         }
 
         $document->setMessages($documentMessages);
+    }
+
+    /**
+     * @param Message   $message
+     * @param string    $locale
+     * @param string    $text
+     * @param \DateTime $updatedAt
+     *
+     * @return Message
+     */
+    private function updateMessageData(Message $message, $locale, $text, $updatedAt = null)
+    {
+        $message->setLocale($locale);
+        $message->setStatus(Message::DIRTY);
+        $message->setMessage($text);
+
+        if ($updatedAt) {
+            $message->setUpdatedAt($updatedAt);
+        }
+
+        return $message;
     }
 
     /**

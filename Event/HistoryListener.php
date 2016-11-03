@@ -13,6 +13,9 @@ namespace ONGR\TranslationsBundle\Event;
 
 use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\TranslationsBundle\Document\History;
+use ONGR\TranslationsBundle\Document\Message;
+use ONGR\TranslationsBundle\Document\Translation;
+use ONGR\TranslationsBundle\Translation\HistoryManager;
 
 /**
  * Listens for edit message request event and add old message to history.
@@ -20,16 +23,16 @@ use ONGR\TranslationsBundle\Document\History;
 class HistoryListener
 {
     /**
-     * @var Repository
+     * @var HistoryManager
      */
-    private $repository;
+    private $manager;
 
     /**
-     * @param Repository $repository
+     * @param HistoryManager $manager
      */
-    public function __construct(Repository $repository)
+    public function __construct(HistoryManager $manager)
     {
-        $this->repository = $repository;
+        $this->manager = $manager;
     }
 
     /**
@@ -39,69 +42,30 @@ class HistoryListener
      */
     public function addToHistory(TranslationEditMessageEvent $event)
     {
-        $manager = $this->repository->getManager();
         $document = $event->getDocument();
-        $locale = $this->getLocale($event);
-        $oldMessage = $this->getOldMessage($document, $locale);
+        $locale = $event->getLocale();
 
-        $historyDocument = $this->setDocument($document, $oldMessage, $locale);
-
-        $manager->persist($historyDocument);
-        $manager->commit();
+        if ($oldMessage = $this->getOldMessage($document, $locale)) {
+            $this->manager->addHistory($oldMessage, $document->getId(), $locale);
+        }
     }
 
     /**
-     * @param TranslationEditMessageEvent $event
+     * @param Translation $document
+     * @param string      $locale
      *
-     * @return string
-     */
-    private function getLocale(TranslationEditMessageEvent $event)
-    {
-        $request = $event->getRequest();
-        $content = json_decode($request->getContent());
-
-        return $content->properties->locale;
-    }
-
-    /**
-     * @param object $document
-     * @param string $oldMessage
-     * @param string $locale
-     *
-     * @return mixed
-     */
-    private function setDocument($document, $oldMessage, $locale)
-    {
-        $newDocument = new History();
-
-        $key = $document->getKey();
-        $domain = $document->getDomain();
-        $newDocument->setKey($key);
-        $newDocument->setLocale($locale);
-        $newDocument->setMessage($oldMessage);
-        $newDocument->setDomain($domain);
-        $newDocument->setId(sha1($document->getId() . $oldMessage));
-        $newDocument->setCreatedAt(new \DateTime());
-
-        return $newDocument;
-    }
-
-    /**
-     * @param object $document
-     * @param string $locale
-     *
-     * @return mixed
+     * @return Message|null
      */
     private function getOldMessage($document, $locale)
     {
         $messages = $document->getMessages();
-        foreach ($messages as $message) {
-            $messageLocale = $message->getLocale();
-            if ($locale == $messageLocale) {
-                $oldMessage = $message->getMessage();
 
-                return $oldMessage;
+        foreach ($messages as $message) {
+            if ($locale == $message->getLocale()) {
+                return $message;
             }
         }
+
+        return null;
     }
 }

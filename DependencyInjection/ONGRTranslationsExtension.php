@@ -46,7 +46,7 @@ class ONGRTranslationsExtension extends Extension
         $this->setTranslationManager($config['repository'], $container);
         $this->setHistoryManager($this->editRepositoryName($config['repository']), $container);
         if ($config['history']) {
-            $this->setEditMessageEvent($this->editRepositoryName($config['repository']), $container);
+            $this->setEditMessageEvent($container);
         }
     }
 
@@ -129,15 +129,14 @@ class ONGRTranslationsExtension extends Extension
     /**
      * Validates edit message event.
      *
-     * @param string           $repositoryId
      * @param ContainerBuilder $container
      */
-    private function setEditMessageEvent($repositoryId, ContainerBuilder $container)
+    private function setEditMessageEvent(ContainerBuilder $container)
     {
         $definition = new Definition(
             'ONGR\TranslationsBundle\Event\HistoryListener',
             [
-                new Reference($repositoryId),
+                new Reference('ongr_translations.history_manager'),
             ]
         );
         $definition->addTag(

@@ -11,6 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Event;
 
+use ONGR\TranslationsBundle\Document\Translation;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -20,40 +21,40 @@ use Symfony\Component\HttpFoundation\Request;
 class TranslationEditMessageEvent extends Event
 {
     /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var object
+     * @var Translation
      */
     private $document;
 
     /**
-     * @param Request $request
-     * @param object  $document
+     * @var array
      */
-    public function __construct(Request $request, $document)
-    {
-        $this->request = $request;
-        $this->document = $document;
-    }
+    private $locale;
 
     /**
-     * @return Request
+     * @param Translation  $document
+     * @param array   $locale
      */
-    public function getRequest()
+    public function __construct(Translation $document, $locale)
     {
-        return $this->request;
+        $this->document = $document;
+        $this->locale = $locale;
     }
-
     /**
      * Returns document associated with the event.
      *
-     * @return object
+     * @return Translation
      */
     public function getDocument()
     {
         return $this->document;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getLocale()
+    {
+        return $this->locale;
     }
 }

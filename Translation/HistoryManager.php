@@ -15,6 +15,8 @@ use ONGR\ElasticsearchBundle\Result\Result;
 use ONGR\ElasticsearchDSL\Query\TermQuery;
 use ONGR\ElasticsearchDSL\Sort\FieldSort;
 use ONGR\ElasticsearchBundle\Service\Repository;
+use ONGR\TranslationsBundle\Document\History;
+use ONGR\TranslationsBundle\Document\Message;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -23,6 +25,11 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  */
 class HistoryManager
 {
+    /**
+     * @var Repository
+     */
+    private $repository;
+
     /**
      * @param Repository $repository
      */
@@ -34,40 +41,34 @@ class HistoryManager
     /**
      * Returns message history.
      *
-     * @param Request $request
+     * @param string $id
      *
      * @return array
      */
-    public function history(Request $request)
+    public function getHistory($id)
     {
-        $content = $this->parseJsonContent($request);
-
         $search = $this->repository->createSearch();
-        $search->addFilter(new TermQuery('key', $content['key']));
-        $search->addFilter(new TermQuery('domain', $content['domain']));
-        $search->addFilter(new TermQuery('locale', $content['locale']));
+        $search->addFilter(new TermQuery('translation', $id));
         $search->addSort(new FieldSort('created_at', FieldSort::DESC));
 
-        return $this->repository->execute($search, Result::RESULTS_ARRAY);
+        return $this->repository->findDocuments($search);
     }
 
+
     /**
-     * Parses http request content from json to array.
-     *
-     * @param Request $request Http request object.
-     *
-     * @return array
-     *
-     * @throws BadRequestHttpException
+     * @param Message $message
+     * @param $id
+     * @param $locale
      */
-    private function parseJsonContent(Request $request)
+    public function addHistory(Message $message, $id, $locale)
     {
-        $content = json_decode($request->getContent(), true);
+        $history = new History();
+        $history->setLocale($locale);
+        $history->setTranslation($id);
+        $history->setMessage($message->getMessage());
+        $history->setId(sha1($id . $message->getMessage()));
+        $history->setUpdatedAt($message->getUpdatedAt());
 
-        if (empty($content)) {
-            throw new BadRequestHttpException('No content found.');
-        }
-
-        return $content;
+        $this->repository->getManager()->persist($history);
     }
 }
