@@ -40,17 +40,24 @@ class TranslationManager
     private $repository;
 
     /**
+     * @var HistoryManager
+     */
+    private $historyManager;
+
+    /**
      * @var EventDispatcherInterface
      */
     private $dispatcher;
 
     /**
      * @param Repository               $repository
+     * @param HistoryManager           $manager
      * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(Repository $repository, EventDispatcherInterface $dispatcher)
+    public function __construct(Repository $repository, HistoryManager $manager, EventDispatcherInterface $dispatcher)
     {
         $this->repository = $repository;
+        $this->historyManager = $manager;
         $this->dispatcher = $dispatcher;
     }
 
@@ -102,6 +109,7 @@ class TranslationManager
                 if (in_array($locale, $setMessagesLocales)) {
                     foreach ($documentMessages as $message) {
                         if ($message->getLocale() == $locale) {
+                            $this->historyManager->addHistory($message, $document->getId(), $locale);
                             $this->updateMessageData($message, $locale, $messages[$locale], new \DateTime());
                             break;
                         }

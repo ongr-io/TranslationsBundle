@@ -45,9 +45,6 @@ class ONGRTranslationsExtension extends Extension
         $this->setFiltersManager($config['repository'], $container);
         $this->setTranslationManager($config['repository'], $container);
         $this->setHistoryManager($this->editRepositoryName($config['repository']), $container);
-        if ($config['history']) {
-            $this->setEditMessageEvent($container);
-        }
     }
 
     /**
@@ -62,6 +59,7 @@ class ONGRTranslationsExtension extends Extension
             'ONGR\TranslationsBundle\Translation\TranslationManager',
             [
                 new Reference($repositoryId),
+                new Reference('ongr_translations.history_manager'),
                 new Reference('event_dispatcher'),
             ]
         );
@@ -124,26 +122,6 @@ class ONGRTranslationsExtension extends Extension
             }
         }
         $container->setParameter('ongr_translations.bundles', $bundles);
-    }
-
-    /**
-     * Validates edit message event.
-     *
-     * @param ContainerBuilder $container
-     */
-    private function setEditMessageEvent(ContainerBuilder $container)
-    {
-        $definition = new Definition(
-            'ONGR\TranslationsBundle\Event\HistoryListener',
-            [
-                new Reference('ongr_translations.history_manager'),
-            ]
-        );
-        $definition->addTag(
-            'kernel.event_listener',
-            ['event' => 'translation.history.add', 'method' => 'addToHistory']
-        );
-        $container->setDefinition('ongr_translations.es_manager', $definition);
     }
 
     /**

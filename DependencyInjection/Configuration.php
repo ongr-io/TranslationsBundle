@@ -55,10 +55,6 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue([])
                     ->end()
                 ->end()
-                ->booleanNode('history')
-                    ->info('History enable/disable. Default is enable.')
-                    ->defaultTrue()
-                ->end()
             ->end()
         ->end();
 
