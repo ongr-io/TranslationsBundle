@@ -249,6 +249,7 @@ $(document).ready(function() {
         var dirtyTranslations = header;
         var data = translationsTable.rows().data();
         table.html('');
+        $('#export-nothing-to-export-header').hide()
         $('#export-modal').modal();
 
         $.each(data, function(i, translation) {
@@ -266,9 +267,9 @@ $(document).ready(function() {
         $('#export-loading').hide();
 
         if (dirtyTranslations != header) {
-            $('#export-table').append(dirtyTranslations);
+            table.append(dirtyTranslations);
         } else {
-            $('#export-table').parent().append('<h4>Nothing to export</h4>');
+            $('#export-nothing-to-export-header').show();
         }
     });
 
