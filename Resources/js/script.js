@@ -247,30 +247,34 @@ $(document).ready(function() {
         var table = $('#export-table');
         var header = '<tr><th>Domain</th><th>Key</th><th>Locale</th><th>Message</th></tr>';
         var dirtyTranslations = header;
-        var data = translationsTable.rows().data();
+        var data;
         table.html('');
         $('#export-nothing-to-export-header').hide()
         $('#export-modal').modal();
+        translationsTable.ajax.reload();
+        setTimeout(function(){
+            data = translationsTable.rows().data()
 
-        $.each(data, function(i, translation) {
-            $.each(locales, function(i, locale){
-                if (typeof translation.messages[locale] != 'undefined' && translation.messages[locale].status == 'dirty') {
-                    dirtyTranslations += '<tr class="dirty-translaiton-row">' +
-                        '<td>'+translation.domain+'</td>' +
-                        '<td>'+translation.key+'</td>' +
-                        '<td>'+locale+'</td>' +
-                        '<td>'+translation.messages[locale].message+'</td></tr>';
-                }
+            $.each(data, function(i, translation) {
+                $.each(locales, function(i, locale){
+                    if (typeof translation.messages[locale] != 'undefined' && translation.messages[locale].status == 'dirty') {
+                        dirtyTranslations += '<tr class="dirty-translaiton-row">' +
+                            '<td>'+translation.domain+'</td>' +
+                            '<td>'+translation.key+'</td>' +
+                            '<td>'+locale+'</td>' +
+                            '<td>'+translation.messages[locale].message+'</td></tr>';
+                    }
+                });
             });
-        });
 
-        $('#export-loading').hide();
+            $('#export-loading').hide();
 
-        if (dirtyTranslations != header) {
-            table.append(dirtyTranslations);
-        } else {
-            $('#export-nothing-to-export-header').show();
-        }
+            if (dirtyTranslations != header) {
+                table.append(dirtyTranslations);
+            } else {
+                $('#export-nothing-to-export-header').show();
+            }
+        }, 400);
     });
 
     $('#add-new-tag-show-form').on('click', function () {
