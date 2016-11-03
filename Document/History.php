@@ -18,7 +18,7 @@ use ONGR\ElasticsearchBundle\Annotation as ES;
  *
  * @ES\Document(type="history")
  */
-class History
+class History implements \JsonSerializable
 {
     /**
      * @var string
@@ -153,5 +153,19 @@ class History
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'message' => $this->getMessage(),
+            'translation' => $this->getTranslation(),
+            'locale' => $this->getLocale(),
+            'updatedAt' => $this->getUpdatedAt()->format('Y-m-d H:i:s'),
+        ];
     }
 }
