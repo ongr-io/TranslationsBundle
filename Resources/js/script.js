@@ -244,6 +244,7 @@ $(document).ready(function() {
     $('#translation-export').on('click', function(e){
         e.preventDefault();
         $('#export-loading').show();
+        $('.export-dialog').hide();
         var table = $('#export-table');
         var header = '<tr><th>Domain</th><th>Key</th><th>Locale</th><th>Message</th></tr>';
         var dirtyTranslations = header;
@@ -275,6 +276,18 @@ $(document).ready(function() {
                 $('#export-nothing-to-export-header').show();
             }
         }, 400);
+    });
+
+    $('#export-submit').on('click', function() {
+        $.post(Routing.generate('ongr_translations_api_export'), function (result) {
+            if (result.error == true) {
+                $('#export-error').show();
+            } else {
+                $('#export-success').show();
+                $('#export-table').html('');
+                translationsTable.reload();
+            }
+        });
     });
 
     $('#add-new-tag-show-form').on('click', function () {

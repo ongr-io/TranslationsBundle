@@ -7,6 +7,14 @@
                 <h4 class="modal-title" id="history-title">Pending changes</h4>
             </div>
             <div class="modal-body">
+                <div id="export-error" class="alert alert-danger alert-dismissible export-dialog" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4>There was an error exporting data!</h4>
+                </div>
+                <div id="export-success" class="alert alert-success alert-dismissible export-dialog" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4>Data exported successfully!</h4>
+                </div>
                 <div id="export-container">
                     <table class="table" id="export-table"></table>
                     <h4 id="export-nothing-to-export-header">Nothing to export</h4>

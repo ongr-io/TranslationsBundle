@@ -94,9 +94,13 @@ class ApiController extends Controller
             chdir($cwd . DIRECTORY_SEPARATOR . '..');
         }
 
-        return new JsonResponse(
-            $this->get('ongr_translations.command.export')->run(new ArrayInput([]), new NullOutput())
-        );
+        $output = ['error' => false];
+
+        if ($this->get('ongr_translations.command.export')->run(new ArrayInput([]), new NullOutput()) != 0) {
+            $output['error'] = true;
+        }
+
+        return new JsonResponse($output);
     }
 
     /**
