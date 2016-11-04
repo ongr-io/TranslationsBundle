@@ -2,7 +2,7 @@ services:
     ongr_translations.filter.domain:
         class: ONGR\FilterManagerBundle\Filter\Widget\Choice\MultiTermChoice
         calls:
-            - ["setRequestField", ["domain"]]
+            - ["setRequestField", ["domains"]]
             - ["setField", ["domain"]]
 
     ongr_translations.filter.tag:

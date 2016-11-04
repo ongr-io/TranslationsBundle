@@ -196,17 +196,39 @@ class TranslationManager
      */
     public function getTags()
     {
-        $search = $this->repository->createSearch();
-        $search->addAggregation(new TermsAggregation('tags', 'tags'));
-        $result = $this->repository->findDocuments($search);
-        $tagAggregation = $result->getAggregation('tags');
-        $tags = [];
+        return $this->getItems('tags');
+    }
 
-        foreach ($tagAggregation as $tag) {
-            $tags[] = $tag['key'];
+    /**
+     * Returns all active domains from translations
+     * @return array
+     */
+    public function getDomains()
+    {
+        return $this->getItems('domain');
+    }
+
+    /**
+     * @param string $type
+     * @return array
+     */
+    private function getItems($type)
+    {
+        if (!in_array($type, ['tags', 'domain'])) {
+            throw new \LogicException();
         }
 
-        return $tags;
+        $search = $this->repository->createSearch();
+        $search->addAggregation(new TermsAggregation($type, $type));
+        $result = $this->repository->findDocuments($search);
+        $aggregation = $result->getAggregation($type);
+        $items = [];
+
+        foreach ($aggregation as $item) {
+            $items[] = $item['key'];
+        }
+
+        return $items;
     }
 
     /**

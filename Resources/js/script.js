@@ -3,16 +3,18 @@ Array.prototype.diff = function(e) {
 };
 
 $(document).ready(function() {
-    var locales;
-    var translationColumns;
+    var tags = [];
+    var domains = [];
+    var locales = [];
+    var translationColumns = [];
     var currentMessageValue;
-    var tags;
 
     $.ajax({
         url: Routing.generate('ongr_translations_list_get_initial_data'),
         success: function(data) {
             locales = data.locales;
             tags = data.tags;
+            domains = data.domains;
             var columnNumbers = [];
 
             for (var i = 2; i < (data.locales.length + 2); i++) {
@@ -24,11 +26,14 @@ $(document).ready(function() {
         async: false
     });
 
+    var tagSelect = $('<select multiple name="tags[]"/>').attr({'id': 'tag-select'});
+    var domainSelect = $('<select multiple name="domains[]"/>').attr({'id': 'domain-select'});
+
     var translationsTable = $('#translations').DataTable( {
         ajax: {
             url: Routing.generate('ongr_translations_list_get_translations'),
             data: function() {
-                return {tags: $('#tag-select').val()}
+                return {tags: $('#tag-select').val(), domains: $('#domain-select').val()}
             },
             dataSrc: ''
         },
@@ -39,7 +44,7 @@ $(document).ready(function() {
             {
                 "targets": translationColumns,
                 "orderable": false,
-                "render": function ( data, type, full, meta ) {
+                "render": function ( data, type, row, meta ) {
                     data = data == null ? '[No message]' : data;
                     return '<span class="translation-message">'+data+'</span>';
                 }
@@ -48,23 +53,40 @@ $(document).ready(function() {
                 "targets": -1,
                 "orderable": false,
                 "render":function ( data, type, row ) {
-                    return '<div class="action-container"><a class="edit btn btn-primary btn-xs" data-toggle="modal" data-target="#setting-edit">Edit</a>&nbsp;<a class="history btn btn-warning btn-xs" data-name="'+row['name']+'">History</a></div>'
+                    return '<div class="action-containr"><a class="edit btn btn-primary btn-xs" data-toggle="modal" data-target="#setting-edit">Edit</a>&nbsp;<a class="history btn btn-warning btn-xs" data-name="'+row['name']+'">History</a></div>'
                 }
             }
         ]
     } );
 
-    var tagSelect = $('<select multiple name="tags[]"/>').attr(
-        {
-            'id': 'tag-select',
-        }
-    );
+    tagSelect = addSelectOptions(tagSelect, tags);
+    domainSelect = addSelectOptions(domainSelect, domains);
 
-    var tagOptions = '';
-    $.each(tags, function(key, tag) {
-        tagOptions += '<option value="'+tag+'">'+tag+'</option>>';
-    });
-    tagSelect.append(tagOptions);
+    var tagLabel = $('<label class="tags-label">Tags: </label>');
+    var domainLabel = $('<label class="domains-label">Domains: </label>');
+    var translationsFilter = $('#translations_filter');
+
+    appendMultiselect(translationsFilter, tagLabel, tagSelect);
+    appendMultiselect(translationsFilter, domainLabel, domainSelect);
+
+    translationsFilter.parent().removeClass('col-sm-6').addClass('col-sm-9');
+    $('#translations_length').parent().removeClass('col-sm-6').addClass('col-sm-3');
+
+    function addSelectOptions(select, items) {
+        var options = '';
+        $.each(items, function(key, item) {
+            options += '<option value="'+item+'">'+item+'</option>>';
+        });
+        select.append(options);
+
+        return select;
+    }
+
+    function appendMultiselect(element, label, select) {
+        label.append(select.prop('outerHTML'));
+        element.prepend(label.prop('outerHTML'));
+        $('#'+select.attr('id')).multiselect();
+    }
 
     function getColumnData() {
         var data = [
@@ -173,10 +195,6 @@ $(document).ready(function() {
             toggleMessage($(this).parent(), $(this).val(), 'span');
         }
     });
-
-    $('#translations_filter').append('<label class="tags-label">Tags: </label>');
-    $('#translations_filter').append(tagSelect.prop('outerHTML'));
-    $('#tag-select').multiselect();
 
     $('#translations tbody').on('blur', 'input.translation-input', function(e) {
         toggleMessage($(this).parent(), $(this).val(), 'span');
@@ -309,6 +327,10 @@ $(document).ready(function() {
     });
 
     $('#tag-select').change(function() {
+        translationsTable.ajax.reload();
+    });
+
+    $('#domain-select').change(function() {
         translationsTable.ajax.reload();
     });
 

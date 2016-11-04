@@ -37,6 +37,7 @@ class ListController extends Controller
         $out = [];
         $out['locales'] = $this->getParameter('ongr_translations.managed_locales');
         $out['tags'] = $this->get('ongr_translations.translation_manager')->getTags();
+        $out['domains'] = $this->get('ongr_translations.translation_manager')->getDomains();
         return new JsonResponse($out);
     }
 
