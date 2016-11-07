@@ -1,4 +1,14 @@
 services:
+  ongr_translations.translation_manager:
+    class: ONGR\TranslationsBundle\Translation\TranslationManager
+    arguments:
+      - "@ongr_translations.translation_repository"
+      - "@ongr_translations.history_manager"
+      - "@event_dispatcher"
+  ongr_translations.history_manager:
+    class: ONGR\TranslationsBundle\Translation\HistoryManager
+    arguments:
+      - "@ongr_translations.history_repository"
   ongr_translations.command.export:
     class: ONGR\TranslationsBundle\Command\ExportCommand
     calls:
@@ -29,7 +39,7 @@ services:
     class: ONGR\TranslationsBundle\Service\Export
     arguments:
       - "@ongr_translations.loaders_container"
-      - "@ongr_translations.repository"
+      - "@ongr_translations.translation_repository"
       - "@ongr_translations.export.yaml"
     calls:
       - ["setManagedLocales", ["%ongr_translations.managed_locales%"]]

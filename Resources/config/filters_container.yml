@@ -13,6 +13,8 @@ services:
 
     ongr_translations.filter.size:
         class: ONGR\TranslationsBundle\Filter\SizeFilter
+        calls:
+            - ["setSize", ["%ongr_translations.list_size%"]]
 
     ongr_translations.filters_container:
         class: ONGR\FilterManagerBundle\Search\FilterContainer

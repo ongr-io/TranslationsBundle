@@ -39,50 +39,15 @@ class ONGRTranslationsExtension extends Extension
         $container->setParameter('ongr_translations.managed_locales', $config['managed_locales']);
         $container->setParameter('ongr_translations.formats', $config['formats']);
         $container->setParameter('ongr_translations.domains', $config['domains']);
-        $container->setAlias('ongr_translations.repository', $config['repository']);
+        $container->setParameter('ongr_translations.list_size', $config['list_size']);
+        $container->setAlias('ongr_translations.translation_repository', $config['repository']);
+        $container->setAlias(
+            'ongr_translations.history_repository',
+            substr_replace($config['repository'], 'history', strrpos($config['repository'], '.') + 1)
+        );
         $this->validateBundles($container, $config['bundles']);
 
         $this->setFiltersManager($config['repository'], $container);
-        $this->setTranslationManager($config['repository'], $container);
-        $this->setHistoryManager($this->editRepositoryName($config['repository']), $container);
-    }
-
-    /**
-     * Adds translations manager.
-     *
-     * @param string           $repositoryId Elasticsearch repository id.
-     * @param ContainerBuilder $container    Service container.
-     */
-    private function setTranslationManager($repositoryId, ContainerBuilder $container)
-    {
-        $definition = new Definition(
-            'ONGR\TranslationsBundle\Translation\TranslationManager',
-            [
-                new Reference($repositoryId),
-                new Reference('ongr_translations.history_manager'),
-                new Reference('event_dispatcher'),
-            ]
-        );
-
-        $container->setDefinition('ongr_translations.translation_manager', $definition);
-    }
-
-    /**
-     * Adds history manager.
-     *
-     * @param string           $repositoryId
-     * @param ContainerBuilder $container
-     */
-    private function setHistoryManager($repositoryId, ContainerBuilder $container)
-    {
-        $definition = new Definition(
-            'ONGR\TranslationsBundle\Translation\HistoryManager',
-            [
-                new Reference($repositoryId),
-            ]
-        );
-
-        $container->setDefinition('ongr_translations.history_manager', $definition);
     }
 
     /**
@@ -122,17 +87,5 @@ class ONGRTranslationsExtension extends Extension
             }
         }
         $container->setParameter('ongr_translations.bundles', $bundles);
-    }
-
-    /**
-     * Edits repository name.
-     *
-     * @param string $repository
-     *
-     * @return string
-     */
-    private function editRepositoryName($repository)
-    {
-        return substr_replace($repository, 'history', strrpos($repository, '.') + 1);
     }
 }

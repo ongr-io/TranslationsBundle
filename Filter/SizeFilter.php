@@ -26,6 +26,11 @@ use Symfony\Component\HttpFoundation\Request;
 class SizeFilter extends AbstractSingleValue
 {
     /**
+     * @var int
+     */
+    private $size;
+
+    /**
      * {@inheritdoc}
      */
     public function getState(Request $request)
@@ -41,7 +46,7 @@ class SizeFilter extends AbstractSingleValue
      */
     public function modifySearch(Search $search, FilterState $state = null, SearchRequest $request = null)
     {
-        $search->setSize(10000);
+        $search->setSize($this->getSize());
     }
 
     /**
@@ -50,5 +55,21 @@ class SizeFilter extends AbstractSingleValue
     public function preProcessSearch(Search $search, Search $relatedSearch, FilterState $state = null)
     {
         // Do nothing
+    }
+
+    /**
+     * @return int
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
+
+    /**
+     * @param int $size
+     */
+    public function setSize($size)
+    {
+        $this->size = $size;
     }
 }
