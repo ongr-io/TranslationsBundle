@@ -9,13 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\TranslationsBundle\Service;
+namespace ONGR\TranslationsBundle\Service\Import;
 
 use Elasticsearch\Common\Exceptions\BadRequest400Exception;
 use ONGR\ElasticsearchBundle\Service\Manager;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
-use ONGR\TranslationsBundle\Translation\Import\FileImport;
 use Symfony\Component\Finder\Finder;
 
 /**

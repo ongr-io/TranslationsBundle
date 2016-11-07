@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\TranslationsBundle\Translation\Import;
+namespace ONGR\TranslationsBundle\Service\Import;
 
 use Symfony\Component\Finder\SplFileInfo;
 

@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\TranslationsBundle\Translation;
+namespace ONGR\TranslationsBundle\Service;
 
 use ONGR\ElasticsearchBundle\Result\DocumentIterator;
 use ONGR\ElasticsearchDSL\Query\TermQuery;

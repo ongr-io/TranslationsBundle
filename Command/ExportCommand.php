@@ -11,7 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Command;
 
-use ONGR\TranslationsBundle\Service\Export;
+use ONGR\TranslationsBundle\Service\Export\Export;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

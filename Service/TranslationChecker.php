@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\TranslationsBundle\Translation;
+namespace ONGR\TranslationsBundle\Service;
 
 use Symfony\Component\Translation\Interval;
 use Symfony\Component\Translation\PluralizationRules;

@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\TranslationsBundle\Translation\Export;
+namespace ONGR\TranslationsBundle\Service\Export;
 
 use Symfony\Component\Yaml\Dumper;
 

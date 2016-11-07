@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\TranslationsBundle\Translation;
+namespace ONGR\TranslationsBundle\Service;
 
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use ONGR\ElasticsearchBundle\Result\DocumentIterator;
@@ -26,8 +26,6 @@ use ONGR\TranslationsBundle\Event\TranslationEditMessageEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Handles translation objects by http requests.

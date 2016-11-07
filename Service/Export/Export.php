@@ -9,14 +9,14 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\TranslationsBundle\Service;
+namespace ONGR\TranslationsBundle\Service\Export;
 
 use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
 use ONGR\ElasticsearchDSL\Query\TermsQuery;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\ElasticsearchBundle\Service\Repository;
-use ONGR\TranslationsBundle\Translation\Export\ExporterInterface;
+use ONGR\TranslationsBundle\Service\LoadersContainer;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**

@@ -11,7 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Command;
 
-use ONGR\TranslationsBundle\Service\Import;
+use ONGR\TranslationsBundle\Service\Import\Import;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
