@@ -66,6 +66,13 @@ class Translation implements \JsonSerializable
     /**
      * @var string
      *
+     * @ES\Property(type="string"})
+     */
+    private $description;
+
+    /**
+     * @var string
+     *
      * @ES\Property(type="string")
      */
     private $format;
@@ -231,6 +238,22 @@ class Translation implements \JsonSerializable
     /**
      * @return string
      */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return string
+     */
     public function getFormat()
     {
         return $this->format;
@@ -287,6 +310,7 @@ class Translation implements \JsonSerializable
                 'id' => $this->getId(),
                 'messages' => $this->getMessagesArray(),
                 'tags' => $this->getTags(),
+                'description' => $this->getDescription(),
                 'createdAt' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
                 'updatedAt' => $this->getUpdatedAt()->format('Y-m-d H:i:s'),
             ]
