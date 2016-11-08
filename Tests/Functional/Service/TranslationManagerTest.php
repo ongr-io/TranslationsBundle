@@ -76,24 +76,6 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
                         ],
                     ],
                 ],
-                'history' => [
-                    [
-                        '_id' => 1,
-                        'key' => 'foo',
-                        'message' => 'Lorum ipsum',
-                        'domain' => 'barbar',
-                        'locale' => 'en',
-                        'historyId' => sha1('foo.en.barbar'),
-                    ],
-                    [
-                        '_id' => 2,
-                        'key' => 'foo',
-                        'message' => 'Lorum',
-                        'domain' => 'barbar',
-                        'locale' => 'en',
-                        'historyId' => sha1('foo.en.barbar'),
-                    ],
-                ],
             ],
         ];
     }
@@ -153,5 +135,10 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
     public function testGetDomains()
     {
         $this->assertEquals(['baz', 'foo'], $this->manager->getDomains());
+    }
+
+    public function testGetAllTranslations()
+    {
+        $this->assertEquals(2, count($this->manager->getAllTranslations()));
     }
 }

@@ -33,6 +33,8 @@
             <exclude>
                 <directory>./Tests</directory>
                 <directory>./vendor</directory>
+                <directory>./Controller</directory>
+                <directory>./Resources</directory>
             </exclude>
         </whitelist>
     </filter>
