@@ -14,7 +14,7 @@ namespace ONGR\TranslationsBundle\Tests\Functional\Command;
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
 use ONGR\TranslationsBundle\Command\ExportCommand;
 use ONGR\TranslationsBundle\Document\Message;
-use ONGR\TranslationsBundle\Translation\Export\YmlExport;
+use ONGR\TranslationsBundle\Service\Export\YmlExport;
 use org\bovigo\vfs\vfsStream;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;

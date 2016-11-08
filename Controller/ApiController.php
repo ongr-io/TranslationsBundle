@@ -11,7 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Controller;
 
-use ONGR\TranslationsBundle\Translation\TranslationChecker;
+use ONGR\TranslationsBundle\Service\TranslationChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;

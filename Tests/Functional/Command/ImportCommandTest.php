@@ -162,7 +162,7 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
      */
     private function getTranslationsCount(array $locales = [], array $domains = [])
     {
-        $repository = $this->getContainer()->get('ongr_translations.repository');
+        $repository = $this->getContainer()->get('ongr_translations.translation_repository');
 
         $search = $repository
             ->createSearch()

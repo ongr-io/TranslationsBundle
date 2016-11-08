@@ -9,11 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\TranslationsBundle\Tests\Functional\Translation;
+namespace ONGR\TranslationsBundle\Tests\Functional\Service;
 
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
 use ONGR\TranslationsBundle\Document\Message;
-use ONGR\TranslationsBundle\Translation\TranslationManager;
+use ONGR\TranslationsBundle\Document\Translation;
+use ONGR\TranslationsBundle\Service\TranslationManager;
 use Symfony\Component\HttpFoundation\Request;
 
 class TranslationManagerTest extends AbstractElasticsearchTestCase
@@ -48,12 +49,8 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
                         'path' => '',
                         'format' => 'yml',
                         'tags' => [
-                            [
-                                'name' => 'foo_tag',
-                            ],
-                            [
-                                'name' => 'tuna_tag',
-                            ],
+                            'foo_tag',
+                            'tuna_tag',
                         ],
                         'messages' => [
                             [
@@ -69,11 +66,7 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
                         'domain' => 'baz',
                         'path' => '',
                         'format' => 'yml',
-                        'tags' => [
-                            [
-                                'name' => 'baz_tag',
-                            ],
-                        ],
+                        'tags' => ['baz_tag'],
                         'messages' => [
                             [
                                 'locale' => 'en',
@@ -106,69 +99,37 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
     }
 
     /**
-     * Test for add().
-     */
-    public function testAdd()
-    {
-        $body = ['id' => 'foo', 'name' => 'tags', 'properties' => ['name' => 'bar_tag']];
-        $request = new Request([], [], [], [], [], [], json_encode($body));
-        $this->manager->add($request);
-
-        $translation = $this->getManager()->find('ONGRTranslationsBundle:Translation', 'foo');
-        $this->assertNotNull($translation);
-
-        $this->assertCount(3, $translation->getTags());
-    }
-
-    /**
      * Test for edit().
      */
     public function testEdit()
     {
         $body = [
-            'id' => 'foo',
-            'name' => 'tags',
-            'properties' => ['name' => 'bar_tag'],
-            'findBy' => ['name' => 'foo_tag'],
+            'tags' => ['bar_tag', 'tuna_tag'],
+            'messages' => [
+                'en' => 'bar',
+                'lt' => 'baras',
+            ]
         ];
-        $request = new Request([], [], [], [], [], [], json_encode($body));
-        $this->manager->edit($request);
 
+        $request = new Request([], [], [], [], [], [], json_encode($body));
+        $this->manager->edit('foo', $request);
+
+        /** @var Translation $translation */
         $translation = $this->getManager()->find('ONGRTranslationsBundle:Translation', 'foo');
         $this->assertNotNull($translation);
-
-        $tags = [];
-        foreach ($translation->getTags() as $tag) {
-            $tags[] = $tag->getName();
-        }
+        $messages = $translation->getMessages();
 
         $expectedTags = ['bar_tag', 'tuna_tag'];
-        $this->assertEquals($expectedTags, $tags);
-    }
+        $this->assertEquals($expectedTags, $translation->getTags());
 
-    /**
-     * Test for delete().
-     */
-    public function testDelete()
-    {
-        $body = [
-            'id' => 'foo',
-            'name' => 'tags',
-            'findBy' => ['name' => 'foo_tag'],
-        ];
-        $request = new Request([], [], [], [], [], [], json_encode($body));
-        $this->manager->delete($request);
+        $messagesArray = [];
 
-        $translation = $this->getManager()->find('ONGRTranslationsBundle:Translation', 'foo');
-        $this->assertNotNull($translation);
-
-        $tags = [];
-        foreach ($translation->getTags() as $tag) {
-            $tags[] = $tag->getName();
+        foreach ($messages as $message) {
+            $messagesArray[$message->getLocale()] = $message->getMessage();
+            $this->assertEquals('dirty', $message->getStatus());
         }
 
-        $expectedTags = ['tuna_tag'];
-        $this->assertEquals($expectedTags, $tags);
+        $this->assertEquals(['en' => 'bar', 'lt' => 'baras'], $messagesArray);
     }
 
     /**
@@ -182,5 +143,15 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
 
         $this->assertCount(1, $result);
         $this->assertEquals('baz.key', reset($result)['key']);
+    }
+
+    public function testGetTags()
+    {
+        $this->assertEquals(['baz_tag', 'foo_tag', 'tuna_tag'], $this->manager->getTags());
+    }
+
+    public function testGetDomains()
+    {
+        $this->assertEquals(['baz', 'foo'], $this->manager->getDomains());
     }
 }

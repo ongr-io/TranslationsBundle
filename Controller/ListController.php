@@ -11,13 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Controller;
 
-use ONGR\ElasticsearchBundle\Result\DocumentIterator;
-use ONGR\ElasticsearchBundle\Result\Result;
-use ONGR\ElasticsearchDSL\Aggregation\TermsAggregation;
-use ONGR\ElasticsearchBundle\Service\Repository;
-use ONGR\FilterManagerBundle\Filter\ViewData;
 use ONGR\FilterManagerBundle\Search\SearchResponse;
-use ONGR\TranslationsBundle\Document\Translation;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
