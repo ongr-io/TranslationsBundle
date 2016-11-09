@@ -39,7 +39,6 @@ services:
     class: ONGR\TranslationsBundle\Service\Export\Export
     arguments:
       - "@ongr_translations.loaders_container"
-      - "@ongr_translations.translation_repository"
       - "@ongr_translations.translation_manager"
       - "@ongr_translations.export.yaml"
     calls:

@@ -125,11 +125,13 @@ class TranslationManager
     }
 
     /**
+     * Returns all translations if filters are not specified
+     *
      * @param array $filters An array with specified limitations for results
      *
      * @return DocumentIterator
      */
-    public function getAllTranslations(array $filters = null)
+    public function getTranslations(array $filters = null)
     {
         $search = $this->repository->createSearch();
         $search->addQuery(new MatchAllQuery());
@@ -142,6 +144,18 @@ class TranslationManager
         }
 
         return $this->repository->findDocuments($search);
+    }
+
+    /**
+     * @param Translation[] $translations
+     */
+    public function saveTranslations($translations)
+    {
+        foreach ($translations as $translation) {
+            $this->repository->getManager()->persist($translation);
+        }
+
+        $this->repository->getManager()->commit();
     }
 
     /**

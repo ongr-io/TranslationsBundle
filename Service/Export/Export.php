@@ -11,11 +11,8 @@
 
 namespace ONGR\TranslationsBundle\Service\Export;
 
-use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
-use ONGR\ElasticsearchDSL\Query\TermsQuery;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
-use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\TranslationsBundle\Service\LoadersContainer;
 use ONGR\TranslationsBundle\Service\TranslationManager;
 use Symfony\Component\Filesystem\Filesystem;
@@ -25,11 +22,6 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class Export
 {
-    /**
-     * @var Repository
-     */
-    private $repository;
-
     /**
      * @var TranslationManager
      */
@@ -57,18 +49,15 @@ class Export
 
     /**
      * @param LoadersContainer   $loadersContainer
-     * @param Repository         $repository
      * @param TranslationManager $translationManager
      * @param ExporterInterface  $exporter
      */
     public function __construct(
         LoadersContainer $loadersContainer,
-        Repository $repository,
         TranslationManager $translationManager,
         ExporterInterface $exporter
     ) {
         $this->loadersContainer = $loadersContainer;
-        $this->repository = $repository;
         $this->translationManager = $translationManager;
         $this->exporter = $exporter;
     }
@@ -81,7 +70,7 @@ class Export
      */
     public function export($domains = [], $force = null)
     {
-        foreach ($this->readStorage($domains, $force) as $file => $translations) {
+        foreach ($this->formExportList($domains, $force) as $file => $translations) {
             if (!file_exists($file)) {
                 (new Filesystem())->touch($file);
             }
@@ -94,15 +83,8 @@ class Export
             $this->exporter->export($file, $translations);
         }
 
-        if (!empty($this->refresh)) {
-            foreach ($this->refresh as $translation) {
-                $this->repository->getManager()->persist($translation);
-            }
-
-            $this->repository->getManager()->commit();
-
-            $this->refresh = [];
-        }
+        $this->translationManager->saveTranslations($this->refresh);
+        $this->refresh = [];
     }
 
     /**
@@ -131,7 +113,7 @@ class Export
      *
      * @return array
      */
-    private function readStorage($domains, $force)
+    private function formExportList($domains, $force)
     {
         $data = [];
         $filters = array_filter([
@@ -139,7 +121,7 @@ class Export
             'domain' => $domains
         ]);
 
-        $translations = $this->translationManager->getAllTranslations($filters);
+        $translations = $this->translationManager->getTranslations($filters);
 
         /** @var Translation $translation */
         foreach ($translations as $translation) {
