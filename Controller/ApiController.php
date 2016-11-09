@@ -18,6 +18,7 @@ use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Controller used for api's actions.
@@ -39,7 +40,7 @@ class ApiController extends Controller
         try {
             $this->get('ongr_translations.translation_manager')->edit($id, $request);
         } catch (\LogicException $e) {
-            $response = ['error' => true, 'message' => $id];
+            $response = ['error' => true];
         }
 
         return new JsonResponse($response);
@@ -101,6 +102,12 @@ class ApiController extends Controller
      */
     public function historyAction(Request $request, $id)
     {
-        return new JsonResponse($this->get('ongr_translations.history_manager')->getOrderedHistory($id));
+        try {
+            $document = $this->get('ongr_translations.translation_manager')->getTranslation($id);
+        } catch (BadRequestHttpException $e) {
+            return new JsonResponse(['error' => true, 'message' => 'translation not found']);
+        }
+
+        return new JsonResponse($this->get('ongr_translations.history_manager')->getHistory($document));
     }
 }

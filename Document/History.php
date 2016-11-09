@@ -32,7 +32,7 @@ class History implements \JsonSerializable
      *
      * @ES\Property(type="string", options={"index"="not_analyzed"})
      */
-    private $translation;
+    private $key;
 
     /**
      * @var string
@@ -47,6 +47,13 @@ class History implements \JsonSerializable
      * @ES\Property(type="string")
      */
     private $message;
+
+    /**
+     * @var string
+     *
+     * @ES\Property(type="string", options={"index"="not_analyzed"})
+     */
+    private $domain;
 
     /**
      * @var \DateTime
@@ -80,23 +87,22 @@ class History implements \JsonSerializable
     }
 
     /**
-     * @param string $translation
+     * @param string $key
      *
      * @return History
      */
-    public function setTranslation($translation)
+    public function setKey($key)
     {
-        $this->translation = $translation;
-
+        $this->key = $key;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getTranslation()
+    public function getKey()
     {
-        return $this->translation;
+        return $this->key;
     }
 
     /**
@@ -140,6 +146,25 @@ class History implements \JsonSerializable
     }
 
     /**
+     * @param string $domain
+     *
+     * @return History
+     */
+    public function setDomain($domain)
+    {
+        $this->domain = $domain;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDomain()
+    {
+        return $this->domain;
+    }
+
+    /**
      * @return \DateTime
      */
     public function getUpdatedAt()
@@ -163,7 +188,8 @@ class History implements \JsonSerializable
         return [
             'id' => $this->getId(),
             'message' => $this->getMessage(),
-            'translation' => $this->getTranslation(),
+            'key' => $this->getKey(),
+            'domain' => $this->getDomain(),
             'locale' => $this->getLocale(),
             'updatedAt' => $this->getUpdatedAt()->format('Y-m-d H:i:s'),
         ];

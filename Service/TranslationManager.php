@@ -89,6 +89,54 @@ class TranslationManager
     }
 
     /**
+     * Returns all active tags from translations
+     * @return array
+     */
+    public function getTags()
+    {
+        return $this->getItems('tags');
+    }
+
+    /**
+     * Returns all active domains from translations
+     * @return array
+     */
+    public function getDomains()
+    {
+        return $this->getItems('domain');
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return Translation
+     *
+     * @throws BadRequestHttpException
+     */
+    public function getTranslation($id)
+    {
+        try {
+            $document = $this->repository->find($id);
+        } catch (Missing404Exception $e) {
+            throw new BadRequestHttpException('Invalid translation Id.');
+        }
+
+        return $document;
+    }
+
+    /**
+     * @return DocumentIterator
+     */
+    public function getAllTranslations()
+    {
+        $search = $this->repository->createSearch();
+        $search->addQuery(new MatchAllQuery());
+        $search->setSize(1000);
+
+        return $this->repository->findDocuments($search);
+    }
+
+    /**
      * @param Translation $document
      * @param array $messages
      */
@@ -107,7 +155,7 @@ class TranslationManager
                 if (in_array($locale, $setMessagesLocales)) {
                     foreach ($documentMessages as $message) {
                         if ($message->getLocale() == $locale && $message->getMessage() != $messageText) {
-                            $this->historyManager->addHistory($message, $document->getId(), $locale);
+                            $this->historyManager->addHistory($message, $document);
                             $this->updateMessageData($message, $locale, $messages[$locale], new \DateTime());
                             break;
                         }
@@ -143,36 +191,8 @@ class TranslationManager
     }
 
     /**
-     * @return DocumentIterator
-     */
-    public function getAllTranslations()
-    {
-        $search = $this->repository->createSearch();
-        $search->addQuery(new MatchAllQuery());
-        $search->setSize(1000);
-
-        return $this->repository->findDocuments($search);
-    }
-
-    /**
-     * Returns all active tags from translations
-     * @return array
-     */
-    public function getTags()
-    {
-        return $this->getItems('tags');
-    }
-
-    /**
-     * Returns all active domains from translations
-     * @return array
-     */
-    public function getDomains()
-    {
-        return $this->getItems('domain');
-    }
-
-    /**
+     * Returns a list of available tags or domains
+     *
      * @param string $type
      * @return array
      */
@@ -222,25 +242,5 @@ class TranslationManager
     {
         $this->repository->getManager()->persist($document);
         $this->repository->getManager()->commit();
-    }
-
-    /**
-     * Returns translation from elasticsearch.
-     *
-     * @param string $id
-     *
-     * @return Translation
-     *
-     * @throws BadRequestHttpException
-     */
-    private function getTranslation($id)
-    {
-        try {
-            $document = $this->repository->find($id);
-        } catch (Missing404Exception $e) {
-            throw new BadRequestHttpException('Invalid translation Id.');
-        }
-
-        return $document;
     }
 }

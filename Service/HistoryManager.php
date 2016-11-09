@@ -17,6 +17,7 @@ use ONGR\ElasticsearchDSL\Sort\FieldSort;
 use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\TranslationsBundle\Document\History;
 use ONGR\TranslationsBundle\Document\Message;
+use ONGR\TranslationsBundle\Document\Translation;
 
 /**
  * History handler.
@@ -37,29 +38,16 @@ class HistoryManager
     }
 
     /**
-     * Returns message history.
+     * Returns an array of history objects grouped by locales
      *
-     * @param string $id
+     * @param Translation $translation
      *
-     * @return DocumentIterator
-     */
-    public function getHistory($id)
-    {
-        $search = $this->repository->createSearch();
-        $search->addFilter(new TermQuery('translation', $id));
-        $search->addSort(new FieldSort('created_at', FieldSort::DESC));
-
-        return $this->repository->findDocuments($search);
-    }
-
-    /**
-     * @param $id
      * @return array
      */
-    public function getOrderedHistory($id)
+    public function getHistory(Translation $translation)
     {
         $ordered = [];
-        $histories = $this->getHistory($id);
+        $histories = $this->getUnorderedHistory($translation);
 
         /** @var History $history */
         foreach ($histories as $history) {
@@ -71,18 +59,34 @@ class HistoryManager
 
     /**
      * @param Message $message
-     * @param $id
-     * @param $locale
+     * @param Translation $translation
      */
-    public function addHistory(Message $message, $id, $locale)
+    public function addHistory(Message $message, Translation $translation)
     {
         $history = new History();
-        $history->setLocale($locale);
-        $history->setTranslation($id);
+        $history->setLocale($message->getLocale());
+        $history->setKey($translation->getKey());
+        $history->setDomain($translation->getDomain());
         $history->setMessage($message->getMessage());
-        $history->setId(sha1($id . $message->getMessage()));
         $history->setUpdatedAt($message->getUpdatedAt());
 
         $this->repository->getManager()->persist($history);
+    }
+
+    /**
+     * Returns message history.
+     *
+     * @param Translation $translation
+     *
+     * @return DocumentIterator
+     */
+    private function getUnorderedHistory(Translation $translation)
+    {
+        $search = $this->repository->createSearch();
+        $search->addFilter(new TermQuery('key', $translation->getKey()));
+        $search->addFilter(new TermQuery('domain', $translation->getDomain()));
+        $search->addSort(new FieldSort('created_at', FieldSort::DESC));
+
+        return $this->repository->findDocuments($search);
     }
 }
