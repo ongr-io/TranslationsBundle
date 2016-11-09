@@ -201,30 +201,32 @@ $(document).ready(function() {
     });
 
     $('#translations tbody').on( 'click', 'a.edit', function () {
-        var data = translationsTable.row( $(this).parents('tr') ).data();
-        $('#translation-id').val(data.id);
-        $('#translation-name-input').val(data.key);
-        $('#translation-domain-input').val(data.domain);
-        $('#translation-created-at-input').val(data.createdAt);
-        $('#translation-updated-at-input').val(data.updatedAt);
-        $('#messages-container').html('');
-        reloadTags(data.tags);
-        var messages = '';
-        var translationLocales = [];
-        $.each(data.messages, function(locale, message){
-            translationLocales.push(locale);
-            messages += addTranslationMessage(locale, message);
-        });
-
-        var unsupportedLocales = locales.diff(translationLocales);
-
-        if (unsupportedLocales.length > 0) {
-            $.each(unsupportedLocales, function(i, locale) {
-                messages += addTranslationMessage(locale, {message: '', status: 'fresh'});
+        var id = translationsTable.row( $(this).parents('tr') ).data().id;
+        $('#translation-id').val(id);
+        $.get(Routing.generate('ongr_translations_api_get', {id: id}), function(data) {
+            $('#translation-name-input').val(data.key);
+            $('#translation-domain-input').val(data.domain);
+            $('#translation-created-at-input').val(data.createdAt);
+            $('#translation-updated-at-input').val(data.updatedAt);
+            $('#messages-container').html('');
+            reloadTags(data.tags);
+            var messages = '';
+            var translationLocales = [];
+            $.each(data.messages, function(locale, message){
+                translationLocales.push(locale);
+                messages += addTranslationMessage(locale, message);
             });
-        }
 
-        $('#messages-container').append(messages);
+            var unsupportedLocales = locales.diff(translationLocales);
+
+            if (unsupportedLocales.length > 0) {
+                $.each(unsupportedLocales, function(i, locale) {
+                    messages += addTranslationMessage(locale, {message: '', status: 'fresh'});
+                });
+            }
+
+            $('#messages-container').append(messages);
+        });
 
         $('#translation-form-modal').modal();
     } );
@@ -321,7 +323,8 @@ $(document).ready(function() {
     $('#add-new-tag').on('click', function(){
         var input = $('#add-new-tag-input');
         var value = input.val();
-        appendNewTag(value);
+        appendNewTag(value, true);
+        $('#tag-select').append('<option>'+value+'</option>').multiselect("destroy").multiselect();
         tags.push(value);
         input.val('');
     });
