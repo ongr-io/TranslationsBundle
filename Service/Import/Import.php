@@ -146,11 +146,7 @@ class Import
      */
     public function importAppTranslationFiles()
     {
-        $finder = $this->findTranslationsFiles(
-            $this->kernelDir,
-            $this->getLocales(),
-            $this->getDomains()
-        );
+        $finder = $this->findTranslationsFiles($this->kernelDir);
         $this->importTranslationFiles($finder);
     }
 
