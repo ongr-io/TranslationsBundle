@@ -17,6 +17,7 @@ use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\TranslationsBundle\Service\LoadersContainer;
+use ONGR\TranslationsBundle\Service\TranslationManager;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -28,6 +29,11 @@ class Export
      * @var Repository
      */
     private $repository;
+
+    /**
+     * @var TranslationManager
+     */
+    private $translationManager;
 
     /**
      * @var ExporterInterface
@@ -50,30 +56,34 @@ class Export
     private $refresh = [];
 
     /**
-     * @param LoadersContainer  $loadersContainer
-     * @param Repository        $repository
-     * @param ExporterInterface $exporter
+     * @param LoadersContainer   $loadersContainer
+     * @param Repository         $repository
+     * @param TranslationManager $translationManager
+     * @param ExporterInterface  $exporter
      */
     public function __construct(
         LoadersContainer $loadersContainer,
         Repository $repository,
+        TranslationManager $translationManager,
         ExporterInterface $exporter
     ) {
-        $this->repository = $repository;
-        $this->exporter = $exporter;
         $this->loadersContainer = $loadersContainer;
+        $this->repository = $repository;
+        $this->translationManager = $translationManager;
+        $this->exporter = $exporter;
     }
 
     /**
      * Exports translations from ES to files.
      *
      * @param array $domains To export.
+     * @param bool  $force
      */
-    public function export($domains = [])
+    public function export($domains = [], $force = null)
     {
-        foreach ($this->readStorage($domains) as $file => $translations) {
+        foreach ($this->readStorage($domains, $force) as $file => $translations) {
             if (!file_exists($file)) {
-                $this->getFilesystem()->touch($file);
+                (new Filesystem())->touch($file);
             }
             list($domain, $locale, $extension) = explode('.', $file);
             if ($this->loadersContainer && $this->loadersContainer->has($extension)) {
@@ -117,20 +127,26 @@ class Export
      * Get translations for export.
      *
      * @param array $domains To read from storage.
+     * @param bool  $force   Determines if the message status is relevant.
      *
      * @return array
      */
-    private function readStorage($domains)
+    private function readStorage($domains, $force)
     {
         $data = [];
-        $translations = $this->read($this->getManagedLocales(), $domains);
+        $filters = array_filter([
+            'messages.locale' => $this->getManagedLocales(),
+            'domain' => $domains
+        ]);
+
+        $translations = $this->translationManager->getAllTranslations($filters);
 
         /** @var Translation $translation */
         foreach ($translations as $translation) {
             $messages = $translation->getMessages();
 
             foreach ($messages as $key => $message) {
-                if ($message->getStatus() === Message::DIRTY) {
+                if ($message->getStatus() === Message::DIRTY || $force) {
                     $path = sprintf(
                         '%s' . DIRECTORY_SEPARATOR . '%s.%s.%s',
                         $translation->getPath(),
@@ -147,31 +163,5 @@ class Export
         }
 
         return $data;
-    }
-
-    /**
-     * @return Filesystem
-     */
-    protected function getFilesystem()
-    {
-        return new Filesystem();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function read($locales = [], $domains = [])
-    {
-        $search = $this->repository
-            ->createSearch()
-            ->setScroll('2m')
-            ->addQuery(new MatchAllQuery());
-        if (!empty($locales)) {
-            $search->addFilter(new TermsQuery('messages.locale', $locales));
-        }
-        if (!empty($domains)) {
-            $search->addFilter(new TermsQuery('domain', $domains));
-        }
-        return $this->repository->findDocuments($search);
     }
 }

@@ -125,13 +125,21 @@ class TranslationManager
     }
 
     /**
+     * @param array $filters An array with specified limitations for results
+     *
      * @return DocumentIterator
      */
-    public function getAllTranslations()
+    public function getAllTranslations(array $filters = null)
     {
         $search = $this->repository->createSearch();
         $search->addQuery(new MatchAllQuery());
-        $search->setSize(1000);
+        $search->setScroll('2m');
+
+        if ($filters) {
+            foreach ($filters as $field => $value) {
+                $search->addFilter(new TermsQuery($field, $value));
+            }
+        }
 
         return $this->repository->findDocuments($search);
     }

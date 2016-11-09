@@ -36,6 +36,12 @@ class ExportCommand extends ContainerAwareCommand
             'Export only these locales, instead of using the managed locales.'
         );
         $this->addOption(
+            'force',
+            'f',
+            InputOption::VALUE_NONE,
+            'If set, the bundle will export all translations, regardless of status'
+        );
+        $this->addOption(
             'domains',
             'd',
             InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
@@ -58,7 +64,7 @@ class ExportCommand extends ContainerAwareCommand
         }
 
         $domains = $input->getOption('domains');
-        $export->export($domains);
+        $export->export($domains, $input->getOption('force'));
 
         $prettify = function ($array) {
             return !empty($array) ? implode('</comment><info>`, `</info><comment>', $array) : 'all';

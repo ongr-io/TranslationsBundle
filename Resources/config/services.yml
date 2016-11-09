@@ -40,6 +40,7 @@ services:
     arguments:
       - "@ongr_translations.loaders_container"
       - "@ongr_translations.translation_repository"
+      - "@ongr_translations.translation_manager"
       - "@ongr_translations.export.yaml"
     calls:
       - ["setManagedLocales", ["%ongr_translations.managed_locales%"]]
