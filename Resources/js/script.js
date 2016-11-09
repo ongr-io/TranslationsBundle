@@ -208,6 +208,7 @@ $(document).ready(function() {
             $('#translation-domain-input').val(data.domain);
             $('#translation-created-at-input').val(data.createdAt);
             $('#translation-updated-at-input').val(data.updatedAt);
+            $('#translation-description-input').val(data.description);
             $('#messages-container').html('');
             reloadTags(data.tags);
             var messages = '';
