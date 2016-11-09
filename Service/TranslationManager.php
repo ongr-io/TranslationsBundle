@@ -143,40 +143,6 @@ class TranslationManager
     }
 
     /**
-     * Returns specific values from objects.
-     *
-     * @param Request $request Http request object.
-     *
-     * @return array
-     */
-    public function get(Request $request)
-    {
-        $content = $this->parseJsonContent($request);
-
-        $search = $this
-            ->repository
-            ->createSearch()
-            ->addFilter(new ExistsQuery($content['name']));
-
-        if (array_key_exists('properties', $content)) {
-            foreach ($content['properties'] as $property) {
-                $search->setSource($content['name'] . '.' . $property);
-            }
-        }
-
-        if (array_key_exists('findBy', $content)) {
-            foreach ($content['findBy'] as $field => $value) {
-                $search->addQuery(
-                    new TermsQuery($content['name'] . '.' . $field, is_array($value) ? $value : [$value]),
-                    'must'
-                );
-            }
-        }
-
-        return $this->repository->execute($search, Result::RESULTS_ARRAY);
-    }
-
-    /**
      * @return DocumentIterator
      */
     public function getAllTranslations()

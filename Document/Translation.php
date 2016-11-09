@@ -66,7 +66,7 @@ class Translation implements \JsonSerializable
     /**
      * @var string
      *
-     * @ES\Property(type="string"})
+     * @ES\Property(type="string")
      */
     private $description;
 

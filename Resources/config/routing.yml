@@ -28,14 +28,6 @@ ongr_translations_api_edit:
     options:
         expose: true
 
-ongr_translations_api_get:
-    path: /_api/get
-    methods: [GET]
-    defaults:
-        _controller: ONGRTranslationsBundle:Api:get
-    options:
-        expose: true
-
 ongr_translations_api_check:
     path: /_api/check
     methods: [POST]
