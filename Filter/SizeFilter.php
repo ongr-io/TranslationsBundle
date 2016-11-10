@@ -11,11 +11,8 @@
 
 namespace ONGR\TranslationsBundle\Filter;
 
-use ONGR\ElasticsearchDSL\Aggregation\TermsAggregation;
 use ONGR\ElasticsearchDSL\Search;
-use ONGR\FilterManagerBundle\Filter\FilterInterface;
 use ONGR\FilterManagerBundle\Filter\FilterState;
-use ONGR\FilterManagerBundle\Filter\Widget\Choice\MultiTermChoice;
 use ONGR\FilterManagerBundle\Filter\Widget\Search\AbstractSingleValue;
 use ONGR\FilterManagerBundle\Search\SearchRequest;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,6 +26,22 @@ class SizeFilter extends AbstractSingleValue
      * @var int
      */
     private $size;
+
+    /**
+     * @return int
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
+
+    /**
+     * @param int $size
+     */
+    public function setSize($size)
+    {
+        $this->size = $size;
+    }
 
     /**
      * {@inheritdoc}
@@ -47,29 +60,5 @@ class SizeFilter extends AbstractSingleValue
     public function modifySearch(Search $search, FilterState $state = null, SearchRequest $request = null)
     {
         $search->setSize($this->getSize());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function preProcessSearch(Search $search, Search $relatedSearch, FilterState $state = null)
-    {
-        // Do nothing
-    }
-
-    /**
-     * @return int
-     */
-    public function getSize()
-    {
-        return $this->size;
-    }
-
-    /**
-     * @param int $size
-     */
-    public function setSize($size)
-    {
-        $this->size = $size;
     }
 }
