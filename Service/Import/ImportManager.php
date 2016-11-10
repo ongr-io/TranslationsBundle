@@ -69,22 +69,20 @@ class ImportManager
      */
     public function writeToStorage()
     {
-        foreach ($this->translations as $path => $domains) {
-            foreach ($domains as $domain => $transMeta) {
-                foreach ($transMeta['translations'] as $key => $keyTrans) {
-                    $document = new Translation();
-                    $document->setDomain($domain);
-                    $document->setKey($key);
-                    $document->setPath($path);
-                    $document->setFormat($transMeta['format']);
-                    foreach ($keyTrans as $locale => $trans) {
-                        $message = new Message();
-                        $message->setLocale($locale);
-                        $message->setMessage($trans);
-                        $document->addMessage($message);
-                    }
-                    $this->esManager->persist($document);
+        foreach ($this->translations as $domain => $keys) {
+            foreach ($keys as $key => $transMeta) {
+                $document = new Translation();
+                $document->setDomain($domain);
+                $document->setKey($key);
+                $document->setPath($transMeta['path']);
+                $document->setFormat($transMeta['format']);
+                foreach ($transMeta['messages'] as $locale => $text) {
+                    $message = new Message();
+                    $message->setLocale($locale);
+                    $message->setMessage($text);
+                    $document->addMessage($message);
                 }
+                $this->esManager->persist($document);
             }
         }
 
@@ -114,19 +112,8 @@ class ImportManager
                 dir($bundle->getPath())->path :
                 dirname((new \ReflectionClass($bundle))->getFileName());
 
-            $this->importBundleTranslationFiles($dir);
+            $this->importDirTranslationFiles($dir);
         }
-    }
-
-    /**
-     * Imports translation files form the specific bundles.
-     *
-     * @param string $bundle
-     */
-    public function importBundleTranslationFiles($bundle)
-    {
-        $finder = $this->findTranslationsFiles($bundle);
-        $this->importTranslationFiles($finder);
     }
 
     /**

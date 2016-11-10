@@ -51,9 +51,10 @@ class FileImport
 
             if (!empty($domainMessages)) {
                 $path = substr(pathinfo($file->getPathname(), PATHINFO_DIRNAME), strlen(getcwd()) + 1);
-                $translations[$path][$domain]['format'] = $file->getExtension();
                 foreach ($domainMessages as $key => $content) {
-                    $translations[$path][$domain]['translations'][$key][$locale] = $content;
+                    $translations[$domain][$key]['messages'][$locale] = $content;
+                    $translations[$domain][$key]['path'] = $path;
+                    $translations[$domain][$key]['format'] = $file->getExtension();
                 }
             }
         }
