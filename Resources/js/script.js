@@ -273,8 +273,7 @@ $(document).ready(function() {
         table.html('');
         $('#export-nothing-to-export-header').hide()
         $('#export-modal').modal();
-        translationsTable.ajax.reload();
-        setTimeout(function(){
+        translationsTable.ajax.reload(function(){
             data = translationsTable.rows().data()
 
             $.each(data, function(i, translation) {
@@ -296,7 +295,7 @@ $(document).ready(function() {
             } else {
                 $('#export-nothing-to-export-header').show();
             }
-        }, 400);
+        });
     });
 
     $('#export-submit').on('click', function() {
