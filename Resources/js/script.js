@@ -46,7 +46,9 @@ $(document).ready(function() {
                 "orderable": false,
                 "render": function ( data, type, row, meta ) {
                     data = data == null ? '[No message]' : data;
-                    return '<span class="translation-message">'+data+'</span>';
+                    var emptyClass = getMessageClass(data);
+
+                    return '<span class="'+emptyClass+' translation-message">'+data+'</span>';
                 }
             },
             {
@@ -112,7 +114,8 @@ $(document).ready(function() {
             element.find('input').focus();
         } else {
             message = message == '' ? '[No message]' : currentMessageValue;
-            element.append('<span class="translation-message">'+message+'</span>');
+            var emptyClass = getMessageClass(message);
+            element.append('<span class="'+emptyClass+' translation-message">'+message+'</span>');
         }
     }
 
@@ -150,6 +153,15 @@ $(document).ready(function() {
             '</div>';
 
         return result
+    }
+
+    function getMessageClass(message) {
+        var messageClass = '';
+
+        if (message == '[No message]') {
+            messageClass = 'empty-message';
+        }
+        return messageClass;
     }
 
     $('#translations tbody').on('click', 'span.translation-message', function() {
