@@ -11,7 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Command;
 
-use ONGR\TranslationsBundle\Service\Import\Import;
+use ONGR\TranslationsBundle\Service\Import\ImportManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -71,7 +71,7 @@ class ImportCommand extends ContainerAwareCommand
         $this->input = $input;
         $this->output = $output;
 
-        /** @var Import $import */
+        /** @var ImportManager $import */
         $import = $this->getContainer()->get('ongr_translations.import');
 
         $locales = $this->input->getOption('locales');

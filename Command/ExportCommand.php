@@ -11,7 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Command;
 
-use ONGR\TranslationsBundle\Service\Export\Export;
+use ONGR\TranslationsBundle\Service\Export\ExportManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -55,7 +55,7 @@ class ExportCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var Export $export */
+        /** @var ExportManager $export */
         $export = $this->getContainer()->get('ongr_translations.export');
 
         $locales = $input->getOption('locales');

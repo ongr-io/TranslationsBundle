@@ -20,7 +20,7 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * Class Export.
  */
-class Export
+class ExportManager
 {
     /**
      * @var TranslationManager

@@ -20,7 +20,7 @@ use Symfony\Component\Finder\Finder;
 /**
  * Collects translations.
  */
-class Import
+class ImportManager
 {
     /**
      * @var FileImport

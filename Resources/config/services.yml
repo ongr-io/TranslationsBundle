@@ -14,13 +14,8 @@ services:
     calls:
       - [setContainer, ["@service_container"]]
 
-  ongr_translations.file_import:
-    class: ONGR\TranslationsBundle\Service\Import\FileImport
-    arguments:
-      - [ "@ongr_translations.loaders_container" ]
-
   ongr_translations.import:
-    class: ONGR\TranslationsBundle\Service\Import\Import
+    class: ONGR\TranslationsBundle\Service\Import\ImportManager
     arguments:
       - "@ongr_translations.file_import"
       - "@es.manager"
@@ -32,17 +27,22 @@ services:
       - [ setDomains, [ %ongr_translations.domains% ] ]
       - [ setFormats, [ %ongr_translations.formats% ] ]
 
-  ongr_translations.export.yaml:
-    class: ONGR\TranslationsBundle\Service\Export\YmlExport
-
   ongr_translations.export:
-    class: ONGR\TranslationsBundle\Service\Export\Export
+    class: ONGR\TranslationsBundle\Service\Export\ExportManager
     arguments:
       - "@ongr_translations.loaders_container"
       - "@ongr_translations.translation_manager"
       - "@ongr_translations.export.yaml"
     calls:
       - ["setManagedLocales", ["%ongr_translations.managed_locales%"]]
+
+  ongr_translations.file_import:
+    class: ONGR\TranslationsBundle\Service\Import\FileImport
+    arguments:
+      - [ "@ongr_translations.loaders_container" ]
+
+  ongr_translations.export.yaml:
+    class: ONGR\TranslationsBundle\Service\Export\YmlExport
 
   ongr_translations.loaders_container:
     class: ONGR\TranslationsBundle\Service\LoadersContainer
