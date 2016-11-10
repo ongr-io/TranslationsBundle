@@ -38,16 +38,6 @@ class ImportManager
     private $domains;
 
     /**
-     * @var string
-     */
-    private $kernelDir;
-
-    /**
-     * @var array
-     */
-    private $bundles;
-
-    /**
      * @var array
      */
     private $formats;
@@ -63,55 +53,15 @@ class ImportManager
     private $esManager;
 
     /**
-     * @var array
-     */
-    private $configBundles;
-
-    /**
      * @param FileImport $fileImport
      * @param Manager    $esManager
-     * @param string     $kernelDir
-     * @param array      $kernelBundles
-     * @param array      $configBundles
      */
     public function __construct(
         FileImport $fileImport,
-        Manager $esManager,
-        $kernelDir,
-        $kernelBundles,
-        $configBundles
+        Manager $esManager
     ) {
         $this->fileImport = $fileImport;
         $this->esManager = $esManager;
-        $this->kernelDir = $kernelDir;
-        $this->bundles = $kernelBundles;
-        $this->configBundles = $configBundles;
-    }
-
-    /**
-     * Collects translations.
-     */
-    public function import()
-    {
-        $this->importAppTranslationFiles();
-
-        $this->importBundlesTranslationFiles(array_merge($this->getConfigBundles(), $this->getBundles()));
-
-        $this->importComponentTranslationFiles();
-    }
-
-    /**
-     * Returns all translations as array.
-     *
-     * @return array
-     */
-    public function getTranslations()
-    {
-        if (empty($this->translations)) {
-            $this->import();
-        }
-
-        return $this->translations;
     }
 
     /**
@@ -142,11 +92,12 @@ class ImportManager
     }
 
     /**
-     * Imports application translation files.
+     * Imports translation files from a directory.
+     * @param string $dir
      */
-    public function importAppTranslationFiles()
+    public function importDirTranslationFiles($dir)
     {
-        $finder = $this->findTranslationsFiles($this->kernelDir);
+        $finder = $this->findTranslationsFiles($dir);
         $this->importTranslationFiles($finder);
     }
 
@@ -161,7 +112,7 @@ class ImportManager
         foreach ($bundles as $bundle) {
             $dir = $isBundle?
                 dir($bundle->getPath())->path :
-                dirname((new \ReflectionClass($bundle))->getFilename());
+                dirname((new \ReflectionClass($bundle))->getFileName());
 
             $this->importBundleTranslationFiles($dir);
         }
@@ -192,10 +143,10 @@ class ImportManager
         $dirs = [];
         foreach ($classes as $namespace => $translationDir) {
             $reflection = new \ReflectionClass($namespace);
-            $dirs[] = dirname($reflection->getFilename()) . $translationDir;
+            $dirs[] = dirname($reflection->getFileName()) . $translationDir;
         }
 
-        $finder = $this->getFinder();
+        $finder = new Finder();
         $finder->files()
             ->name($this->getFileNamePattern())
             ->in($dirs);
@@ -223,7 +174,7 @@ class ImportManager
         $dir = $path . '/Resources/translations';
 
         if (is_dir($dir)) {
-            $finder = $this->getFinder();
+            $finder = new Finder();
             $finder->files()
                 ->name($this->getFileNamePattern())
                 ->in($dir);
@@ -315,31 +266,5 @@ class ImportManager
     public function setFormats($formats)
     {
         $this->formats = $formats;
-    }
-
-    /**
-     * Returns Finder object.
-     *
-     * @return Finder
-     */
-    protected function getFinder()
-    {
-        return new Finder();
-    }
-
-    /**
-     * @return array
-     */
-    public function getConfigBundles()
-    {
-        return $this->configBundles;
-    }
-
-    /**
-     * @return array
-     */
-    public function getBundles()
-    {
-        return $this->bundles;
     }
 }

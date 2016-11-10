@@ -19,9 +19,6 @@ services:
     arguments:
       - "@ongr_translations.file_import"
       - "@es.manager"
-      - %kernel.root_dir%
-      - %kernel.bundles%
-      - %ongr_translations.bundles%
     calls:
       - [ setLocales, [ %ongr_translations.managed_locales% ] ]
       - [ setDomains, [ %ongr_translations.domains% ] ]

@@ -17,22 +17,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Translation\MessageCatalogue;
 
 /**
  * Translations import command.
  */
 class ImportCommand extends ContainerAwareCommand
 {
-    /**
-     * @var InputInterface
-     */
-    private $input;
-
-    /**
-     * @var OutputInterface
-     */
-    private $output;
-
     /**
      * {@inheritdoc}
      */
@@ -68,40 +59,38 @@ class ImportCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input = $input;
-        $this->output = $output;
-
         /** @var ImportManager $import */
         $import = $this->getContainer()->get('ongr_translations.import');
+        $configBundles = $this->getContainer()->getParameter('ongr_translations.bundles');
 
-        $locales = $this->input->getOption('locales');
+        $locales = $input->getOption('locales');
         if (empty($locales)) {
             $locales = $this->getContainer()->getParameter('ongr_translations.managed_locales');
         }
         $domains = $input->getOption('domains');
 
-        $bundleName = $this->input->getArgument('bundle');
+        $bundleName = $input->getArgument('bundle');
 
         $import->setLocales($locales);
         $import->setDomains($domains);
 
         if ($input->getOption('config-only')) {
-            $this->output->writeln('<info>*** Importing configured bundles translation files ***</info>');
-            $import->importBundlesTranslationFiles($import->getConfigBundles());
+            $output->writeln('<info>*** Importing configured bundles translation files ***</info>');
+            $import->importBundlesTranslationFiles($configBundles);
         } else {
             if ($bundleName) {
-                $this->output->writeln("<info>*** Importing {$bundleName} translation files ***</info>");
+                $output->writeln("<info>*** Importing {$bundleName} translation files ***</info>");
                 $bundle = $this->getContainer()->get('kernel')->getBundle($bundleName);
                 $import->importBundlesTranslationFiles([$bundle], true);
             } else {
-                $this->output->writeln('<info>*** Importing application translation files ***</info>');
-                $import->importAppTranslationFiles();
-                if (!$this->input->getOption('globals')) {
-                    $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
+                $output->writeln('<info>*** Importing application translation files ***</info>');
+                $import->importDirTranslationFiles($this->getContainer()->getParameter('kernel.root_dir'));
+                if (!$input->getOption('globals')) {
+                    $output->writeln('<info>*** Importing bundles translation files ***</info>');
                     $import->importBundlesTranslationFiles(
-                        array_merge($import->getBundles(), $import->getConfigBundles())
+                        array_merge($this->getContainer()->getParameter('kernel.bundles'), $configBundles)
                     );
-                    $this->output->writeln('<info>*** Importing component translation files ***</info>');
+                    $output->writeln('<info>*** Importing component translation files ***</info>');
                     $import->importComponentTranslationFiles();
                 }
             }
