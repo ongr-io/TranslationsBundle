@@ -16,7 +16,7 @@ use Symfony\Component\Yaml\Dumper;
 /**
  * Class YmlExport for dumping translations to yml file.
  */
-class YmlExport implements ExporterInterface
+class YmlExport
 {
     /**
      * Export translations in to the given file.

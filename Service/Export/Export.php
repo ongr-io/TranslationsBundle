@@ -28,7 +28,7 @@ class Export
     private $translationManager;
 
     /**
-     * @var ExporterInterface
+     * @var YmlExport
      */
     private $exporter;
 
@@ -50,12 +50,12 @@ class Export
     /**
      * @param LoadersContainer   $loadersContainer
      * @param TranslationManager $translationManager
-     * @param ExporterInterface  $exporter
+     * @param YmlExport          $exporter
      */
     public function __construct(
         LoadersContainer $loadersContainer,
         TranslationManager $translationManager,
-        ExporterInterface $exporter
+        YmlExport $exporter
     ) {
         $this->loadersContainer = $loadersContainer;
         $this->translationManager = $translationManager;

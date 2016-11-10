@@ -18,7 +18,7 @@ use Symfony\Component\Translation\MessageCatalogue;
 /**
  * Import translations file.
  */
-class FileImport implements ImporterInterface
+class FileImport
 {
     /**
      * @var LoadersContainer
@@ -34,7 +34,9 @@ class FileImport implements ImporterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param SplFileInfo $file
+     *
+     * @return array
      */
     public function import(SplFileInfo $file)
     {
