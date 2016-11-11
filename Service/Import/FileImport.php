@@ -13,6 +13,7 @@ namespace ONGR\TranslationsBundle\Service\Import;
 
 use ONGR\TranslationsBundle\Service\LoadersContainer;
 use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\Translation\MessageCatalogue;
 
 /**
@@ -21,14 +22,14 @@ use Symfony\Component\Translation\MessageCatalogue;
 class FileImport
 {
     /**
-     * @var LoadersContainer
+     * @var ParameterBag
      */
     private $loadersContainer;
 
     /**
-     * @param LoadersContainer $loadersContainer
+     * @param ParameterBag $loadersContainer
      */
-    public function __construct(LoadersContainer $loadersContainer)
+    public function __construct(ParameterBag $loadersContainer)
     {
         $this->loadersContainer = $loadersContainer;
     }

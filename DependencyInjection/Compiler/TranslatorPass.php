@@ -27,7 +27,7 @@ class TranslatorPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $formats = $container->getParameter('ongr_translations.formats');
-        $loadersContainer = new Definition('ONGR\TranslationsBundle\Service\LoadersContainer');
+        $loadersContainer = new Definition('Symfony\Component\HttpFoundation\ParameterBag');
 
         foreach ($container->findTaggedServiceIds('translation.loader') as $id => $attributes) {
             if (!empty($formats)) {

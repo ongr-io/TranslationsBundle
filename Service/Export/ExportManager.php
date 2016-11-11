@@ -16,6 +16,7 @@ use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\TranslationsBundle\Service\LoadersContainer;
 use ONGR\TranslationsBundle\Service\TranslationManager;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Class Export.
@@ -33,7 +34,7 @@ class ExportManager
     private $exporter;
 
     /**
-     * @var LoadersContainer
+     * @var ParameterBag
      */
     private $loadersContainer;
 
@@ -48,12 +49,12 @@ class ExportManager
     private $refresh = [];
 
     /**
-     * @param LoadersContainer   $loadersContainer
+     * @param ParameterBag   $loadersContainer
      * @param TranslationManager $translationManager
      * @param YmlExport          $exporter
      */
     public function __construct(
-        LoadersContainer $loadersContainer,
+        ParameterBag $loadersContainer,
         TranslationManager $translationManager,
         YmlExport $exporter
     ) {
