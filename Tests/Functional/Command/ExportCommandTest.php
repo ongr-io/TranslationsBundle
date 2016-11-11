@@ -36,11 +36,6 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
     private $command;
 
     /**
-     * @var string
-     */
-    private $translationsDir;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -237,6 +232,27 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
                 'bar_key' => 'bar_message',
             ],
         ];
+
+        $this->verifyFiles($data);
+    }
+
+    /**
+     * Test if destination translations are merged correctly.
+     */
+    public function testExportForce()
+    {
+        $this->commandTester->execute(['--domains' => ['buz_domain']]);
+
+        $data = [
+            'buz_domain.lt.yml' => [
+                'foo_key' => 'foo_message',
+            ],
+        ];
+
+        $this->verifyFiles($data);
+
+        $this->commandTester->execute(['--domains' => ['buz_domain'], '--force' => true]);
+        $data['buz_domain.lt.yml']['fresh_key'] = 'fresh_foo_message';
 
         $this->verifyFiles($data);
     }
