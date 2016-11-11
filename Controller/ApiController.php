@@ -90,9 +90,9 @@ class ApiController extends Controller
      */
     public function historyAction(Request $request, $id)
     {
-        try {
-            $document = $this->get('ongr_translations.translation_manager')->getTranslation($id);
-        } catch (BadRequestHttpException $e) {
+        $document = $this->get('ongr_translations.translation_manager')->getTranslation($id);
+
+        if (empty($document)) {
             return new JsonResponse(['error' => true, 'message' => 'translation not found']);
         }
 
