@@ -21,7 +21,7 @@ var assets = {
     styles: dir.sass + '**/*.scss',
 };
 
-gulp.task('app-sass', function() {
+gulp.task('app-sass', function () {
     return gulp.src([
         dir.sass + 'style.scss',
         dir.npm + 'datatables.net-buttons-bs/css/buttons.bootstrap.css',
@@ -36,7 +36,7 @@ gulp.task('app-sass', function() {
         .pipe(gulp.dest(dir.dist));
 });
 
-gulp.task('app-js', function() {
+gulp.task('app-js', function () {
     return gulp.src([
         dir.js + 'script.js',
     ])
@@ -50,9 +50,7 @@ gulp.task('watch', function () {
     gulp.watch(assets.styles, ['app-sass', 'app-js']);
 });
 
-gulp.task('default',
-    [
-        'app-sass',
-        'app-js',
-    ]
+gulp.task(
+    'default',
+    ['app-sass', 'app-js']
 );

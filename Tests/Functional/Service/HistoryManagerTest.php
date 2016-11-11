@@ -47,7 +47,10 @@ class HistoryManagerTest extends AbstractElasticsearchTestCase
                         'domain' => 'foo',
                         'path' => '',
                         'format' => 'yml',
-                        'tags' => ['foo_tag', 'tuna_tag'],
+                        'tags' => [
+                            'foo_tag',
+                            'tuna_tag',
+                        ],
                         'messages' => [
                             [
                                 'locale' => 'en',
