@@ -63,6 +63,24 @@ class ExportManager
     }
 
     /**
+     * Sets managed locales.
+     *
+     * @param array $managedLocales
+     */
+    public function setManagedLocales($managedLocales)
+    {
+        $this->managedLocales = $managedLocales;
+    }
+
+    /**
+     * @return array
+     */
+    public function getManagedLocales()
+    {
+        return $this->managedLocales;
+    }
+
+    /**
      * Exports translations from ES to files.
      *
      * @param array $domains To export.
@@ -85,24 +103,6 @@ class ExportManager
 
         $this->translationManager->saveTranslations($this->refresh);
         $this->refresh = [];
-    }
-
-    /**
-     * Sets managed locales.
-     *
-     * @param array $managedLocales
-     */
-    public function setManagedLocales($managedLocales)
-    {
-        $this->managedLocales = $managedLocales;
-    }
-
-    /**
-     * @return array
-     */
-    public function getManagedLocales()
-    {
-        return $this->managedLocales;
     }
 
     /**

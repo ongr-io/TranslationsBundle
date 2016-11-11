@@ -65,6 +65,54 @@ class ImportManager
     }
 
     /**
+     * @return mixed
+     */
+    public function getDomains()
+    {
+        return $this->domains;
+    }
+
+    /**
+     * @param mixed $domains
+     */
+    public function setDomains($domains)
+    {
+        $this->domains = $domains;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLocales()
+    {
+        return $this->locales;
+    }
+
+    /**
+     * @param mixed $locales
+     */
+    public function setLocales($locales)
+    {
+        $this->locales = $locales;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFormats()
+    {
+        return $this->formats;
+    }
+
+    /**
+     * @param mixed $formats
+     */
+    public function setFormats($formats)
+    {
+        $this->formats = $formats;
+    }
+
+    /**
      * Write translations to storage.
      */
     public function writeToStorage()
@@ -180,53 +228,5 @@ class ImportManager
                 $this->translations = array_replace_recursive($this->fileImport->import($file), $this->translations);
             }
         }
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDomains()
-    {
-        return $this->domains;
-    }
-
-    /**
-     * @param mixed $domains
-     */
-    public function setDomains($domains)
-    {
-        $this->domains = $domains;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLocales()
-    {
-        return $this->locales;
-    }
-
-    /**
-     * @param mixed $locales
-     */
-    public function setLocales($locales)
-    {
-        $this->locales = $locales;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFormats()
-    {
-        return $this->formats;
-    }
-
-    /**
-     * @param mixed $formats
-     */
-    public function setFormats($formats)
-    {
-        $this->formats = $formats;
     }
 }
