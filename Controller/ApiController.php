@@ -60,31 +60,6 @@ class ApiController extends Controller
     }
 
     /**
-     * Action to check if translation is valid.
-     *
-     * @param Request $request Http request object.
-     *
-     * @return JsonResponse
-     */
-    public function checkAction(Request $request)
-    {
-        $content = json_decode($request->getContent(), true);
-
-        if ($content === null || (!array_key_exists('message', $content) || !array_key_exists('locale', $content))) {
-            return new JsonResponse(Response::$statusTexts[Response::HTTP_BAD_REQUEST], Response::HTTP_BAD_REQUEST);
-        }
-
-        if (TranslationChecker::check($content['message'], $content['locale'])) {
-            return new JsonResponse();
-        }
-
-        return new JsonResponse(
-            Response::$statusTexts[Response::HTTP_NOT_ACCEPTABLE],
-            Response::HTTP_NOT_ACCEPTABLE
-        );
-    }
-
-    /**
      * Action for executing export command.
      *
      * @return JsonResponse

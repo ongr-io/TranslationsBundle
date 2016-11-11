@@ -36,14 +36,6 @@ ongr_translations_api_get:
     options:
         expose: true
 
-ongr_translations_api_check:
-    path: /_api/check
-    methods: [POST]
-    defaults:
-        _controller: ONGRTranslationsBundle:Api:check
-    options:
-        expose: true
-
 ongr_translations_api_export:
     path: /_api/export
     methods: [POST]
