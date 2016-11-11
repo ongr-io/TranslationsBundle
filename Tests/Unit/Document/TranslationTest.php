@@ -29,19 +29,29 @@ class TranslationTest extends \PHPUnit_Framework_TestCase
         $translation = new Translation();
         $translation->setCreatedAt($date);
         $translation->setUpdatedAt($date);
+        $translation->setTags('single tag');
+        $translation->setDescription('foo description');
         $translation->setDomain('foo_domain');
         $message = new Message();
         $message->setLocale('en');
         $message->setMessage('foo_message');
-        $message->setCreatedAt($date);
-        $message->setUpdatedAt($date);
         $translation->addMessage($message);
 
-        $expectedJson = '{"id":"10b9bf5859bce4052de0dac6c01324679d21cad0","domain":"foo_domain",'
-            . '"tags":[],"messages":{"en":{"message":"foo_message","status":"fresh",'
-            . "\"createdAt\":\"{$dateString}\",\"updatedAt\":\"{$dateString}\"}},\"key\":null,\"path\":null,"
-            . "\"format\":null,\"createdAt\":\"{$dateString}\",\"updatedAt\":\"{$dateString}\"}";
+        $expected = [
+            'createdAt' => $dateString,
+            'updatedAt' => $dateString,
+            'domain' => 'foo_domain',
+            'tags' => ['single tag'],
+            'format' => null,
+            'key' => null,
+            'path' => null,
+            'id' =>null,
+            'description' => 'foo description',
+            'messages' => [
+                'en' => $message
+            ],
+        ];
 
-        $this->assertEquals($expectedJson, json_encode($translation), 'JSON strings should be equal');
+        $this->assertEquals($expected, $translation->jsonSerialize());
     }
 }

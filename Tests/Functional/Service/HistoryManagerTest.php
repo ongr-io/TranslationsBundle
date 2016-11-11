@@ -12,6 +12,7 @@
 namespace ONGR\TranslationsBundle\Tests\Functional\Service;
 
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
+use ONGR\TranslationsBundle\Document\History;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Service\HistoryManager;
 
@@ -59,13 +60,15 @@ class HistoryManagerTest extends AbstractElasticsearchTestCase
                 'history' => [
                     [
                         '_id' => 1,
-                        'translation' => 'foo',
+                        'key' => 'foo.key',
+                        'domain' => 'foo',
                         'message' => 'Lorum ipsum',
                         'locale' => 'en',
                     ],
                     [
                         '_id' => 2,
-                        'translation' => 'foo',
+                        'key' => 'foo.key',
+                        'domain' => 'foo',
                         'message' => 'Lorum',
                         'locale' => 'en',
                     ],
@@ -76,39 +79,26 @@ class HistoryManagerTest extends AbstractElasticsearchTestCase
 
     public function testGetHistory()
     {
-        $histories = $this->manager->getHistory('foo');
+        $messages = ['Lorum ipsum', 'Lorum'];
+        $histories = $this->manager->getHistory(
+            $this->getContainer()->get('ongr_translations.translation_manager')->getTranslation('foo')
+        );
 
-        $this->assertEquals(2, count($histories));
+        $this->assertArrayHasKey('en', $histories);
 
-        $messages = [];
-
-        foreach ($histories as $history) {
-            $messages[] = $history->getMessage();
+        /** @var History $history */
+        foreach ($histories['en'] as $history) {
+            $this->assertTrue(in_array($history->getMessage(), $messages));
         }
-
-        $this->assertEquals(['Lorum ipsum', 'Lorum'], $messages);
-    }
-
-    public function testGetOrderedHistory()
-    {
-        $orderedHistories = $this->manager->getOrderedHistory('foo');
-        $histories = $this->manager->getHistory('foo');
-        $unorderedHistories = [];
-
-        foreach ($histories as $history) {
-            $unorderedHistories[] = $history;
-        }
-
-        $this->assertEquals(['en' => $unorderedHistories], $orderedHistories);
     }
 
     public function testAddHistory()
     {
-        $translation = $this->getManager()->getRepository('ONGRTranslationsBundle:Translation')->find('foo');
+        $translation = $this->getContainer()->get('ongr_translations.translation_manager')->getTranslation('foo');
         $message = $translation->getMessages()[0];
         $this->assertInstanceOf('ONGR\TranslationsBundle\Document\Message', $message);
-        $this->manager->addHistory($message, 'foo', 'en');
+        $this->manager->addHistory($message, $translation);
         $this->getManager()->commit();
-        $this->assertEquals(3, count($this->manager->getHistory('foo')));
+        $this->assertEquals(3, count($this->manager->getHistory($translation)['en']));
     }
 }

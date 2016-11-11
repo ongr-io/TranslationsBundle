@@ -122,10 +122,6 @@ class Translation implements \JsonSerializable
      */
     public function getId()
     {
-        if (!$this->id) {
-            $this->setId(sha1($this->getDomain() . $this->getKey()));
-        }
-
         return $this->id;
     }
 
@@ -167,16 +163,6 @@ class Translation implements \JsonSerializable
     public function getTags()
     {
         return $this->tags;
-    }
-
-    /**
-     * Adds a single tag.
-     *
-     * @param Tag $tag
-     */
-    public function addTag($tag)
-    {
-        $this->tags[] = $tag;
     }
 
     /**

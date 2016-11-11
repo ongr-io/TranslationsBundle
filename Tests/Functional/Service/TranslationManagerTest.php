@@ -114,19 +114,6 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
         $this->assertEquals(['en' => 'bar', 'lt' => 'baras'], $messagesArray);
     }
 
-    /**
-     * Test for get().
-     */
-    public function testGet()
-    {
-        $body = ['name' => 'messages', 'findBy' => ['status' => Message::DIRTY]];
-        $request = new Request([], [], [], [], [], [], json_encode($body));
-        $result = $this->manager->get($request);
-
-        $this->assertCount(1, $result);
-        $this->assertEquals('baz.key', reset($result)['key']);
-    }
-
     public function testGetTags()
     {
         $this->assertEquals(['baz_tag', 'foo_tag', 'tuna_tag'], $this->manager->getTags());
@@ -137,8 +124,9 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
         $this->assertEquals(['baz', 'foo'], $this->manager->getDomains());
     }
 
-    public function testGetAllTranslations()
+    public function testGetTranslations()
     {
-        $this->assertEquals(2, count($this->manager->getAllTranslations()));
+        $this->assertEquals(2, count($this->manager->getTranslations()));
+        $this->assertEquals(1, count($this->manager->getTranslations(['domain' => ['foo']])));
     }
 }

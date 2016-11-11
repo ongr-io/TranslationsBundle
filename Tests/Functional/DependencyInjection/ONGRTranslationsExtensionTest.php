@@ -24,12 +24,12 @@ class ONGRTranslationsExtensionTest extends AbstractElasticsearchTestCase
     {
         return [
             [
-                'ongr_translations.import',
-                'ONGR\TranslationsBundle\Service\Import\Import',
+                'ongr_translations.translation_repository',
+                'ONGR\ElasticsearchBundle\Service\Repository',
             ],
             [
-                'ongr_translations.file_import',
-                'ONGR\TranslationsBundle\Service\Import\FileImport',
+                'ongr_translations.history_repository',
+                'ONGR\ElasticsearchBundle\Service\Repository',
             ],
             [
                 'ongr_translations.filter_manager',

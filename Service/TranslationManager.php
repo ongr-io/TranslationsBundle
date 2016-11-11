@@ -114,18 +114,10 @@ class TranslationManager
      * @param string $id
      *
      * @return Translation
-     *
-     * @throws BadRequestHttpException
      */
     public function getTranslation($id)
     {
-        try {
-            $document = $this->repository->find($id);
-        } catch (Missing404Exception $e) {
-            throw new BadRequestHttpException('Invalid translation Id.');
-        }
-
-        return $document;
+        return $this->repository->find($id);
     }
 
     /**
@@ -224,10 +216,6 @@ class TranslationManager
      */
     private function getItems($type)
     {
-        if (!in_array($type, ['tags', 'domain'])) {
-            throw new \LogicException();
-        }
-
         $search = $this->repository->createSearch();
         $search->addAggregation(new TermsAggregation($type, $type));
         $result = $this->repository->findDocuments($search);
