@@ -64,7 +64,6 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
         $this->assertGreaterThan(0, $this->getTranslationsCount(['en'], ['validators']));
         $this->assertGreaterThan(0, $this->getTranslationsCount(['en'], ['ONGRTranslations']));
         $this->assertGreaterThan(0, $this->getTranslationsCount(['en'], ['messages']));
-        $this->assertEquals(0, $this->getTranslationsCount(['en'], ['security']));
     }
 
     /**
@@ -81,7 +80,6 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
 
         $this->assertEquals(0, $this->getTranslationsCount(['en'], ['validators']));
         $this->assertEquals(0, $this->getTranslationsCount(['en'], ['ONGRTranslation']));
-        $this->assertEquals(0, $this->getTranslationsCount(['en'], ['security']));
         $this->assertGreaterThan(0, $this->getTranslationsCount(['en'], ['messages']));
     }
 
@@ -110,13 +108,12 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
             [
                 'command' => $this->command->getName(),
                 '--locales' => ['lt', 'lv'],
-                '--domains' => ['messages', 'security'],
+                '--domains' => ['messages', 'validators'],
             ]
         );
 
-        $this->assertEquals(0, $this->getTranslationsCount(['lt'], ['validators']));
+        $this->assertGreaterThan(0, $this->getTranslationsCount(['lt'], ['validators']));
         $this->assertEquals(0, $this->getTranslationsCount(['lt'], ['ONGRTranslation']));
-        $this->assertGreaterThan(0, $this->getTranslationsCount(['lv'], ['security']));
         $this->assertGreaterThan(0, $this->getTranslationsCount(['lt'], ['messages']));
     }
 

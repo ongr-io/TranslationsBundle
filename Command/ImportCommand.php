@@ -91,7 +91,9 @@ class ImportCommand extends ContainerAwareCommand
                         array_merge($this->getContainer()->getParameter('kernel.bundles'), $configBundles)
                     );
                     $output->writeln('<info>*** Importing component translation files ***</info>');
-                    $import->importComponentTranslationFiles();
+                    $import->importBundlesTranslationFiles(
+                        $this->getContainer()->getParameter('ongr_translations.component_directories')
+                    );
                 }
             }
         }

@@ -43,6 +43,7 @@ class TranslatorPass implements CompilerPassInterface
 
         $this->setImportLoadersContainer($container, $loadersContainer);
         $this->setExportLoadersContainer($container, $loadersContainer);
+        $this->setComponentDirectories($container);
     }
 
     /**
@@ -84,5 +85,19 @@ class TranslatorPass implements CompilerPassInterface
         if ($container->hasDefinition('ongr_translations.export')) {
             $container->findDefinition('ongr_translations.export')->replaceArgument(0, $loadersContainer);
         }
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     */
+    private function setComponentDirectories(ContainerBuilder $container)
+    {
+        $container->setParameter(
+            'ongr_translations.component_directories',
+            [
+                'Symfony\Component\Validator\ValidatorBuilder',
+                'Symfony\Component\Form\Form',
+            ]
+        );
     }
 }

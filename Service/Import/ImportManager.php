@@ -117,31 +117,6 @@ class ImportManager
     }
 
     /**
-     * Imports Symfony's components translation files.
-     */
-    public function importComponentTranslationFiles()
-    {
-        $classes = [
-            'Symfony\Component\Validator\ValidatorBuilder' => '/Resources/translations',
-            'Symfony\Component\Form\Form' => '/Resources/translations',
-            'Symfony\Component\Security\Core\Exception\AuthenticationException' => '/../../Resources/translations',
-        ];
-
-        $dirs = [];
-        foreach ($classes as $namespace => $translationDir) {
-            $reflection = new \ReflectionClass($namespace);
-            $dirs[] = dirname($reflection->getFileName()) . $translationDir;
-        }
-
-        $finder = new Finder();
-        $finder->files()
-            ->name($this->getFileNamePattern())
-            ->in($dirs);
-
-        $this->importTranslationFiles($finder->count() > 0 ? $finder : null);
-    }
-
-    /**
      * Return a Finder object if $path has a Resources/translations folder.
      *
      * @param string $path
