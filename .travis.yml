@@ -1,33 +1,29 @@
-sudo: false
+sudo: true
 language: php
 php:
-  - 5.5
   - 5.6
   - 7.0
   - hhvm
+env:
+  global:
+    - ES_VERSION="2.4" JAVA_HOME="/usr/lib/jvm/java-8-oracle/jre"
 matrix:
   allow_failures:
     - php: hhvm
-env:
-  - SYMFONY="2.7.*"
-  - SYMFONY="~3.0"
-services:
-  - elasticsearch
-before_install:
-  - composer self-update
 install:
-  - composer require --no-update symfony/symfony:${SYMFONY}
+  - sudo apt-get install -y oracle-java8-set-default
+  - ES_URL=$(curl -sS "https://esvm-props.kibana.rocks/builds" | jq -r ".branches[\"$ES_VERSION\"].zip")
+  - curl -L -o elasticsearch.zip $ES_URL
+  - unzip elasticsearch.zip
+  - ./elasticsearch-*/bin/elasticsearch -d
 before_script:
   - composer config -g github-oauth.github.com $GITHUB_COMPOSER_AUTH
+  - if [[ $TRAVIS_PHP_VERSION != "hhvm" ]]; then echo 'memory_limit = -1' » ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini; fi
+  - php -i | grep memory
+  - php -i | grep ini
   - composer install --no-interaction --prefer-dist
 script:
-  - vendor/bin/phpunit --coverage-clover=coveralls.clover
-  - vendor/bin/phpcs -p --standard=PSR2 --ignore=vendor/,Tests/app/,Resources/,node_modules ./
+  - vendor/bin/phpunit --coverage-clover=coverage.clover
+  - vendor/bin/phpcs -p --standard=PSR2 --ignore=vendor/,Tests/app/,Resources/ ./
 after_script:
   - vendor/bin/coveralls
-notifications:
-  webhooks:
-    urls:
-      - https://webhooks.gitter.im/e/81e47479feba5ba8dc47
-    on_success: change
-    on_start: never
