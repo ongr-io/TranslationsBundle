@@ -13,9 +13,7 @@ namespace ONGR\TranslationsBundle\Service;
 
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use ONGR\ElasticsearchBundle\Result\DocumentIterator;
-use ONGR\ElasticsearchBundle\Result\Result;
 use ONGR\ElasticsearchDSL\Aggregation\Bucketing\TermsAggregation;
-use ONGR\ElasticsearchDSL\Query\ExistsQuery;
 use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
 use ONGR\ElasticsearchDSL\Query\TermsQuery;
 use ONGR\ElasticsearchBundle\Service\Repository;
@@ -67,7 +65,12 @@ class TranslationManager
      */
     public function edit($id, Request $request)
     {
-        $content = $this->parseJsonContent($request);
+        $content = json_decode($request->getContent(), true);
+
+        if (empty($content)) {
+            return;
+        }
+
         $document = $this->getTranslation($id);
 
         if (isset($content['messages'])) {
@@ -85,7 +88,8 @@ class TranslationManager
             throw new \LogicException('Illegal variable provided for translation');
         }
 
-        $this->commitTranslation($document);
+        $this->repository->getManager()->persist($document);
+        $this->repository->getManager()->commit();
     }
 
     /**
@@ -235,34 +239,5 @@ class TranslationManager
         }
 
         return $items;
-    }
-
-    /**
-     * Parses http request content from json to array.
-     *
-     * @param Request $request Http request object.
-     *
-     * @return array
-     *
-     * @throws BadRequestHttpException
-     */
-    private function parseJsonContent(Request $request)
-    {
-        $content = json_decode($request->getContent(), true);
-
-        if (empty($content)) {
-            throw new BadRequestHttpException('No content found.');
-        }
-
-        return $content;
-    }
-
-    /**
-     * @param object $document
-     */
-    private function commitTranslation($document)
-    {
-        $this->repository->getManager()->persist($document);
-        $this->repository->getManager()->commit();
     }
 }
