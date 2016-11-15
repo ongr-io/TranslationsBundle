@@ -39,7 +39,7 @@ class ListController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function getTranslationsAction(Request $request)
+    public function listAction(Request $request)
     {
         /** @var SearchResponse $filterResponse */
         $filterResponse = $this->get('ongr_translations.filter_manager')->handleRequest($request);
@@ -54,7 +54,7 @@ class ListController extends Controller
      *
      * @return Response
      */
-    public function listAction(Request $request)
+    public function indexAction(Request $request)
     {
         return $this->render(
             'ONGRTranslationsBundle:List:list.html.twig',
