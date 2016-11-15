@@ -158,6 +158,7 @@ class Message implements \JsonSerializable
         return [
             'message' => $this->getMessage(),
             'status' => $this->getStatus(),
+            'locale' => $this->getLocale(),
             'createdAt' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
             'updatedAt' => $this->getUpdatedAt()->format('Y-m-d H:i:s'),
         ];

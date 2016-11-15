@@ -1,9 +1,0 @@
-<a href="#" ng-click="edit()" ng-bind="message.message" ng-class="error == 1 ? 'danger-font' : ''"></a>
-<div class="input-group input-group-sm" ng-class="error === 0 ? 'has-success' : (error === 1  ? 'has-error' : '')">
-    <span class="input-group-btn">
-        <button ng-click="save()" ng-class="error == null ? 'btn-default' : (error == 0 ? 'btn-success' : 'btn-danger')" class="btn"><i class="glyphicon glyphicon-ok"></i></button>
-        <button ng-click="close()" class="btn btn-default"><i class="glyphicon glyphicon-remove"></i></button>
-        <button ng-click="history()" class="btn btn-default"><i class="glyphicon glyphicon-header"></i></button>
-    </span>
-    <input type="text" class="form-control" ng-model="message.message" ng-keydown="keyPress($event)"/>
-</div>

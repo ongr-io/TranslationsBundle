@@ -11,13 +11,14 @@
 
 namespace ONGR\TranslationsBundle\Controller;
 
-use ONGR\TranslationsBundle\Translation\TranslationChecker;
+use ONGR\TranslationsBundle\Service\TranslationChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Controller used for api's actions.
@@ -28,79 +29,34 @@ class ApiController extends Controller
      * Action for editing translation objects.
      *
      * @param Request $request Http request object.
+     * @param string  $id
      *
      * @return JsonResponse
      */
-    public function editAction(Request $request)
+    public function editAction(Request $request, $id)
     {
-        $this->get('ongr_translations.translation_manager')->edit($request);
+        $response = ['error' => false];
 
-        return new JsonResponse();
-    }
-
-    /**
-     * Action for removing translation objects.
-     *
-     * @param Request $request Http request object.
-     *
-     * @return JsonResponse
-     */
-    public function deleteAction(Request $request)
-    {
-        $this->get('ongr_translations.translation_manager')->delete($request);
-
-        return new JsonResponse();
-    }
-
-    /**
-     * Action for adding translation objects.
-     *
-     * @param Request $request Http request object.
-     *
-     * @return JsonResponse
-     */
-    public function addAction(Request $request)
-    {
-        $this->get('ongr_translations.translation_manager')->add($request);
-
-        return new JsonResponse();
-    }
-
-    /**
-     * Action for getting specific values from objects.
-     *
-     * @param Request $request Http request object.
-     *
-     * @return JsonResponse
-     */
-    public function getAction(Request $request)
-    {
-        return new JsonResponse($this->get('ongr_translations.translation_manager')->get($request));
-    }
-
-    /**
-     * Action to check if translation is valid.
-     *
-     * @param Request $request Http request object.
-     *
-     * @return JsonResponse
-     */
-    public function checkAction(Request $request)
-    {
-        $content = json_decode($request->getContent(), true);
-
-        if ($content === null || (!array_key_exists('message', $content) || !array_key_exists('locale', $content))) {
-            return new JsonResponse(Response::$statusTexts[Response::HTTP_BAD_REQUEST], Response::HTTP_BAD_REQUEST);
+        try {
+            $this->get('ongr_translations.translation_manager')->edit($id, $request);
+        } catch (\LogicException $e) {
+            $response = ['error' => true];
         }
 
-        if (TranslationChecker::check($content['message'], $content['locale'])) {
-            return new JsonResponse();
-        }
+        return new JsonResponse($response);
+    }
 
-        return new JsonResponse(
-            Response::$statusTexts[Response::HTTP_NOT_ACCEPTABLE],
-            Response::HTTP_NOT_ACCEPTABLE
-        );
+    /**
+     * Action for getting translation.
+     *
+     * @param Request $request Http request object.
+     * @param string  $id
+     *
+     * @return JsonResponse
+     */
+    public function getAction(Request $request, $id)
+    {
+        return new JsonResponse($this->get('ongr_translations.translation_manager')->getTranslation($id));
     }
 
     /**
@@ -115,20 +71,31 @@ class ApiController extends Controller
             chdir($cwd . DIRECTORY_SEPARATOR . '..');
         }
 
-        return new JsonResponse(
-            $this->get('ongr_translations.command.export')->run(new ArrayInput([]), new NullOutput())
-        );
+        $output = ['error' => false];
+
+        if ($this->get('ongr_translations.command.export')->run(new ArrayInput([]), new NullOutput()) != 0) {
+            $output['error'] = true;
+        }
+
+        return new JsonResponse($output);
     }
 
     /**
      * Action for executing history command.
      *
      * @param Request $request Http request object.
+     * @param string  $id
      *
      * @return JsonResponse
      */
-    public function historyAction(Request $request)
+    public function historyAction(Request $request, $id)
     {
-        return new JsonResponse($this->get('ongr_translations.history_manager')->history($request));
+        $document = $this->get('ongr_translations.translation_manager')->getTranslation($id);
+
+        if (empty($document)) {
+            return new JsonResponse(['error' => true, 'message' => 'translation not found']);
+        }
+
+        return new JsonResponse($this->get('ongr_translations.history_manager')->getHistory($document));
     }
 }

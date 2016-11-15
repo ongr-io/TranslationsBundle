@@ -18,7 +18,7 @@ use ONGR\ElasticsearchBundle\Annotation as ES;
  *
  * @ES\Document(type="history")
  */
-class History
+class History implements \JsonSerializable
 {
     /**
      * @var string
@@ -44,7 +44,7 @@ class History
     /**
      * @var string
      *
-     * @ES\Property(type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="string")
      */
     private $message;
 
@@ -60,15 +60,7 @@ class History
      *
      * @ES\Property(type="date")
      */
-    private $createdAt;
-
-    /**
-     * Sets timestamps.
-     */
-    public function __construct()
-    {
-        $this->createdAt = new \DateTime();
-    }
+    private $updatedAt;
 
     /**
      * Sets document ID.
@@ -102,7 +94,6 @@ class History
     public function setKey($key)
     {
         $this->key = $key;
-
         return $this;
     }
 
@@ -162,7 +153,6 @@ class History
     public function setDomain($domain)
     {
         $this->domain = $domain;
-
         return $this;
     }
 
@@ -177,16 +167,31 @@ class History
     /**
      * @return \DateTime
      */
-    public function getCreatedAt()
+    public function getUpdatedAt()
     {
-        return $this->createdAt;
+        return $this->updatedAt;
     }
 
     /**
-     * @param \DateTime $createdAt
+     * @param \DateTime $updatedAt
      */
-    public function setCreatedAt($createdAt)
+    public function setUpdatedAt($updatedAt)
     {
-        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'message' => $this->getMessage(),
+            'key' => $this->getKey(),
+            'domain' => $this->getDomain(),
+            'locale' => $this->getLocale(),
+            'updatedAt' => $this->getUpdatedAt()->format('Y-m-d H:i:s'),
+        ];
     }
 }

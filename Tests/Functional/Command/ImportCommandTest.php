@@ -12,8 +12,10 @@
 namespace ONGR\TranslationsBundle\Tests\Functional\Command;
 
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
+use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
+use ONGR\ElasticsearchDSL\Query\TermsQuery;
 use ONGR\TranslationsBundle\Command\ImportCommand;
-use Symfony\Component\Console\Application;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
@@ -62,7 +64,6 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
         $this->assertGreaterThan(0, $this->getTranslationsCount(['en'], ['validators']));
         $this->assertGreaterThan(0, $this->getTranslationsCount(['en'], ['ONGRTranslations']));
         $this->assertGreaterThan(0, $this->getTranslationsCount(['en'], ['messages']));
-        $this->assertGreaterThan(0, $this->getTranslationsCount(['en'], ['security']));
     }
 
     /**
@@ -79,7 +80,6 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
 
         $this->assertEquals(0, $this->getTranslationsCount(['en'], ['validators']));
         $this->assertEquals(0, $this->getTranslationsCount(['en'], ['ONGRTranslation']));
-        $this->assertEquals(0, $this->getTranslationsCount(['en'], ['security']));
         $this->assertGreaterThan(0, $this->getTranslationsCount(['en'], ['messages']));
     }
 
@@ -107,14 +107,13 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
         $this->commandTester->execute(
             [
                 'command' => $this->command->getName(),
-                '--locales' => ['lt'],
-                '--domains' => ['messages', 'security'],
+                '--locales' => ['lt', 'lv'],
+                '--domains' => ['messages', 'validators'],
             ]
         );
 
-        $this->assertEquals(0, $this->getTranslationsCount(['lt'], ['validators']));
+        $this->assertGreaterThan(0, $this->getTranslationsCount(['lt'], ['validators']));
         $this->assertEquals(0, $this->getTranslationsCount(['lt'], ['ONGRTranslation']));
-        $this->assertGreaterThan(0, $this->getTranslationsCount(['lt'], ['security']));
         $this->assertGreaterThan(0, $this->getTranslationsCount(['lt'], ['messages']));
     }
 
@@ -160,9 +159,19 @@ class ImportCommandTest extends AbstractElasticsearchTestCase
      */
     private function getTranslationsCount(array $locales = [], array $domains = [])
     {
-        $esStorage = $this->getContainer()->get('ongr_translations.storage');
+        $repository = $this->getContainer()->get('ongr_translations.translation_repository');
 
-        $result = $esStorage->read($locales, $domains);
+        $search = $repository
+            ->createSearch()
+            ->setScroll('2m')
+            ->addQuery(new MatchAllQuery());
+        if (!empty($locales)) {
+            $search->addFilter(new TermsQuery('messages.locale', $locales));
+        }
+        if (!empty($domains)) {
+            $search->addFilter(new TermsQuery('domain', $domains));
+        }
+        $result =  $repository->findDocuments($search);
 
         return $result->count();
     }

@@ -1,0 +1,28 @@
+{
+  "name": "translations-bundle",
+  "version": "1.0.0",
+  "description": "Translations bundle provides the UI for handling Symfony translations.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ongr-io/TranslationsBundle.git"
+  },
+  "author": "ONGR Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ongr-io/TranslationsBundle/issues"
+  },
+  "homepage": "https://github.com/ongr-io/TranslationsBundle#readme",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-sass": "^2.3.1",
+    "gulp-clean-css": "^2.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^2.0.0",
+    "gulp-watch": "^4.3.6",
+    "jquery": "^3.0.0",
+    "node-sass": "^3.7.0"
+  }
+}

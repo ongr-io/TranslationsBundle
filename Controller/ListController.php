@@ -11,12 +11,9 @@
 
 namespace ONGR\TranslationsBundle\Controller;
 
-use ONGR\ElasticsearchBundle\Result\Result;
-use ONGR\ElasticsearchDSL\Aggregation\TermsAggregation;
-use ONGR\ElasticsearchBundle\Service\Repository;
-use ONGR\FilterManagerBundle\Filter\ViewData;
 use ONGR\FilterManagerBundle\Search\SearchResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,18 +23,28 @@ use Symfony\Component\HttpFoundation\Response;
 class ListController extends Controller
 {
     /**
-     * @var Repository
+     * Returns a JsonResponse with available locales and active tags
+     * @return JsonResponse
      */
-    private $repository;
+    public function getInitialDataAction()
+    {
+        $out = [];
+        $out['locales'] = $this->getParameter('ongr_translations.managed_locales');
+        $out['tags'] = $this->get('ongr_translations.translation_manager')->getTags();
+        $out['domains'] = $this->get('ongr_translations.translation_manager')->getDomains();
+        return new JsonResponse($out);
+    }
 
     /**
-     * Injects elasticsearch repository for listing actions.
-     *
-     * @param Repository $repository Elasticsearch repository.
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function __construct(Repository $repository)
+    public function getTranslationsAction(Request $request)
     {
-        $this->repository = $repository;
+        /** @var SearchResponse $filterResponse */
+        $filterResponse = $this->get('ongr_translations.filter_manager')->handleRequest($request);
+
+        return new JsonResponse(iterator_to_array($filterResponse->getResult()));
     }
 
     /**
@@ -49,43 +56,9 @@ class ListController extends Controller
      */
     public function listAction(Request $request)
     {
-        /** @var SearchResponse $fmr */
-        $fmr = $this->get('ongr_translations.filter_manager')->handleRequest($request);
-
         return $this->render(
             'ONGRTranslationsBundle:List:list.html.twig',
-            [
-                'data' => iterator_to_array($fmr->getResult()),
-                'locales' => $this->buildLocalesList($fmr->getFilters()['locale']),
-                'filters_manager' => $fmr,
-            ]
+            ['locales' => $this->getParameter('ongr_translations.managed_locales')]
         );
-    }
-
-    /**
-     * Creates locales list.
-     *
-     * @param ViewData\ChoicesAwareViewData $filter
-     *
-     * @return array
-     */
-    private function buildLocalesList($filter)
-    {
-        $locales = $this->container->getParameter('ongr_translations.managed_locales');
-        $list = [];
-        foreach ($locales as $locale) {
-            $list[$locale] = true;
-        }
-        ksort($list);
-        $activeLocales = [];
-
-        if ($filter->getState()->isActive()) {
-            foreach ($filter->getChoices() as $choice) {
-                $activeLocales[$choice->getLabel()] = $choice->isActive();
-            }
-            $list = array_merge($list, $activeLocales);
-        }
-
-        return $list;
     }
 }

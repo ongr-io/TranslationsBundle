@@ -36,9 +36,9 @@ class Translation implements \JsonSerializable
     private $domain;
 
     /**
-     * @var Tag[]
+     * @var array
      *
-     * @ES\Embedded(class="ONGRTranslationsBundle:Tag", multiple=true)
+     * @ES\Property(type="string", options={"index"="not_analyzed"})
      */
     private $tags = [];
 
@@ -68,6 +68,13 @@ class Translation implements \JsonSerializable
      *
      * @ES\Property(type="string")
      */
+    private $description;
+
+    /**
+     * @var string
+     *
+     * @ES\Property(type="string")
+     */
     private $format;
 
     /**
@@ -89,7 +96,6 @@ class Translation implements \JsonSerializable
      */
     public function __construct()
     {
-        $this->tags = new Collection();
         $this->messages = new Collection();
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
@@ -116,10 +122,6 @@ class Translation implements \JsonSerializable
      */
     public function getId()
     {
-        if (!$this->id) {
-            $this->setId(sha1($this->getDomain() . $this->getKey()));
-        }
-
         return $this->id;
     }
 
@@ -142,31 +144,25 @@ class Translation implements \JsonSerializable
     /**
      * Sets tags.
      *
-     * @param Tag[]|Collection $tags
+     * @param array|string $tags
      */
-    public function setTags(Collection $tags = null)
+    public function setTags($tags)
     {
+        if (is_string($tags)) {
+            $tags = [$tags];
+        }
+
         $this->tags = $tags;
     }
 
     /**
      * Returns all tags.
      *
-     * @return Tag[]
+     * @return array
      */
     public function getTags()
     {
         return $this->tags;
-    }
-
-    /**
-     * Adds a single tag.
-     *
-     * @param Tag $tag
-     */
-    public function addTag($tag)
-    {
-        $this->tags[] = $tag;
     }
 
     /**
@@ -228,6 +224,22 @@ class Translation implements \JsonSerializable
     /**
      * @return string
      */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return string
+     */
     public function getFormat()
     {
         return $this->format;
@@ -283,7 +295,8 @@ class Translation implements \JsonSerializable
             [
                 'id' => $this->getId(),
                 'messages' => $this->getMessagesArray(),
-                'tags' => $this->getTagsArray(),
+                'tags' => $this->getTags(),
+                'description' => $this->getDescription(),
                 'createdAt' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
                 'updatedAt' => $this->getUpdatedAt()->format('Y-m-d H:i:s'),
             ]
@@ -297,30 +310,11 @@ class Translation implements \JsonSerializable
      *
      * @return array
      */
-    private function getMessagesArray()
+    public function getMessagesArray()
     {
         $result = [];
         foreach ($this->getMessages() as $message) {
             $result[$message->getLocale()] = $message;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Returns tags array.
-     *
-     * @return array
-     */
-    private function getTagsArray()
-    {
-        if ($this->tags === null) {
-            return [];
-        }
-
-        $result = [];
-        foreach ($this->tags as $tag) {
-            $result[] = $tag->getName();
         }
 
         return $result;

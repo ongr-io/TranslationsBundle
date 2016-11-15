@@ -1,0 +1,31 @@
+<div id="export-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="history-title">Pending changes</h4>
+            </div>
+            <div class="modal-body">
+                <div id="export-error" class="alert alert-danger alert-dismissible export-dialog" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4>There was an error exporting data!</h4>
+                </div>
+                <div id="export-success" class="alert alert-success alert-dismissible export-dialog" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4>Data exported successfully!</h4>
+                </div>
+                <div id="export-container">
+                    <table class="table" id="export-table"></table>
+                    <h4 id="export-nothing-to-export-header">Nothing to export</h4>
+                    <img id="export-loading" src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" alt="">
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" id="export-submit">Export</button>
+            </div>
+        </div>
+    </div>
+</div>

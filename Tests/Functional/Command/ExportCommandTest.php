@@ -14,7 +14,7 @@ namespace ONGR\TranslationsBundle\Tests\Functional\Command;
 use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
 use ONGR\TranslationsBundle\Command\ExportCommand;
 use ONGR\TranslationsBundle\Document\Message;
-use ONGR\TranslationsBundle\Translation\Export\YmlExport;
+use ONGR\TranslationsBundle\Service\Export\YmlExport;
 use org\bovigo\vfs\vfsStream;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -34,11 +34,6 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
      * @var ExportCommand
      */
     private $command;
-
-    /**
-     * @var string
-     */
-    private $translationsDir;
 
     /**
      * {@inheritdoc}
@@ -237,6 +232,27 @@ class ExportCommandTest extends AbstractElasticsearchTestCase
                 'bar_key' => 'bar_message',
             ],
         ];
+
+        $this->verifyFiles($data);
+    }
+
+    /**
+     * Test if destination translations are merged correctly.
+     */
+    public function testExportForce()
+    {
+        $this->commandTester->execute(['--domains' => ['buz_domain']]);
+
+        $data = [
+            'buz_domain.lt.yml' => [
+                'foo_key' => 'foo_message',
+            ],
+        ];
+
+        $this->verifyFiles($data);
+
+        $this->commandTester->execute(['--domains' => ['buz_domain'], '--force' => true]);
+        $data['buz_domain.lt.yml']['fresh_key'] = 'fresh_foo_message';
 
         $this->verifyFiles($data);
     }
