@@ -45,7 +45,7 @@ class TranslationTest extends \PHPUnit_Framework_TestCase
             'format' => null,
             'key' => null,
             'path' => null,
-            'id' =>null,
+            'id' => sha1('foo_domain'),
             'description' => 'foo description',
             'messages' => [
                 'en' => $message

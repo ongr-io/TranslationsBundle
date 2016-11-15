@@ -122,6 +122,10 @@ class Translation implements \JsonSerializable
      */
     public function getId()
     {
+        if (!$this->id) {
+            $this->setId(sha1($this->getDomain() . $this->getKey()));
+        }
+
         return $this->id;
     }
 
