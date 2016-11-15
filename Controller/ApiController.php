@@ -35,7 +35,7 @@ class ApiController extends Controller
         $response = ['error' => false];
 
         try {
-            $this->get('ongr_translations.translation_manager')->edit($id, $request);
+            $this->get('ongr_translations.translation_manager')->update($id, $request);
         } catch (\LogicException $e) {
             $response = ['error' => true];
         }
@@ -53,7 +53,7 @@ class ApiController extends Controller
      */
     public function getAction(Request $request, $id)
     {
-        return new JsonResponse($this->get('ongr_translations.translation_manager')->getTranslation($id));
+        return new JsonResponse($this->get('ongr_translations.translation_manager')->get($id));
     }
 
     /**
@@ -62,7 +62,7 @@ class ApiController extends Controller
      */
     public function allAction(Request $request)
     {
-        return new JsonResponse($this->get('ongr_translations.translation_manager')->getTranslations());
+        return new JsonResponse($this->get('ongr_translations.translation_manager')->getAll());
     }
 
     /**
@@ -102,6 +102,6 @@ class ApiController extends Controller
             return new JsonResponse(['error' => true, 'message' => 'translation not found']);
         }
 
-        return new JsonResponse($this->get('ongr_translations.history_manager')->getHistory($document));
+        return new JsonResponse($this->get('ongr_translations.history_manager')->get($document));
     }
 }

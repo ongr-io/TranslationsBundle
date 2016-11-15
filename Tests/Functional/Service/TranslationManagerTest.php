@@ -94,7 +94,7 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
         ];
 
         $request = new Request([], [], [], [], [], [], json_encode($body));
-        $this->manager->edit('foo', $request);
+        $this->manager->update('foo', $request);
 
         /** @var Translation $translation */
         $translation = $this->getManager()->find('ONGRTranslationsBundle:Translation', 'foo');
@@ -126,7 +126,7 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
 
     public function testGetTranslations()
     {
-        $this->assertEquals(2, count($this->manager->getTranslations()));
-        $this->assertEquals(1, count($this->manager->getTranslations(['domain' => ['foo']])));
+        $this->assertEquals(2, count($this->manager->getAll()));
+        $this->assertEquals(1, count($this->manager->getAll(['domain' => ['foo']])));
     }
 }

@@ -43,7 +43,7 @@ class HistoryManager
      *
      * @return array
      */
-    public function getHistory(Translation $translation)
+    public function get(Translation $translation)
     {
         $ordered = [];
         $search = $this->repository->createSearch();
@@ -64,7 +64,7 @@ class HistoryManager
      * @param Message $message
      * @param Translation $translation
      */
-    public function addHistory(Message $message, Translation $translation)
+    public function add(Message $message, Translation $translation)
     {
         $history = new History();
         $history->setLocale($message->getLocale());

@@ -83,8 +83,8 @@ class HistoryManagerTest extends AbstractElasticsearchTestCase
     public function testGetHistory()
     {
         $messages = ['Lorum ipsum', 'Lorum'];
-        $histories = $this->manager->getHistory(
-            $this->getContainer()->get('ongr_translations.translation_manager')->getTranslation('foo')
+        $histories = $this->manager->get(
+            $this->getContainer()->get('ongr_translations.translation_manager')->get('foo')
         );
 
         $this->assertArrayHasKey('en', $histories);
@@ -97,11 +97,11 @@ class HistoryManagerTest extends AbstractElasticsearchTestCase
 
     public function testAddHistory()
     {
-        $translation = $this->getContainer()->get('ongr_translations.translation_manager')->getTranslation('foo');
+        $translation = $this->getContainer()->get('ongr_translations.translation_manager')->get('foo');
         $message = $translation->getMessages()[0];
         $this->assertInstanceOf('ONGR\TranslationsBundle\Document\Message', $message);
-        $this->manager->addHistory($message, $translation);
+        $this->manager->add($message, $translation);
         $this->getManager()->commit();
-        $this->assertEquals(3, count($this->manager->getHistory($translation)['en']));
+        $this->assertEquals(3, count($this->manager->get($translation)['en']));
     }
 }

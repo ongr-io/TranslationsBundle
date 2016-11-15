@@ -101,7 +101,7 @@ class ExportManager
             $this->exporter->export($file, $translations);
         }
 
-        $this->translationManager->saveTranslations($this->refresh);
+        $this->translationManager->save($this->refresh);
         $this->refresh = [];
     }
 
@@ -121,7 +121,7 @@ class ExportManager
             'domain' => $domains
         ]);
 
-        $translations = $this->translationManager->getTranslations($filters);
+        $translations = $this->translationManager->getAll($filters);
 
         /** @var Translation $translation */
         foreach ($translations as $translation) {

@@ -61,7 +61,7 @@ class TranslationManager
      * @param string $id
      * @param Request $request Http request object.
      */
-    public function edit($id, Request $request)
+    public function update($id, Request $request)
     {
         $content = json_decode($request->getContent(), true);
 
@@ -69,7 +69,7 @@ class TranslationManager
             return;
         }
 
-        $document = $this->getTranslation($id);
+        $document = $this->get($id);
 
         if (isset($content['messages'])) {
             $this->updateMessages($document, $content['messages']);
@@ -113,7 +113,7 @@ class TranslationManager
      *
      * @return Translation
      */
-    public function getTranslation($id)
+    public function get($id)
     {
         return $this->repository->find($id);
     }
@@ -125,7 +125,7 @@ class TranslationManager
      *
      * @return DocumentIterator
      */
-    public function getTranslations(array $filters = null)
+    public function getAll(array $filters = null)
     {
         $search = $this->repository->createSearch();
         $search->addQuery(new MatchAllQuery());
@@ -143,7 +143,7 @@ class TranslationManager
     /**
      * @param Translation[] $translations
      */
-    public function saveTranslations($translations)
+    public function save($translations)
     {
         foreach ($translations as $translation) {
             $this->repository->getManager()->persist($translation);
@@ -171,7 +171,7 @@ class TranslationManager
                 if (in_array($locale, $setMessagesLocales)) {
                     foreach ($documentMessages as $message) {
                         if ($message->getLocale() == $locale && $message->getMessage() != $messageText) {
-                            $this->historyManager->addHistory($message, $document);
+                            $this->historyManager->add($message, $document);
                             $this->updateMessageData($message, $locale, $messages[$locale], new \DateTime());
                             break;
                         }
