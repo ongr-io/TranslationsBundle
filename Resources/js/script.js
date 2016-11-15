@@ -178,7 +178,7 @@ $(document).ready(function() {
 
             if (currentMessageValue != value) {
                 $.ajax({
-                    url: Routing.generate('ongr_translations_api_edit', {id: data.id}),
+                    url: Routing.generate('ongr_translations_api_update', {id: data.id}),
                     data: '{"messages": {"'+locale+'": "'+value+'"}}',
                     method: 'post',
                     contentType: "application/json; charset=utf-8",
@@ -355,7 +355,7 @@ $(document).ready(function() {
         var data = $.deparam($('#translation-form').serialize());
         data = JSON.stringify(data);
         $.ajax({
-            url: Routing.generate('ongr_translations_api_edit', {id: id}),
+            url: Routing.generate('ongr_translations_api_update', {id: id}),
             method: 'post',
             data: data,
             contentType: "application/json; charset=utf-8",

@@ -11,14 +11,11 @@
 
 namespace ONGR\TranslationsBundle\Controller;
 
-use ONGR\TranslationsBundle\Service\TranslationChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Controller used for api's actions.
@@ -33,7 +30,7 @@ class ApiController extends Controller
      *
      * @return JsonResponse
      */
-    public function editAction(Request $request, $id)
+    public function updateAction(Request $request, $id)
     {
         $response = ['error' => false];
 

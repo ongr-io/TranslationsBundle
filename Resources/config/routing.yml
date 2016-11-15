@@ -1,11 +1,11 @@
 ongr_translations_list_page:
-    path: /list
+    path: /
     methods: [GET]
     defaults:
-        _controller: ONGRTranslationsBundle:List:list
+        _controller: ONGRTranslationsBundle:List:index
 
 ongr_translations_list_get_initial_data:
-    path: /list/get/initial-data/
+    path: /initial-data
     methods: [GET]
     defaults:
         _controller: ONGRTranslationsBundle:List:getInitialData
@@ -13,23 +13,23 @@ ongr_translations_list_get_initial_data:
         expose: true
 
 ongr_translations_list_get_translations:
-    path: /list/translations/_all
+    path: /list/translations
     methods: [GET]
     defaults:
-        _controller: ONGRTranslationsBundle:List:getTranslations
+        _controller: ONGRTranslationsBundle:List:list
     options:
         expose: true
 
-ongr_translations_api_edit:
-    path: /_api/edit/{id}
+ongr_translations_api_update:
+    path: /_api/{id}
     methods: [POST]
     defaults:
-        _controller: ONGRTranslationsBundle:Api:edit
+        _controller: ONGRTranslationsBundle:Api:update
     options:
         expose: true
 
 ongr_translations_api_get:
-    path: /_api/get/{id}
+    path: /_api/{id}
     methods: [GET]
     defaults:
         _controller: ONGRTranslationsBundle:Api:get
