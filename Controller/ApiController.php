@@ -57,6 +57,15 @@ class ApiController extends Controller
     }
 
     /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function allAction(Request $request)
+    {
+        return new JsonResponse($this->get('ongr_translations.translation_manager')->getTranslations());
+    }
+
+    /**
      * Action for executing export command.
      *
      * @return JsonResponse
