@@ -11,7 +11,6 @@
 
 namespace ONGR\TranslationsBundle\Service;
 
-use Elasticsearch\Common\Exceptions\Missing404Exception;
 use ONGR\ElasticsearchBundle\Result\DocumentIterator;
 use ONGR\ElasticsearchDSL\Aggregation\Bucketing\TermsAggregation;
 use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
@@ -23,7 +22,6 @@ use ONGR\TranslationsBundle\Event\Events;
 use ONGR\TranslationsBundle\Event\TranslationEditMessageEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Handles translation objects by http requests.

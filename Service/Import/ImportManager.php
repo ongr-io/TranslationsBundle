@@ -11,7 +11,6 @@
 
 namespace ONGR\TranslationsBundle\Service\Import;
 
-use Elasticsearch\Common\Exceptions\BadRequest400Exception;
 use ONGR\ElasticsearchBundle\Service\Manager;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;

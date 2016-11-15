@@ -13,7 +13,6 @@ namespace ONGR\TranslationsBundle\Event;
 
 use ONGR\TranslationsBundle\Document\Translation;
 use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Event for edit message action.

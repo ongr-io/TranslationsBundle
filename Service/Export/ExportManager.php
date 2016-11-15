@@ -13,7 +13,6 @@ namespace ONGR\TranslationsBundle\Service\Export;
 
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
-use ONGR\TranslationsBundle\Service\LoadersContainer;
 use ONGR\TranslationsBundle\Service\TranslationManager;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\ParameterBag;
