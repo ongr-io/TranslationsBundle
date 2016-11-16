@@ -16,6 +16,7 @@ use ONGR\ElasticsearchDSL\Aggregation\Bucketing\TermsAggregation;
 use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
 use ONGR\ElasticsearchDSL\Query\TermsQuery;
 use ONGR\ElasticsearchBundle\Service\Repository;
+use ONGR\FilterManagerBundle\Twig\PagerExtension;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\TranslationsBundle\Event\Events;
@@ -119,16 +120,17 @@ class TranslationManager
             unset($content['messages']);
         }
 
-        try {
-            foreach ($content as $key => $value) {
-                $document->{'set'.ucfirst($key)}($value);
+        foreach ($content as $key => $value) {
+            $method = 'set' . ucfirst($key);
+
+            if (!method_exists($document, $method)) {
+                throw new \LogicException('Illegal variable provided for translation');
             }
 
-            $document->setUpdatedAt(new \DateTime());
-        } catch (\Error $e) {
-            throw new \LogicException('Illegal variable provided for translation');
+            $document->$method($value);
         }
 
+        $document->setUpdatedAt(new \DateTime());
         $this->repository->getManager()->persist($document);
         $this->repository->getManager()->commit();
     }
