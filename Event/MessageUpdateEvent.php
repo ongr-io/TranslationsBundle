@@ -11,6 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Event;
 
+use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use Symfony\Component\EventDispatcher\Event;
 
@@ -25,18 +26,18 @@ class MessageUpdateEvent extends Event
     private $document;
 
     /**
-     * @var array
+     * @var Message
      */
-    private $locale;
+    private $message;
 
     /**
-     * @param Translation  $document
-     * @param array   $locale
+     * @param Translation $document
+     * @param Message     $message
      */
-    public function __construct(Translation $document, $locale)
+    public function __construct(Translation $document, Message $message)
     {
         $this->document = $document;
-        $this->locale = $locale;
+        $this->message = $message;
     }
     /**
      * Returns document associated with the event.
@@ -50,10 +51,10 @@ class MessageUpdateEvent extends Event
 
 
     /**
-     * @return array
+     * @return Message
      */
-    public function getLocale()
+    public function getMessage()
     {
-        return $this->locale;
+        return $this->message;
     }
 }

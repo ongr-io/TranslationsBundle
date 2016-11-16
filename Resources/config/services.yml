@@ -3,7 +3,6 @@ services:
     class: ONGR\TranslationsBundle\Service\TranslationManager
     arguments:
       - "@ongr_translations.translation_repository"
-      - "@ongr_translations.history_manager"
       - "@event_dispatcher"
   ongr_translations.history_manager:
     class: ONGR\TranslationsBundle\Service\HistoryManager
@@ -32,6 +31,13 @@ services:
       - "@ongr_translations.export.yaml"
     calls:
       - ["setManagedLocales", ["%ongr_translations.managed_locales%"]]
+
+  ongr_translations.messages_listener:
+    class: ONGR\TranslationsBundle\EventListener\MessageUpdateListener
+    arguments:
+      - "@ongr_translations.history_manager"
+    tags:
+      - { name: kernel.event_listener, event: translation.history.add, method: onMessageUpdate }
 
   ongr_translations.file_import:
     class: ONGR\TranslationsBundle\Service\Import\FileImport

@@ -19,7 +19,7 @@ use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\TranslationsBundle\Event\Events;
-use ONGR\TranslationsBundle\Event\TranslationEditMessageEvent;
+use ONGR\TranslationsBundle\Event\MessageUpdateEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -34,24 +34,17 @@ class TranslationManager
     private $repository;
 
     /**
-     * @var HistoryManager
-     */
-    private $historyManager;
-
-    /**
      * @var EventDispatcherInterface
      */
     private $dispatcher;
 
     /**
      * @param Repository               $repository
-     * @param HistoryManager           $manager
      * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(Repository $repository, HistoryManager $manager, EventDispatcherInterface $dispatcher)
+    public function __construct(Repository $repository, EventDispatcherInterface $dispatcher)
     {
         $this->repository = $repository;
-        $this->historyManager = $manager;
         $this->dispatcher = $dispatcher;
     }
 
@@ -163,15 +156,10 @@ class TranslationManager
 
         foreach ($messages as $locale => $messageText) {
             if (!empty($messageText) && is_string($messageText)) {
-                $this->dispatcher->dispatch(
-                    Events::ADD_HISTORY,
-                    new TranslationEditMessageEvent($document, $locale)
-                );
-
                 if (in_array($locale, $setMessagesLocales)) {
                     foreach ($documentMessages as $message) {
                         if ($message->getLocale() == $locale && $message->getMessage() != $messageText) {
-                            $this->historyManager->add($message, $document);
+                            $this->dispatcher->dispatch(Events::ADD_HISTORY, new MessageUpdateEvent($document, $message));
                             $this->updateMessageData($message, $locale, $messages[$locale], new \DateTime());
                             break;
                         }

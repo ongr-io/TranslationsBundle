@@ -96,7 +96,7 @@ class ApiController extends Controller
      */
     public function historyAction(Request $request, $id)
     {
-        $document = $this->get('ongr_translations.translation_manager')->getTranslation($id);
+        $document = $this->get('ongr_translations.translation_manager')->get($id);
 
         if (empty($document)) {
             return new JsonResponse(['error' => true, 'message' => 'translation not found']);
