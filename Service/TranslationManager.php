@@ -157,12 +157,11 @@ class TranslationManager
         foreach ($messages as $locale => $messageText) {
             if (!empty($messageText) && is_string($messageText)) {
                 if (in_array($locale, $setMessagesLocales)) {
-                    foreach ($documentMessages as $message) {
-                        if ($message->getLocale() == $locale && $message->getMessage() != $messageText) {
-                            $this->dispatcher->dispatch(Events::ADD_HISTORY, new MessageUpdateEvent($document, $message));
-                            $this->updateMessageData($message, $locale, $messages[$locale]);
-                            break;
-                        }
+                    $message = $document->getMessageByLocale($locale);
+
+                    if ($message && $message->getMessage() != $messageText) {
+                        $this->dispatcher->dispatch(Events::ADD_HISTORY, new MessageUpdateEvent($document, $message));
+                        $this->updateMessageData($message, $locale, $messages[$locale]);
                     }
                 } else {
                     $documentMessages[] = $this->updateMessageData(new Message(), $locale, $messageText);

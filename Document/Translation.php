@@ -323,4 +323,19 @@ class Translation implements \JsonSerializable
 
         return $result;
     }
+
+    /**
+     * @param string $locale
+     * @return Message|null
+     */
+    public function getMessageByLocale($locale)
+    {
+        foreach ($this->messages as $message) {
+            if ($message->getLocale() == $locale) {
+                return $message;
+            }
+        }
+
+        return null;
+    }
 }
