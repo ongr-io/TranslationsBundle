@@ -11,6 +11,7 @@
 
 namespace ONGR\TranslationsBundle\Service\Import;
 
+use ONGR\TranslationsBundle\Document\Message;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\Translation\MessageCatalogue;
@@ -51,10 +52,23 @@ class FileImport
 
             if (!empty($domainMessages)) {
                 $path = substr(pathinfo($file->getPathname(), PATHINFO_DIRNAME), strlen(getcwd()) + 1);
+                $date = (new \DateTime())->format(\DateTime::ISO8601);
+
                 foreach ($domainMessages as $key => $content) {
-                    $translations[$domain][$key]['messages'][$locale] = $content;
-                    $translations[$domain][$key]['path'] = $path;
-                    $translations[$domain][$key]['format'] = $file->getExtension();
+                    $id = sha1($domain.$key);
+                    $message = [
+                        'locale' => $locale,
+                        'message' => $content,
+                        'status' => Message::FRESH,
+                        'updated_at' => $date,
+                        'created_at' => $date,
+                    ];
+                    $translations[$id]['_id'] = $id;
+                    $translations[$id]['key'] = $key;
+                    $translations[$id]['domain'] = $domain;
+                    $translations[$id]['path'] = $path;
+                    $translations[$id]['format'] = $file->getExtension();
+                    $translations[$id]['messages'][$locale] = $message;
                 }
             }
         }

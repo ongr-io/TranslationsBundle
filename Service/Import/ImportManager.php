@@ -12,8 +12,6 @@
 namespace ONGR\TranslationsBundle\Service\Import;
 
 use ONGR\ElasticsearchBundle\Service\Manager;
-use ONGR\TranslationsBundle\Document\Message;
-use ONGR\TranslationsBundle\Document\Translation;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -116,21 +114,13 @@ class ImportManager
      */
     public function writeToStorage()
     {
-        foreach ($this->translations as $domain => $keys) {
-            foreach ($keys as $key => $transMeta) {
-                $document = new Translation();
-                $document->setDomain($domain);
-                $document->setKey($key);
-                $document->setPath($transMeta['path']);
-                $document->setFormat($transMeta['format']);
-                foreach ($transMeta['messages'] as $locale => $text) {
-                    $message = new Message();
-                    $message->setLocale($locale);
-                    $message->setMessage($text);
-                    $document->addMessage($message);
-                }
-                $this->esManager->persist($document);
-            }
+        foreach ($this->translations as $id => $translation) {
+            $translation['messages'] = array_values($translation['messages']);
+            $this->esManager->bulk(
+                'index',
+                $this->esManager->getMetadataCollector()->getDocumentType('ONGRTranslationsBundle:Translation'),
+                $translation
+            );
         }
 
         $this->esManager->commit();
