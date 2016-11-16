@@ -15,6 +15,7 @@ use ONGR\ElasticsearchBundle\Test\AbstractElasticsearchTestCase;
 use ONGR\TranslationsBundle\Document\History;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Service\HistoryManager;
+use Symfony\Component\HttpFoundation\Request;
 
 class HistoryManagerTest extends AbstractElasticsearchTestCase
 {
@@ -103,5 +104,13 @@ class HistoryManagerTest extends AbstractElasticsearchTestCase
         $this->manager->add($message, $translation);
         $this->getManager()->commit();
         $this->assertEquals(3, count($this->manager->get($translation)['en']));
+    }
+
+    public function testAddHistoryProcess()
+    {
+        $request = new Request([], [], [], [], [], [], json_encode(['messages' => ['en' => 'something']]));
+        $translationManager = $this->getContainer()->get('ongr_translations.translation_manager');
+        $translationManager->update('foo', $request);
+        $this->assertEquals(3, count($this->manager->get($translationManager->get('foo'))['en']));
     }
 }
