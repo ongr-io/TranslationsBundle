@@ -160,7 +160,7 @@ class TranslationManager
                     foreach ($documentMessages as $message) {
                         if ($message->getLocale() == $locale && $message->getMessage() != $messageText) {
                             $this->dispatcher->dispatch(Events::ADD_HISTORY, new MessageUpdateEvent($document, $message));
-                            $this->updateMessageData($message, $locale, $messages[$locale], new \DateTime());
+                            $this->updateMessageData($message, $locale, $messages[$locale]);
                             break;
                         }
                     }
@@ -177,19 +177,15 @@ class TranslationManager
      * @param Message   $message
      * @param string    $locale
      * @param string    $text
-     * @param \DateTime $updatedAt
      *
      * @return Message
      */
-    private function updateMessageData(Message $message, $locale, $text, $updatedAt = null)
+    private function updateMessageData(Message $message, $locale, $text)
     {
         $message->setLocale($locale);
         $message->setStatus(Message::DIRTY);
         $message->setMessage($text);
-
-        if ($updatedAt) {
-            $message->setUpdatedAt($updatedAt);
-        }
+        $message->setUpdatedAt(new \DateTime());
 
         return $message;
     }
