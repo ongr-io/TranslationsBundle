@@ -17,7 +17,7 @@ use Symfony\Component\EventDispatcher\Event;
 /**
  * Event for edit message action.
  */
-class TranslationEditMessageEvent extends Event
+class MessageUpdateEvent extends Event
 {
     /**
      * @var Translation
