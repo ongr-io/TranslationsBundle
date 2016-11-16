@@ -22,7 +22,8 @@ class TranslationTest extends \PHPUnit_Framework_TestCase
     /**
      * @return Translation
      */
-    private function getTranslation() {
+    private function getTranslation()
+    {
         $date = new \DateTime();
         $translation = new Translation();
         $translation->setCreatedAt($date);

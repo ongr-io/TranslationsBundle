@@ -75,7 +75,7 @@ class TranslationManager
             }
 
             $document->setUpdatedAt(new \DateTime());
-        } catch (\Exception $e) {
+        } catch (\Error $e) {
             throw new \LogicException('Illegal variable provided for translation');
         }
 
