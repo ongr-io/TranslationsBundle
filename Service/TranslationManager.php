@@ -49,6 +49,56 @@ class TranslationManager
     }
 
     /**
+     * @param string $id
+     *
+     * @return Translation
+     */
+    public function get($id)
+    {
+        return $this->repository->find($id);
+    }
+
+    /**
+     * Returns all active tags from translations
+     * @return array
+     */
+    public function getTags()
+    {
+        return $this->getItems('tags');
+    }
+
+    /**
+     * Returns all active domains from translations
+     * @return array
+     */
+    public function getDomains()
+    {
+        return $this->getItems('domain');
+    }
+
+    /**
+     * Returns all translations if filters are not specified
+     *
+     * @param array $filters An array with specified limitations for results
+     *
+     * @return DocumentIterator
+     */
+    public function getAll(array $filters = null)
+    {
+        $search = $this->repository->createSearch();
+        $search->addQuery(new MatchAllQuery());
+        $search->setScroll('2m');
+
+        if ($filters) {
+            foreach ($filters as $field => $value) {
+                $search->addFilter(new TermsQuery($field, $value));
+            }
+        }
+
+        return $this->repository->findDocuments($search);
+    }
+
+    /**
      * Edits object from translation.
      *
      * @param string $id
@@ -81,56 +131,6 @@ class TranslationManager
 
         $this->repository->getManager()->persist($document);
         $this->repository->getManager()->commit();
-    }
-
-    /**
-     * Returns all active tags from translations
-     * @return array
-     */
-    public function getTags()
-    {
-        return $this->getItems('tags');
-    }
-
-    /**
-     * Returns all active domains from translations
-     * @return array
-     */
-    public function getDomains()
-    {
-        return $this->getItems('domain');
-    }
-
-    /**
-     * @param string $id
-     *
-     * @return Translation
-     */
-    public function get($id)
-    {
-        return $this->repository->find($id);
-    }
-
-    /**
-     * Returns all translations if filters are not specified
-     *
-     * @param array $filters An array with specified limitations for results
-     *
-     * @return DocumentIterator
-     */
-    public function getAll(array $filters = null)
-    {
-        $search = $this->repository->createSearch();
-        $search->addQuery(new MatchAllQuery());
-        $search->setScroll('2m');
-
-        if ($filters) {
-            foreach ($filters as $field => $value) {
-                $search->addFilter(new TermsQuery($field, $value));
-            }
-        }
-
-        return $this->repository->findDocuments($search);
     }
 
     /**
