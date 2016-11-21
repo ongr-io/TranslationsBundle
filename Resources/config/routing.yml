@@ -28,6 +28,14 @@ ongr_translations_api_all:
     options:
         expose: true
 
+ongr_translations_api_get_tags:
+    path: /_api/_tags
+    methods: [GET]
+    defaults:
+        _controller: ONGRTranslationsBundle:Api:tags
+    options:
+        expose: true
+
 ongr_translations_api_get:
     path: /_api/translations/{id}
     methods: [GET]
