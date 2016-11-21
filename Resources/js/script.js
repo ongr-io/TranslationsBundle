@@ -180,7 +180,7 @@ $(document).ready(function() {
                 $.ajax({
                     url: Routing.generate('ongr_translations_api_update', {id: data.id}),
                     data: '{"messages": {"'+locale+'": "'+value+'"}}',
-                    method: 'post',
+                    method: 'put',
                     contentType: "application/json; charset=utf-8",
                     dataType   : "json",
                 });
@@ -356,7 +356,7 @@ $(document).ready(function() {
         data = JSON.stringify(data);
         $.ajax({
             url: Routing.generate('ongr_translations_api_update', {id: id}),
-            method: 'post',
+            method: 'put',
             data: data,
             contentType: "application/json; charset=utf-8",
             dataType   : "json",

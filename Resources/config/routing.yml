@@ -22,7 +22,7 @@ ongr_translations_list_get_translations:
 
 ongr_translations_api_update:
     path: /_api/translations/{id}
-    methods: [POST]
+    methods: [PUT]
     defaults:
         _controller: ONGRTranslationsBundle:Api:update
     options:
