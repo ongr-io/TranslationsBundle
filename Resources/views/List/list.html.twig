@@ -26,6 +26,12 @@
 
 {% endblock %}
 
-{% block footer_javascript %}
-
+{% block pre_javascripts %}
+    <script type="text/javascript">
+        var locales = {{ locales|json_encode|raw }};
+        var tags = {{ tags|json_encode|raw }};
+        var domains = {{ domains|json_encode|raw }};
+    </script>
 {% endblock %}
+
+{% block footer_javascript %}{% endblock %}

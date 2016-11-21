@@ -3,28 +3,12 @@ Array.prototype.diff = function(e) {
 };
 
 $(document).ready(function() {
-    var tags = [];
-    var domains = [];
-    var locales = [];
     var translationColumns = [];
     var currentMessageValue;
 
-    $.ajax({
-        url: Routing.generate('ongr_translations_list_get_initial_data'),
-        success: function(data) {
-            locales = data.locales;
-            tags = data.tags;
-            domains = data.domains;
-            var columnNumbers = [];
-
-            for (var i = 2; i < (data.locales.length + 2); i++) {
-                columnNumbers.push(i);
-            }
-
-            translationColumns = columnNumbers;
-        },
-        async: false
-    });
+    for (var i = 2; i < (locales.length + 2); i++) {
+        translationColumns.push(i);
+    }
 
     var tagSelect = $('<select multiple name="tags[]"/>').attr({'id': 'tag-select'});
     var domainSelect = $('<select multiple name="domains[]"/>').attr({'id': 'domain-select'});
