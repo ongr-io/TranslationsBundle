@@ -5,9 +5,9 @@ This section describes the API that is provided by the bundle:
 | Path              | Method  | Action
 |-------------------|---------|------------
 | _api/{id}         | GET     | retrieves a json representation of a translation
-| _api/{id}         | POST    | edits a specific translation with the data provided in the request content
-| _api/{id}         | DELETE  | deletes a specified translation 
+| _api/{id}         | PUT     | edits a specific translation with the data provided in the request content 
 | _api/_all         | GET     | gets a json object with all translations 
+| _api/tags/_all    | GET     | gets a json object with all tags 
 | _api/export       | POST    | exports all the modified translation messages 
 | _api/history/{id} | GET     | retrieves history about a specified translation 
 
