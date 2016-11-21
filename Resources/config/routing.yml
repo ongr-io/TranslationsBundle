@@ -21,7 +21,7 @@ ongr_translations_list_get_translations:
         expose: true
 
 ongr_translations_api_update:
-    path: /_api/{id}
+    path: /_api/translations/{id}
     methods: [POST]
     defaults:
         _controller: ONGRTranslationsBundle:Api:update
@@ -29,7 +29,7 @@ ongr_translations_api_update:
         expose: true
 
 ongr_translations_api_all:
-    path: /_api/_all
+    path: /_api/translations/_all
     methods: [GET]
     defaults:
         _controller: ONGRTranslationsBundle:Api:all
@@ -37,7 +37,7 @@ ongr_translations_api_all:
         expose: true
 
 ongr_translations_api_get:
-    path: /_api/{id}
+    path: /_api/translations/{id}
     methods: [GET]
     defaults:
         _controller: ONGRTranslationsBundle:Api:get
@@ -57,5 +57,13 @@ ongr_translations_api_history:
     methods: [GET]
     defaults:
         _controller: ONGRTranslationsBundle:Api:history
+    options:
+        expose: true
+
+ongr_translations_api_get_tags:
+    path: /_api/tags/_all
+    methods: [GET]
+    defaults:
+        _controller: ONGRTranslationsBundle:Api:tags
     options:
         expose: true

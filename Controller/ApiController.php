@@ -104,4 +104,14 @@ class ApiController extends Controller
 
         return new JsonResponse($this->get('ongr_translations.history_manager')->get($document));
     }
+
+    /**
+     * @param Request $request Http request object.
+     *
+     * @return JsonResponse
+     */
+    public function tagsAction(Request $request)
+    {
+        return new JsonResponse($this->get('ongr_translations.translation_manager')->getTags());
+    }
 }
