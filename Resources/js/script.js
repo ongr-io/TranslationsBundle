@@ -27,7 +27,7 @@ $(document).ready(function() {
         columnDefs: [
             {
                 "targets": translationColumns,
-                "orderable": false,
+                "orderable": true,
                 "render": function ( data, type, row, meta ) {
                     data = data == null ? '[No message]' : data;
                     var emptyClass = getMessageClass(data);
