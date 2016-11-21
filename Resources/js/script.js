@@ -73,6 +73,7 @@ $(document).ready(function() {
 
     translationsFilter.parent().removeClass('col-sm-6').addClass('col-sm-9');
     $('#translations_length').parent().removeClass('col-sm-6').addClass('col-sm-3');
+    $('#translations_length').append('<i class="glyphicon glyphicon-question-sign" id="info" onclick="$(\'#info-modal\').modal();">');
 
     function addSelectOptions(select, items) {
         var options = '';
@@ -216,10 +217,8 @@ $(document).ready(function() {
         var id = translationsTable.row( $(this).parents('tr') ).data().id;
         $('#translation-id').val(id);
         $.get(Routing.generate('ongr_translations_api_get', {id: id}), function(data) {
-            $('#translation-name-input').val(data.key);
-            $('#translation-domain-input').val(data.domain);
-            $('#translation-created-at-input').val(data.createdAt);
-            $('#translation-updated-at-input').val(data.updatedAt);
+            $('#translation-name-input').text(data.key);
+            $('#translation-domain-input').text(data.domain);
             $('#translation-description-input').val(data.description);
             $('#messages-container').html('');
             reloadTags(data.tags);
