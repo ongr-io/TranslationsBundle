@@ -18,7 +18,7 @@ services:
     class: ONGR\TranslationsBundle\Service\Import\ImportManager
     arguments:
       - "@ongr_translations.file_import"
-      - "@es.manager"
+      - "@ongr_translations.translation_repository"
     calls:
       - [ setLocales, [ %ongr_translations.managed_locales% ] ]
       - [ setDomains, [ %ongr_translations.domains% ] ]

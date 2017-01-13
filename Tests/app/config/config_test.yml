@@ -12,14 +12,12 @@ framework:
         strict_requirements: %kernel.debug%
 
 ongr_elasticsearch:
-    connections:
-        default:
-            hosts:
-                - "%database.elastic_search.host%"
-            index_name: "%database.elastic_search.index%"
     managers:
         default:
-            connection: default
+            index:
+                hosts:
+                    - "%database.elastic_search.host%"
+                index_name: "%database.elastic_search.index%"
             mappings:
                 - ONGRTranslationsBundle
 

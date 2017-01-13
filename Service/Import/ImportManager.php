@@ -13,6 +13,7 @@ namespace ONGR\TranslationsBundle\Service\Import;
 
 use Elasticsearch\Common\Exceptions\BadRequest400Exception;
 use ONGR\ElasticsearchBundle\Service\Manager;
+use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use Symfony\Component\Finder\Finder;
@@ -53,15 +54,21 @@ class ImportManager
     private $esManager;
 
     /**
-     * @param FileImport $fileImport
-     * @param Manager    $esManager
+     * @var Repository
+     */
+    private $translationsRepo;
+
+    /**
+     * @param FileImport  $fileImport
+     * @param Repository  $repository
      */
     public function __construct(
         FileImport $fileImport,
-        Manager $esManager
+        $repository
     ) {
         $this->fileImport = $fileImport;
-        $this->esManager = $esManager;
+        $this->translationsRepo = $repository;
+        $this->esManager = $repository->getManager();
     }
 
     /**
