@@ -2,8 +2,9 @@ ONGR Translations Bundle
 ===
 
 This bundle provides graphical user interface for translations management. It
-allows to add, edit and remove translations in multiple languages. Translations
-can be automatically collected from and dumped into your project. 
+enables easy control and manipulation of translation files stored in multiple
+domains in your entire project. Translations can be automatically collected 
+from and dumped into your project. 
 
 [![Stable Release](https://poser.pugx.org/ongr/translations-bundle/v/stable.svg)](https://packagist.org/packages/ongr/translations-bundle)
 [![Build Status](https://travis-ci.org/ongr-io/TranslationsBundle.svg?branch=master)](https://travis-ci.org/ongr-io/TranslationsBundle)
@@ -13,7 +14,7 @@ can be automatically collected from and dumped into your project.
 Documentation
 ---
 
-The documentation of the bundle can be found in [Resources/doc/][2]
+The full documentation of the bundle can be found [here][1]
 
 Installation
 ---
@@ -22,15 +23,15 @@ Follow 5 quick steps to get ready to translate.
 
 ### Step 1: Download the Bundle
 
-Open a command console, enter your project directory and execute the following
-command to download the latest stable version of this bundle:
+FilterManager bundle is installed using [Composer][2]
 
 ```bash
-$ composer require ongr/translations-bundle
+# You can require any version you need, check the latest stable to make sure you are using the newest version.
+$ composer require ongr/translations-bundle "~1.0"
 ```
 
-> This command requires you to have Composer installed globally, as explained in
-> the [installation chapter][3] of the Composer documentation.
+> Please note that filter manager requires Elasticsearch bundle, guide on 
+how to install and configure it can be found [here][3].
 
 ### Step 2: Enable the Bundle
 
@@ -57,7 +58,7 @@ class AppKernel extends Kernel
 }
 ```
 
-> __Note:__ This bundle uses [ONGRElasticsearchBundle][4] to store translations.
+> __Note:__ This bundle uses [ONGRElasticsearchBundle][3] to store translations.
 Also [ONGRFilterManagerBundle][5] and [FOSJsRoutingBundle][6] bundles are used
 to build user interface.
 
@@ -69,7 +70,7 @@ Import API and UI routes:
 # app/config/routing.yml
 ongr_translation_ui:
     resource: "@ONGRTranslationsBundle/Resources/config/routing.yml"
-    prefix:   /translations
+    prefix:   /translations  # or any other prefix of your choice
 
 fos_js_routing:
     resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
@@ -77,28 +78,10 @@ fos_js_routing:
 
 ### Step 4: Configure Elasticsearch Bundle  
 
-This bundle provides `Translation` document. Add this bundle to your ES
-manager's mapping to associate it:
-
-```yml                
-# app/config/config.yml
-ongr_elasticsearch:
-    # ...
-    managers:
-        default:
-            # ...
-            mappings:
-                # ...
-                - AppBundle
-                - ONGRTranslationsBundle
-```
-
-Once the bundle is added open console and run command to update mapping in
-Elasticsearch:
-
-```bash
-$ app/console ongr:es:mapping:update --force
-```
+This bundle relies on ONGR ElasticsearchBundle to store translations. You can
+include this bundle in an existing managers mapping but we recommend to create
+a separate index and manager for translations. More information on how to do 
+that can be found in official ElasticsearchBundle [documentation][3].
 
 ### Step 5: Configure the Bundle
 
@@ -108,15 +91,16 @@ This bundle requires minimal configuration to get started:
 # app/config/config.yml
 ongr_translations:
     managed_locales: ["en", "de", "lt"]
-    repository: 'es.manager.default.translation'
+    repository: 'es.manager.translations.translation'
 ```
 
 In the example above `managed_locales` defines locales we are working with and
-`repository` defines repository service for `Translation` document. (Your
-repository ID may be different depending on what manager name you configured in
-`ongr_elasticsearch` section.)
+`repository` defines repository service for `Translation` document.
 
-Enable Symfony translations component if you don not have it enabled yet:
+> Your repository ID may be different depending on what manager name you configured in
+  `ongr_elasticsearch` section. In this case manager named `translations` is used
+
+Lastly, enable Symfony translations component if you do not have it enabled yet:
 
 ```yml
 framework:
@@ -126,7 +110,7 @@ framework:
 
 That's it about setup. Follow next chapter to learn how to work with translations.
 
-> For detailed [configuration reference][9] check dedicated documentation page.
+> For detailed [configuration reference][6] check dedicated documentation page.
 
 Translate Your First Message!
 ---
@@ -136,23 +120,17 @@ messages from this bundle. Here is a command `ongr:translations:import`
 to do that:
 
 ```bash
-$ app/console ongr:translations:import ONGRTranslationsBundle
+$ bin/console ongr:translations:import ONGRTranslationsBundle
 ```
 
-Install assets and start web server if it's not running yet:
+Install assets:
 
 ```bash
-$ app/console assets:install
-$ app/console server:start
+$ bin/console assets:install
 ```
 
-Now open `http://127.0.0.1:8000/translations/list` in your browser. You should
-see translations list. You can enter edit mode by clicking on message. Change
-translation and click "ok" or press <kbd>Enter</kbd> to save. Click "x" or
-press <kbd>Esc</kbd> to discard changes.
-
-> Read more about [import][7] and [export of translations][8] in dedicated
-documentation pages.
+Now open `http://127.0.0.1:8000/translations` in your browser. You should
+see translations list. 
 
 License
 ---
@@ -161,12 +139,9 @@ This package is licensed under the MIT license. For the full copyright and
 license information, please view the [LICENSE][1] file that was distributed
 with this source code. 
 
-[1]: LICENSE
-[2]: Resources/doc/index.md
-[3]: https://getcomposer.org/doc/00-intro.md
-[4]: https://github.com/ongr-io/ElasticsearchBundle
-[5]: https://github.com/ongr-io/FilterManagerBundle
-[6]: https://github.com/FriendsOfSymfony/FOSJsRoutingBundle  
-[7]: Resources/doc/import.md
-[8]: Resources/doc/export.md
-[9]: Resources/doc/configuration.md
+[1]: http://docs.ongr.io/TranslationsBundle
+[2]: https://getcomposer.org
+[3]: http://docs.ongr.io/ElasticsearchBundle
+[4]: http://docs.ongr.io/FilterManagerBundle
+[5]: https://github.com/FriendsOfSymfony/FOSJsRoutingBundle
+[6]: http://docs.ongr.io/TranslationsBundle/configuration
