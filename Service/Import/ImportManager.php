@@ -126,6 +126,12 @@ class ImportManager
     {
         foreach ($this->translations as $domain => $keys) {
             foreach ($keys as $key => $transMeta) {
+                $document = $this->translationsRepo->findOneBy(['key' => $key]);
+
+                if ($document) {
+                    continue;
+                }
+
                 $document = new Translation();
                 $document->setDomain($domain);
                 $document->setKey($key);
