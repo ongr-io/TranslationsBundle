@@ -122,6 +122,10 @@ class Translation implements \JsonSerializable
      */
     public function getId()
     {
+        if (!$this->id) {
+            $this->setId(sha1($this->getDomain() . $this->getKey()));
+        }
+
         return $this->id;
     }
 
@@ -318,5 +322,20 @@ class Translation implements \JsonSerializable
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $locale
+     * @return Message|null
+     */
+    public function getMessageByLocale($locale)
+    {
+        foreach ($this->messages as $message) {
+            if ($message->getLocale() == $locale) {
+                return $message;
+            }
+        }
+
+        return null;
     }
 }

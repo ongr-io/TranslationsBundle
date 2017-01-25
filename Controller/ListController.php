@@ -12,6 +12,7 @@
 namespace ONGR\TranslationsBundle\Controller;
 
 use ONGR\FilterManagerBundle\Search\SearchResponse;
+use ONGR\TranslationsBundle\Service\TranslationManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,19 +23,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ListController extends Controller
 {
-    /**
-     * Returns a JsonResponse with available locales and active tags
-     * @return JsonResponse
-     */
-    public function getInitialDataAction()
-    {
-        $out = [];
-        $out['locales'] = $this->getParameter('ongr_translations.managed_locales');
-        $out['tags'] = $this->get('ongr_translations.translation_manager')->getTags();
-        $out['domains'] = $this->get('ongr_translations.translation_manager')->getDomains();
-        return new JsonResponse($out);
-    }
-
     /**
      * @param Request $request
      * @return JsonResponse
@@ -56,9 +44,16 @@ class ListController extends Controller
      */
     public function indexAction(Request $request)
     {
+        /** @var TranslationManager $manager */
+        $manager = $this->get('ongr_translations.translation_manager');
+
         return $this->render(
             'ONGRTranslationsBundle:List:list.html.twig',
-            ['locales' => $this->getParameter('ongr_translations.managed_locales')]
+            [
+                'locales' => $this->getParameter('ongr_translations.managed_locales'),
+                'tags' => $manager->getTags(),
+                'domains' => $manager->getDomains(),
+            ]
         );
     }
 }

@@ -3,28 +3,12 @@ Array.prototype.diff = function(e) {
 };
 
 $(document).ready(function() {
-    var tags = [];
-    var domains = [];
-    var locales = [];
     var translationColumns = [];
     var currentMessageValue;
 
-    $.ajax({
-        url: Routing.generate('ongr_translations_list_get_initial_data'),
-        success: function(data) {
-            locales = data.locales;
-            tags = data.tags;
-            domains = data.domains;
-            var columnNumbers = [];
-
-            for (var i = 2; i < (data.locales.length + 2); i++) {
-                columnNumbers.push(i);
-            }
-
-            translationColumns = columnNumbers;
-        },
-        async: false
-    });
+    for (var i = 2; i < (locales.length + 2); i++) {
+        translationColumns.push(i);
+    }
 
     var tagSelect = $('<select multiple name="tags[]"/>').attr({'id': 'tag-select'});
     var domainSelect = $('<select multiple name="domains[]"/>').attr({'id': 'domain-select'});
@@ -43,7 +27,7 @@ $(document).ready(function() {
         columnDefs: [
             {
                 "targets": translationColumns,
-                "orderable": false,
+                "orderable": true,
                 "render": function ( data, type, row, meta ) {
                     data = data == null ? '[No message]' : data;
                     var emptyClass = getMessageClass(data);
@@ -73,6 +57,7 @@ $(document).ready(function() {
 
     translationsFilter.parent().removeClass('col-sm-6').addClass('col-sm-9');
     $('#translations_length').parent().removeClass('col-sm-6').addClass('col-sm-3');
+    $('#translations_length').append('<i class="glyphicon glyphicon-question-sign" id="info" onclick="$(\'#info-modal\').modal();">');
 
     function addSelectOptions(select, items) {
         var options = '';
@@ -180,7 +165,7 @@ $(document).ready(function() {
                 $.ajax({
                     url: Routing.generate('ongr_translations_api_update', {id: data.id}),
                     data: '{"messages": {"'+locale+'": "'+value+'"}}',
-                    method: 'post',
+                    method: 'put',
                     contentType: "application/json; charset=utf-8",
                     dataType   : "json",
                 });
@@ -216,10 +201,8 @@ $(document).ready(function() {
         var id = translationsTable.row( $(this).parents('tr') ).data().id;
         $('#translation-id').val(id);
         $.get(Routing.generate('ongr_translations_api_get', {id: id}), function(data) {
-            $('#translation-name-input').val(data.key);
-            $('#translation-domain-input').val(data.domain);
-            $('#translation-created-at-input').val(data.createdAt);
-            $('#translation-updated-at-input').val(data.updatedAt);
+            $('#translation-name-input').text(data.key);
+            $('#translation-domain-input').text(data.domain);
             $('#translation-description-input').val(data.description);
             $('#messages-container').html('');
             reloadTags(data.tags);
@@ -356,7 +339,7 @@ $(document).ready(function() {
         data = JSON.stringify(data);
         $.ajax({
             url: Routing.generate('ongr_translations_api_update', {id: id}),
-            method: 'post',
+            method: 'put',
             data: data,
             contentType: "application/json; charset=utf-8",
             dataType   : "json",

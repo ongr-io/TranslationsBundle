@@ -45,6 +45,7 @@ class ONGRTranslationsExtension extends Extension
             'ongr_translations.history_repository',
             substr_replace($config['repository'], 'history', strrpos($config['repository'], '.') + 1)
         );
+        $container->setAlias('ongr_translations.es_manager', preg_replace('/\.\w+\.\w+$/', '', $config['repository']));
         $this->validateBundles($container, $config['bundles']);
 
         $this->setFiltersManager($config['repository'], $container);
