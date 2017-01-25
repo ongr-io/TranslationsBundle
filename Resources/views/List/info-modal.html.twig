@@ -1,0 +1,47 @@
+<div id="info-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="history-title">Info</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container col-sm-11">
+                        <h5><strong>Interface usage</strong></h5>
+                        <ul>
+                            <li>You can edit a translation message by clicking on it.</li>
+                            <li>
+                                You can navigate up or down to other messages in a column by clicking <i class="glyphicon glyphicon-triangle-bottom"></i>
+                                and <i class="glyphicon glyphicon-triangle-top"></i> arrow keys on your keyboard.
+                            </li>
+                            <li>
+                                After modifying a translation message save it by pressing 'return' (or 'enter') or by moving
+                                to another message with the arrow keys.
+                            </li>
+                            <li>Editing can be canceled by clicking out of the input box or pressing esc.</li>
+                        </ul>
+                        <h5><strong>Filtering</strong></h5>
+                        <ul>
+                            <li>You can filter by domain. Or search for any fraze in the current translations.</li>
+                            <li>You can specify translation-specific tags in edit mode to filter on.</li>
+                            <li>Have in mind that these tags will be lost after the next data import, use them for short-term managing only.</li>
+                        </ul>
+                        <h5><strong>Managing Translations</strong></h5>
+                        <ul>
+                            <li>When you enter edit mode, you will see that each message has a status ('fresh' or 'dirty')</li>
+                            <li>Only messages with 'dirty' status will be exported to the translation files.</li>
+                            <li>
+                                Description is another piece of temporary information that can be added to a translation.
+                                It will be lost after the next data import
+                            </li>
+                        </ul>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
