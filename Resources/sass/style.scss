@@ -18,10 +18,23 @@
   width: 40px;
 }
 
+#info {
+  padding-left: 10px;
+  color: darkorange;
+  font-size: 20px;
+  cursor: pointer;
+}
+
 .translation-message {
   text-decoration: underline;
   cursor: pointer;
   color: #2e6da4;
+}
+
+.translation-info {
+  margin-top: 7px;
+  display: inline-block;
+  position: relative;
 }
 
 .translation-message-status {

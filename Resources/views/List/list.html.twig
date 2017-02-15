@@ -14,7 +14,7 @@
             {% for locale in locales %}
                 <th class="locale-message-header">{{ locale }}</th>
             {% endfor %}
-            <th style="width: 100px">Actions</th>
+            <th style="width: 130px">Actions</th>
         </tr>
         </thead>
     </table>
@@ -22,9 +22,16 @@
     {% include 'ONGRTranslationsBundle:List:translation-form.html.twig' %}
     {% include 'ONGRTranslationsBundle:List:history-modal.html.twig' %}
     {% include 'ONGRTranslationsBundle:List:export-modal.html.twig' %}
+    {% include 'ONGRTranslationsBundle:List:info-modal.html.twig' %}
 
 {% endblock %}
 
-{% block footer_javascript %}
-
+{% block pre_javascripts %}
+    <script type="text/javascript">
+        var locales = {{ locales|json_encode|raw }};
+        var tags = {{ tags|json_encode|raw }};
+        var domains = {{ domains|json_encode|raw }};
+    </script>
 {% endblock %}
+
+{% block footer_javascript %}{% endblock %}

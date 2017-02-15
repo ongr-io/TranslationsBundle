@@ -20,12 +20,11 @@ use ONGR\TranslationsBundle\Document\Translation;
 class TranslationTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Tests if document JSON serialization is correct.
+     * @return Translation
      */
-    public function testSerialize()
+    private function getTranslation()
     {
         $date = new \DateTime();
-        $dateString = $date->format('Y-m-d H:i:s');
         $translation = new Translation();
         $translation->setCreatedAt($date);
         $translation->setUpdatedAt($date);
@@ -37,6 +36,14 @@ class TranslationTest extends \PHPUnit_Framework_TestCase
         $message->setMessage('foo_message');
         $translation->addMessage($message);
 
+        return $translation;
+    }
+
+    public function testSerialize()
+    {
+        $translation = $this->getTranslation();
+        $dateString = $translation->getCreatedAt()->format('Y-m-d H:i:s');
+
         $expected = [
             'createdAt' => $dateString,
             'updatedAt' => $dateString,
@@ -45,13 +52,21 @@ class TranslationTest extends \PHPUnit_Framework_TestCase
             'format' => null,
             'key' => null,
             'path' => null,
-            'id' =>null,
+            'id' => sha1('foo_domain'),
             'description' => 'foo description',
             'messages' => [
-                'en' => $message
+                'en' => $translation->getMessagesArray()['en']
             ],
         ];
 
         $this->assertEquals($expected, $translation->jsonSerialize());
+    }
+
+    public function testGetMessageByLocale()
+    {
+        $translation = $this->getTranslation();
+
+        $this->assertNotNull($translation->getMessageByLocale('en'));
+        $this->assertNull($translation->getMessageByLocale('lt'));
     }
 }

@@ -94,7 +94,7 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
         ];
 
         $request = new Request([], [], [], [], [], [], json_encode($body));
-        $this->manager->edit('foo', $request);
+        $this->manager->update('foo', $request);
 
         /** @var Translation $translation */
         $translation = $this->getManager()->find('ONGRTranslationsBundle:Translation', 'foo');
@@ -114,6 +114,31 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
         $this->assertEquals(['en' => 'bar', 'lt' => 'baras'], $messagesArray);
     }
 
+    public function testUpdateEmptyContent()
+    {
+        $translation = $this->manager->get('foo');
+        $this->manager->update('foo', new Request());
+
+        $this->assertEquals($translation->jsonSerialize(), $this->manager->get('foo')->jsonSerialize());
+    }
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Illegal variable provided for translation
+     */
+    public function testUpdateWithBadMethodCall()
+    {
+        $content = json_encode(['non-existant-property' => 'foobar']);
+        $request = new Request([], [], [], [], [], [], $content);
+        $this->manager->update('foo', $request);
+    }
+
+    public function testGet()
+    {
+        $this->assertEquals(2, count($this->manager->getAll()));
+        $this->assertEquals(1, count($this->manager->getAll(['domain' => ['foo']])));
+    }
+
     public function testGetTags()
     {
         $this->assertEquals(['baz_tag', 'foo_tag', 'tuna_tag'], $this->manager->getTags());
@@ -122,11 +147,5 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
     public function testGetDomains()
     {
         $this->assertEquals(['baz', 'foo'], $this->manager->getDomains());
-    }
-
-    public function testGetTranslations()
-    {
-        $this->assertEquals(2, count($this->manager->getTranslations()));
-        $this->assertEquals(1, count($this->manager->getTranslations(['domain' => ['foo']])));
     }
 }

@@ -11,9 +11,9 @@
 
 namespace ONGR\TranslationsBundle\Service\Import;
 
-use Elasticsearch\Common\Exceptions\BadRequest400Exception;
 use ONGR\ElasticsearchBundle\Service\Manager;
 use ONGR\ElasticsearchBundle\Service\Repository;
+use ONGR\ElasticsearchDSL\Query\FullText\MatchQuery;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use Symfony\Component\Finder\Finder;
@@ -126,6 +126,13 @@ class ImportManager
     {
         foreach ($this->translations as $domain => $keys) {
             foreach ($keys as $key => $transMeta) {
+                $search = $this->translationsRepo->createSearch();
+                $search->addQuery(new MatchQuery('key', $key));
+                $results = $this->translationsRepo->findDocuments($search);
+                if (count($results)) {
+                    continue;
+                }
+
                 $document = new Translation();
                 $document->setDomain($domain);
                 $document->setKey($key);

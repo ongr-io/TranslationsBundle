@@ -45,10 +45,14 @@ class HistoryManager
      *
      * @return array
      */
-    public function getHistory(Translation $translation)
+    public function get(Translation $translation)
     {
         $ordered = [];
-        $histories = $this->getUnorderedHistory($translation);
+        $search = $this->repository->createSearch();
+        $search->addQuery(new TermQuery('key', $translation->getKey()), BoolQuery::FILTER);
+        $search->addQuery(new TermQuery('domain', $translation->getDomain()), BoolQuery::FILTER);
+        $search->addSort(new FieldSort('created_at', FieldSort::DESC));
+        $histories = $this->repository->findDocuments($search);
 
         /** @var History $history */
         foreach ($histories as $history) {
@@ -62,7 +66,7 @@ class HistoryManager
      * @param Message $message
      * @param Translation $translation
      */
-    public function addHistory(Message $message, Translation $translation)
+    public function add(Message $message, Translation $translation)
     {
         $history = new History();
         $history->setLocale($message->getLocale());

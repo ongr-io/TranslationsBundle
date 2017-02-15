@@ -39,7 +39,7 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue(1000)
                 ->end()
                 ->arrayNode('managed_locales')
-                    ->requiresAtleastOneElement()
+                    ->requiresAtLeastOneElement()
                     ->info('Locales to manage (e.g. "en", "de").')
                     ->prototype('scalar')->end()
                 ->end()
