@@ -1,12 +1,12 @@
 sudo: true
 language: php
 php:
-  - 5.6
   - 7.0
+  - 7.1
   - hhvm
 env:
   global:
-    - ES_VERSION="2.4" JAVA_HOME="/usr/lib/jvm/java-8-oracle/jre"
+    - ES_VERSION="5.1" JAVA_HOME="/usr/lib/jvm/java-8-oracle/jre"
 matrix:
   allow_failures:
     - php: hhvm
