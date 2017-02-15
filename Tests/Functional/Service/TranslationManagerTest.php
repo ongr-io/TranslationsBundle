@@ -119,7 +119,7 @@ class TranslationManagerTest extends AbstractElasticsearchTestCase
         $translation = $this->manager->get('foo');
         $this->manager->update('foo', new Request());
 
-        $this->assertEquals($translation->jsonSerialize(), $this->manager->get('foo')->jsonSerialize());
+        $this->assertEquals($translation->getUpdatedAt(), $this->manager->get('foo')->getUpdatedAt());
     }
 
     /**
