@@ -26,21 +26,21 @@ class Message implements \JsonSerializable
     /**
      * @var string
      *
-     * @ES\Property(type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="keyword")
      */
     private $locale;
 
     /**
      * @var string
      *
-     * @ES\Property(type="string")
+     * @ES\Property(type="text")
      */
     private $message;
 
     /**
      * @var string
      *
-     * @ES\Property(type="string")
+     * @ES\Property(type="text")
      */
     private $status;
 

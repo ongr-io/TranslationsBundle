@@ -31,14 +31,14 @@ class Translation implements \JsonSerializable
     /**
      * @var string
      *
-     * @ES\Property(type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="keyword")
      */
     private $domain;
 
     /**
      * @var array
      *
-     * @ES\Property(type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="keyword")
      */
     private $tags = [];
 
@@ -52,28 +52,28 @@ class Translation implements \JsonSerializable
     /**
      * @var string
      *
-     * @ES\Property(type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="keyword")
      */
     private $key;
 
     /**
      * @var string
      *
-     * @ES\Property(type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="keyword")
      */
     private $path;
 
     /**
      * @var string
      *
-     * @ES\Property(type="string")
+     * @ES\Property(type="text")
      */
     private $description;
 
     /**
      * @var string
      *
-     * @ES\Property(type="string")
+     * @ES\Property(type="text")
      */
     private $format;
 

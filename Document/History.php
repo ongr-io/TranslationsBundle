@@ -18,7 +18,7 @@ use ONGR\ElasticsearchBundle\Annotation as ES;
  *
  * @ES\Document(type="history")
  */
-class History implements \JsonSerializable
+class History extends Translation implements \JsonSerializable
 {
     /**
      * @var string
@@ -30,28 +30,28 @@ class History implements \JsonSerializable
     /**
      * @var string
      *
-     * @ES\Property(type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="keyword")
      */
     private $key;
 
     /**
      * @var string
      *
-     * @ES\Property(type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="keyword")
      */
     private $locale;
 
     /**
      * @var string
      *
-     * @ES\Property(type="string")
+     * @ES\Property(type="text")
      */
     private $message;
 
     /**
      * @var string
      *
-     * @ES\Property(type="string", options={"index"="not_analyzed"})
+     * @ES\Property(type="keyword")
      */
     private $domain;
 

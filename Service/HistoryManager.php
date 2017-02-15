@@ -12,7 +12,8 @@
 namespace ONGR\TranslationsBundle\Service;
 
 use ONGR\ElasticsearchBundle\Result\DocumentIterator;
-use ONGR\ElasticsearchDSL\Query\TermQuery;
+use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
+use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use ONGR\ElasticsearchDSL\Sort\FieldSort;
 use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\TranslationsBundle\Document\History;
@@ -83,8 +84,8 @@ class HistoryManager
     private function getUnorderedHistory(Translation $translation)
     {
         $search = $this->repository->createSearch();
-        $search->addFilter(new TermQuery('key', $translation->getKey()));
-        $search->addFilter(new TermQuery('domain', $translation->getDomain()));
+        $search->addQuery(new TermQuery('key', $translation->getKey()), BoolQuery::FILTER);
+        $search->addQuery(new TermQuery('domain', $translation->getDomain()), BoolQuery::FILTER);
         $search->addSort(new FieldSort('created_at', FieldSort::DESC));
 
         return $this->repository->findDocuments($search);

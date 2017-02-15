@@ -11,11 +11,11 @@
 
 namespace ONGR\TranslationsBundle\Service;
 
-use Elasticsearch\Common\Exceptions\Missing404Exception;
 use ONGR\ElasticsearchBundle\Result\DocumentIterator;
 use ONGR\ElasticsearchDSL\Aggregation\Bucketing\TermsAggregation;
+use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
-use ONGR\ElasticsearchDSL\Query\TermsQuery;
+use ONGR\ElasticsearchDSL\Query\TermLevel\TermsQuery;
 use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
@@ -23,7 +23,6 @@ use ONGR\TranslationsBundle\Event\Events;
 use ONGR\TranslationsBundle\Event\TranslationEditMessageEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Handles translation objects by http requests.
@@ -135,7 +134,7 @@ class TranslationManager
 
         if ($filters) {
             foreach ($filters as $field => $value) {
-                $search->addFilter(new TermsQuery($field, $value));
+                $search->addQuery(new TermsQuery($field, $value), BoolQuery::FILTER);
             }
         }
 
