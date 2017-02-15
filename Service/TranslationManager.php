@@ -13,8 +13,9 @@ namespace ONGR\TranslationsBundle\Service;
 
 use ONGR\ElasticsearchBundle\Result\DocumentIterator;
 use ONGR\ElasticsearchDSL\Aggregation\Bucketing\TermsAggregation;
+use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
-use ONGR\ElasticsearchDSL\Query\TermsQuery;
+use ONGR\ElasticsearchDSL\Query\TermLevel\TermsQuery;
 use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\FilterManagerBundle\Twig\PagerExtension;
 use ONGR\TranslationsBundle\Document\Message;
@@ -92,7 +93,7 @@ class TranslationManager
 
         if ($filters) {
             foreach ($filters as $field => $value) {
-                $search->addFilter(new TermsQuery($field, $value));
+                $search->addQuery(new TermsQuery($field, $value), BoolQuery::FILTER);
             }
         }
 

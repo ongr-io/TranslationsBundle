@@ -3,13 +3,13 @@ services:
         class: ONGR\FilterManagerBundle\Filter\Widget\Choice\MultiTermChoice
         calls:
             - ["setRequestField", ["domains"]]
-            - ["setField", ["domain"]]
+            - ["setDocumentField", ["domain"]]
 
     ongr_translations.filter.tag:
         class: ONGR\FilterManagerBundle\Filter\Widget\Choice\MultiTermChoice
         calls:
             - ["setRequestField", ["tags"]]
-            - ["setField", ["tags"]]
+            - ["setDocumentField", ["tags"]]
 
     ongr_translations.filter.size:
         class: ONGR\TranslationsBundle\Filter\SizeFilter
