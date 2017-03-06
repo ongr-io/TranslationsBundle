@@ -124,28 +124,27 @@ class ImportManager
      */
     public function writeToStorage()
     {
-        foreach ($this->translations as $domain => $keys) {
-            foreach ($keys as $key => $transMeta) {
-                $search = $this->translationsRepo->createSearch();
-                $search->addQuery(new MatchQuery('key', $key));
-                $results = $this->translationsRepo->findDocuments($search);
-                if (count($results)) {
-                    continue;
-                }
-
-                $document = new Translation();
-                $document->setDomain($domain);
-                $document->setKey($key);
-                $document->setPath($transMeta['path']);
-                $document->setFormat($transMeta['format']);
-                foreach ($transMeta['messages'] as $locale => $text) {
-                    $message = new Message();
-                    $message->setLocale($locale);
-                    $message->setMessage($text);
-                    $document->addMessage($message);
-                }
-                $this->esManager->persist($document);
+        foreach ($this->translations as $id => $translation) {
+            $search = $this->translationsRepo->createSearch();
+            $search->addQuery(new MatchQuery('key', $id));
+            $results = $this->translationsRepo->findDocuments($search);
+            if (count($results)) {
+                continue;
             }
+
+            $document = new Translation();
+            $document->setDomain($translation['domain']);
+            $document->setKey($id);
+            $document->setPath($translation['path']);
+            $document->setFormat($translation['format']);
+            foreach ($translation['messages'] as $locale => $translationMessage) {
+                $message = new Message();
+                $message->setStatus($translationMessage['status']);
+                $message->setLocale($translationMessage['locale']);
+                $message->setMessage($translationMessage['message']);
+                $document->addMessage($message);
+            }
+            $this->esManager->persist($document);
         }
 
         $this->esManager->commit();
