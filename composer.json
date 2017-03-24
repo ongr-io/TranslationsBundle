@@ -13,7 +13,7 @@
     "require": {
         "php": "~7",
         "symfony/symfony": "~2.8|~3.0",
-        "ongr/filter-manager-bundle": "dev-master",
+        "ongr/filter-manager-bundle": "~2.0",
         "friendsofsymfony/jsrouting-bundle": "~1.5"
     },
     "require-dev": {
