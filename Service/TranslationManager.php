@@ -17,7 +17,6 @@ use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\TermsQuery;
 use ONGR\ElasticsearchBundle\Service\Repository;
-use ONGR\FilterManagerBundle\Twig\PagerExtension;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\TranslationsBundle\Event\Events;
@@ -53,7 +52,7 @@ class TranslationManager
     /**
      * @param string $id
      *
-     * @return Translation
+     * @return Translation|object
      */
     public function get($id)
     {
