@@ -29,27 +29,17 @@ class ImportCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this->setName('ongr:translations:import');
-        $this->setDescription('Import all translations from flat files (xliff, yml, php) into the database.');
-        $this->addOption('globals', 'g', InputOption::VALUE_NONE, 'Import only globals (app/Resources/translations.');
-        $this->addOption('config-only', 'c', InputOption::VALUE_NONE, 'Import only bundles specified in config.');
+        $this->setDescription('Import all translations from flat files into the elasticsearch database.');
         $this->addOption(
             'locales',
             'l',
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-            'Import only for these locales, instead of using the managed locales.'
-        );
-        $this->addOption(
-            'domains',
-            'd',
-            InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-            'Import only these domains.',
-            []
+            'Import only the specific locales, leave blank to import all configured.'
         );
         $this->addArgument(
             'bundle',
             InputArgument::OPTIONAL,
-            'Import translations for this specific bundle. Provide full bundles namespace.',
-            null
+            'Import translations for the specific bundle.'
         );
     }
 
@@ -63,39 +53,45 @@ class ImportCommand extends ContainerAwareCommand
         $configBundles = $this->getContainer()->getParameter('ongr_translations.bundles');
 
         $locales = $input->getOption('locales');
-        if (empty($locales)) {
-            $locales = $this->getContainer()->getParameter('ongr_translations.managed_locales');
-        }
-        $domains = $input->getOption('domains');
 
-        $bundleName = $input->getArgument('bundle');
+        if (empty($locales)) {
+            $locales = $this->getContainer()->getParameter('ongr_translations.locales');
+        }
+
+        $bundleNames = $input->getArgument('bundle');
 
         $import->setLocales($locales);
-        $import->setDomains($domains);
 
-        if ($input->getOption('config-only')) {
-            $output->writeln('<info>*** Importing configured bundles translation files ***</info>');
-            $import->importBundlesTranslationFiles($configBundles);
+        if ($bundleNames) {
+//            $output->writeln("<info>*** Importing {$bundleName} translation files ***</info>");
+//            $bundle = $this->getContainer()->get('kernel')->getBundle($bundleNames);
+//
+//            foreach ($bundleNames as $bundleName) {
+//                $dir = $this->getContainer()->get('kernel')->getBundle($bundleName);
+//                $import->importTranslationFiles($bundle);
+//            }
         } else {
-            if ($bundleName) {
-                $output->writeln("<info>*** Importing {$bundleName} translation files ***</info>");
-                $bundle = $this->getContainer()->get('kernel')->getBundle($bundleName);
-                $import->importBundlesTranslationFiles([$bundle], true);
-            } else {
-                $output->writeln('<info>*** Importing application translation files ***</info>');
-                $import->importDirTranslationFiles($this->getContainer()->getParameter('kernel.root_dir'));
-                if (!$input->getOption('globals')) {
-                    $output->writeln('<info>*** Importing bundles translation files ***</info>');
-                    $import->importBundlesTranslationFiles(
-                        array_merge($this->getContainer()->getParameter('kernel.bundles'), $configBundles)
-                    );
-                    $output->writeln('<info>*** Importing component translation files ***</info>');
-                    $import->importBundlesTranslationFiles(
-                        $this->getContainer()->getParameter('ongr_translations.component_directories')
-                    );
-                }
+            $output->writeln('<info>*** Importing application translation files ***</info>');
+            $domain = 'messages';
+            $translations = $import->getTranslationsFromFiles(
+                $domain,
+                null,
+                [$this->getContainer()->getParameter('kernel.root_dir') . 'translations']
+            );
+            $import->writeToStorage($domain, $translations);
+            $output->writeln('<info>*** Importing bundles translation files ***</info>');
+
+            foreach ($configBundles as $configBundle) {
+                $import->importTranslationFiles(
+                    $configBundle,
+                    $this->getContainer()->get('kernel')->locateResource('@'.$configBundle)
+                );
             }
+
+//            $output->writeln('<info>*** Importing component translation files ***</info>');
+//            $import->importBundlesTranslationFiles(
+//                $this->getContainer()->getParameter('ongr_translations.component_directories')
+//            );
         }
-        $import->writeToStorage();
     }
 }

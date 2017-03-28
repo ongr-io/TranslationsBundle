@@ -1,51 +1,32 @@
 services:
-  ongr_translations.translation_manager:
-    class: ONGR\TranslationsBundle\Service\TranslationManager
-    arguments:
-      - "@ongr_translations.translation_repository"
-      - "@event_dispatcher"
-  ongr_translations.history_manager:
-    class: ONGR\TranslationsBundle\Service\HistoryManager
-    arguments:
-      - "@ongr_translations.history_repository"
-  ongr_translations.command.export:
-    class: ONGR\TranslationsBundle\Command\ExportCommand
-    calls:
-      - [setContainer, ["@service_container"]]
+    ongr_translations.translation_manager:
+        class: ONGR\TranslationsBundle\Service\TranslationManager
+        arguments:
+            - "@ongr_translations.repository.translation"
+            - "@ongr_translations.history_manager"
+            - "@event_dispatcher"
 
-  ongr_translations.import:
-    class: ONGR\TranslationsBundle\Service\Import\ImportManager
-    arguments:
-      - "@ongr_translations.file_import"
-      - "@ongr_translations.translation_repository"
-    calls:
-      - [ setLocales, [ %ongr_translations.managed_locales% ] ]
-      - [ setDomains, [ %ongr_translations.domains% ] ]
-      - [ setFormats, [ %ongr_translations.formats% ] ]
+    ongr_translations.history_manager:
+        class: ONGR\TranslationsBundle\Service\HistoryManager
+        arguments:
+            - "@ongr_translations.repository.translation"
 
-  ongr_translations.export:
-    class: ONGR\TranslationsBundle\Service\Export\ExportManager
-    arguments:
-      - "@ongr_translations.loaders_container"
-      - "@ongr_translations.translation_manager"
-      - "@ongr_translations.export.yaml"
-    calls:
-      - ["setManagedLocales", ["%ongr_translations.managed_locales%"]]
+    ongr_translations.import:
+        class: ONGR\TranslationsBundle\Service\Import\ImportManager
+        arguments:
+            - "@ongr_translations.repository.translation"
+            - "%kernel.root_dir%"
+        calls:
+            - ["setLocales", ["%ongr_translations.locales%"]]
 
-  ongr_translations.messages_listener:
-    class: ONGR\TranslationsBundle\EventListener\MessageUpdateListener
-    arguments:
-      - "@ongr_translations.history_manager"
-    tags:
-      - { name: kernel.event_listener, event: translation.history.add, method: onMessageUpdate }
+#    ongr_translations.export:
+#        class: ONGR\TranslationsBundle\Service\Export\ExportManager
+#        arguments:
+#            - "@ongr_translations.loaders_container"
+#            - "@ongr_translations.translation_manager"
+#            - "@ongr_translations.export.yaml"
+#        calls:
+#            - ["setManagedLocales", ["%ongr_translations.locales%"]]
 
-  ongr_translations.file_import:
-    class: ONGR\TranslationsBundle\Service\Import\FileImport
-    arguments:
-      - [ "@ongr_translations.loaders_container" ]
-
-  ongr_translations.export.yaml:
-    class: ONGR\TranslationsBundle\Service\Export\YmlExport
-
-  ongr_translations.loaders_container:
-    class: ONGR\TranslationsBundle\Service\LoadersContainer
+    ongr_translations.export.yaml:
+        class: ONGR\TranslationsBundle\Service\Export\YmlExport

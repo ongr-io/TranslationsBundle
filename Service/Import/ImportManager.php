@@ -17,6 +17,11 @@ use ONGR\ElasticsearchDSL\Query\FullText\MatchQuery;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\Translation\Exception\InvalidResourceException;
+use Symfony\Component\Translation\Loader\YamlFileLoader;
+use Symfony\Component\Yaml\Exception\ParseException;
+use Symfony\Component\Yaml\Parser as YamlParser;
 
 /**
  * Collects translations.
@@ -24,71 +29,46 @@ use Symfony\Component\Finder\Finder;
 class ImportManager
 {
     /**
-     * @var FileImport
-     */
-    private $fileImport;
-
-    /**
      * @var array
      */
     private $locales;
 
     /**
-     * @var array
+     * @var Repository
      */
-    private $domains;
-
-    /**
-     * @var array
-     */
-    private $formats;
-
-    /**
-     * @var array
-     */
-    private $translations = [];
+    private $repository;
 
     /**
      * @var Manager
      */
-    private $esManager;
+    private $manager;
 
     /**
-     * @var Repository
+     * @var YamlFileLoader
      */
-    private $translationsRepo;
+    private $parser;
 
     /**
-     * @param FileImport  $fileImport
-     * @param Repository  $repository
+     * @var string
+     */
+    private $kernelRoot;
+
+    /**
+     * @param Repository $repository
      */
     public function __construct(
-        FileImport $fileImport,
-        $repository
-    ) {
-        $this->fileImport = $fileImport;
-        $this->translationsRepo = $repository;
-        $this->esManager = $repository->getManager();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDomains()
+        Repository $repository,
+        $kernelRoot
+    )
     {
-        return $this->domains;
+        $this->parser = new YamlParser();
+        $this->repository = $repository;
+        $this->manager = $repository->getManager();
+        $this->kernelRoot = $kernelRoot;
     }
 
     /**
-     * @param mixed $domains
-     */
-    public function setDomains($domains)
-    {
-        $this->domains = $domains;
-    }
-
-    /**
-     * @return mixed
+     * @return array
      */
     public function getLocales()
     {
@@ -96,150 +76,136 @@ class ImportManager
     }
 
     /**
-     * @param mixed $locales
+     * @param array $locales
      */
-    public function setLocales($locales)
+    public function setLocales(array $locales)
     {
         $this->locales = $locales;
     }
 
     /**
-     * @return mixed
-     */
-    public function getFormats()
-    {
-        return $this->formats;
-    }
-
-    /**
-     * @param mixed $formats
-     */
-    public function setFormats($formats)
-    {
-        $this->formats = $formats;
-    }
-
-    /**
      * Write translations to storage.
+     *
+     * @param $translations
      */
-    public function writeToStorage()
+    public function writeToStorage($domain, $translations)
     {
-        foreach ($this->translations as $id => $translation) {
-            $search = $this->translationsRepo->createSearch();
-            $search->addQuery(new MatchQuery('key', $id));
-            $results = $this->translationsRepo->findDocuments($search);
-            if (count($results)) {
-                continue;
-            }
+        foreach ($translations as $keys) {
+            foreach ($keys as $key => $transMeta) {
 
-            $document = new Translation();
-            $document->setDomain($translation['domain']);
-            $document->setKey($id);
-            $document->setPath($translation['path']);
-            $document->setFormat($translation['format']);
-            foreach ($translation['messages'] as $locale => $translationMessage) {
-                $message = new Message();
-                $message->setStatus($translationMessage['status']);
-                $message->setLocale($translationMessage['locale']);
-                $message->setMessage($translationMessage['message']);
-                $document->addMessage($message);
+                $search = $this->repository->createSearch();
+                $search->addQuery(new MatchQuery('key', $key));
+                $results = $this->repository->findDocuments($search);
+                if (count($results)) {
+                    continue;
+                }
+
+                $document = new Translation();
+                $document->setDomain($domain);
+                $document->setKey($key);
+                $document->setPath($transMeta['path']);
+                $document->setFormat($transMeta['format']);
+                foreach ($transMeta['messages'] as $locale => $text) {
+                    $message = new Message();
+                    $message->setLocale($locale);
+                    $message->setMessage($text);
+                    $document->addMessage($message);
+                }
+                $this->manager->persist($document);
             }
-            $this->esManager->persist($document);
         }
 
-        $this->esManager->commit();
+        $this->manager->commit();
     }
 
     /**
      * Imports translation files from a directory.
      * @param string $dir
      */
-    public function importDirTranslationFiles($dir)
+    public function importTranslationFiles($domain, $dir)
     {
-        $finder = $this->findTranslationsFiles($dir);
-        $this->importTranslationFiles($finder);
-    }
-
-    /**
-     * Imports translation files form all bundles.
-     *
-     * @param array $bundles
-     * @param bool  $isBundle
-     */
-    public function importBundlesTranslationFiles($bundles, $isBundle = false)
-    {
-        foreach ($bundles as $bundle) {
-            $dir = $isBundle?
-                dir($bundle->getPath())->path :
-                dirname((new \ReflectionClass($bundle))->getFileName());
-
-            $this->importDirTranslationFiles($dir);
-        }
+        $translations = $this->getTranslationsFromFiles($domain, $dir);
+        $this->writeToStorage($domain, $translations);
     }
 
     /**
      * Return a Finder object if $path has a Resources/translations folder.
      *
+     * @param string $domain
      * @param string $path
+     * @param array $directories
      *
-     * @return Finder
+     * @return array
      */
-    protected function findTranslationsFiles($path)
+    public function getTranslationsFromFiles($domain, $path, array $directories = [])
     {
-        $finder = null;
-
-        if (preg_match('#^win#i', PHP_OS)) {
-            $path = preg_replace('#' . preg_quote(DIRECTORY_SEPARATOR, '#') . '#', '/', $path);
-        } else {
-            $path = str_replace('\\', '/', $path);
+        if (!$directories) {
+            $directories = [
+                $path . 'Resources/translations',
+                $this->kernelRoot . DIRECTORY_SEPARATOR . $domain . DIRECTORY_SEPARATOR . 'translations',
+            ];
         }
 
-        $dir = $path . '/Resources/translations';
+        $finder = new Finder();
+        $translations = [];
 
-        if (is_dir($dir)) {
-            $finder = new Finder();
-            $finder->files()
-                ->name($this->getFileNamePattern())
-                ->in($dir);
+        foreach ($directories as $directory) {
+            if (is_dir($directory)) {
+                $finder->files()
+                    ->name($this->getFileNamePattern())
+                    ->in($directory);
+
+                foreach ($finder as $file) {
+                    $translations = array_replace_recursive($this->getFileTranslationMessages($file, $domain), $translations);
+                }
+            }
         }
 
-        return (null !== $finder && $finder->count() > 0) ? $finder : null;
+        return $translations;
+    }
+
+    /**
+     * @param SplFileInfo $file
+     * @param string      $domain
+     *
+     * @return array
+     */
+    public function getFileTranslationMessages(SplFileInfo $file, $domain)
+    {
+        $locale = explode('.', $file->getFilename())[1];
+
+        if (!in_array($locale, $this->getLocales())) {
+            return [];
+        }
+
+        $translations = [];
+
+        try {
+            $domainMessages = $this->parser->parse(file_get_contents($file->getPath().DIRECTORY_SEPARATOR.$file->getFilename()));
+        } catch (ParseException $e) {
+            throw new InvalidResourceException(sprintf('Error parsing YAML, invalid file "%s"', $file->getPath()), 0, $e);
+        }
+
+        $path = substr(pathinfo($file->getPathname(), PATHINFO_DIRNAME), strlen(getcwd()) + 1);
+        foreach ($domainMessages as $key => $content) {
+            $translations[$domain][$key]['messages'][$locale] = $content;
+            $translations[$domain][$key]['path'] = $path;
+            $translations[$domain][$key]['format'] = $file->getExtension();
+        }
+
+        return $translations;
     }
 
     /**
      * @return string
      */
-    protected function getFileNamePattern()
+    private function getFileNamePattern()
     {
-        if (count($this->getDomains())) {
-            $regex = sprintf(
-                '/((%s)\.(%s)\.(%s))/',
-                implode('|', $this->getDomains()),
-                implode('|', $this->getLocales()),
-                implode('|', $this->getFormats())
-            );
-        } else {
-            $regex = sprintf(
-                '/(.*\.(%s)\.(%s))/',
-                implode('|', $this->getLocales()),
-                implode('|', $this->getFormats())
-            );
-        }
-
+        $regex = sprintf(
+            '/(.*\.(%s)\.(%s))/',
+            implode('|', $this->getLocales()),
+            'yml'
+        );
         return $regex;
-    }
-
-    /**
-     * Imports some translations files.
-     *
-     * @param Finder $finder
-     */
-    protected function importTranslationFiles($finder)
-    {
-        if ($finder instanceof Finder) {
-            foreach ($finder as $file) {
-                $this->translations = array_replace_recursive($this->fileImport->import($file), $this->translations);
-            }
-        }
     }
 }

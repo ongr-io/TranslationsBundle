@@ -41,13 +41,6 @@ class ExportCommand extends ContainerAwareCommand
             InputOption::VALUE_NONE,
             'If set, the bundle will export all translations, regardless of status'
         );
-        $this->addOption(
-            'domains',
-            'd',
-            InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-            'Exports only these domains.',
-            []
-        );
     }
 
     /**

@@ -13,14 +13,13 @@ namespace ONGR\TranslationsBundle\Service;
 
 use ONGR\ElasticsearchBundle\Result\DocumentIterator;
 use ONGR\ElasticsearchDSL\Aggregation\Bucketing\TermsAggregation;
-use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\TermsQuery;
 use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\TranslationsBundle\Event\Events;
-use ONGR\TranslationsBundle\Event\MessageUpdateEvent;
+use ONGR\TranslationsBundle\Event\TranslationEditMessageEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -35,28 +34,60 @@ class TranslationManager
     private $repository;
 
     /**
+     * @var HistoryManager
+     */
+    private $historyManager;
+
+    /**
      * @var EventDispatcherInterface
      */
     private $dispatcher;
 
     /**
-     * @param Repository               $repository
+     * @param Repository               $repository Translation repository service.
+     * @param HistoryManager           $manager    History manager service.
      * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(Repository $repository, EventDispatcherInterface $dispatcher)
+    public function __construct(Repository $repository, HistoryManager $manager, EventDispatcherInterface $dispatcher)
     {
         $this->repository = $repository;
+        $this->historyManager = $manager;
         $this->dispatcher = $dispatcher;
     }
 
     /**
-     * @param string $id
+     * Edits object from translation.
      *
-     * @return Translation|object
+     * @param string $id
+     * @param Request $request Http request object.
      */
-    public function get($id)
+    public function edit($id, Request $request)
     {
-        return $this->repository->find($id);
+        $content = json_decode($request->getContent(), true);
+
+        if (empty($content)) {
+            return;
+        }
+
+        $document = $this->getTranslation($id);
+
+        if (isset($content['messages'])) {
+            $this->updateMessages($document, $content['messages']);
+            unset($content['messages']);
+        }
+
+        try {
+            foreach ($content as $key => $value) {
+                $document->{'set'.ucfirst($key)}($value);
+            }
+
+            $document->setUpdatedAt(new \DateTime());
+        } catch (\Exception $e) {
+            throw new \LogicException('Illegal variable provided for translation');
+        }
+
+        $this->repository->getManager()->persist($document);
+        $this->repository->getManager()->commit();
     }
 
     /**
@@ -78,13 +109,23 @@ class TranslationManager
     }
 
     /**
+     * @param string $id
+     *
+     * @return Translation|object
+     */
+    public function getTranslation($id)
+    {
+        return $this->repository->find($id);
+    }
+
+    /**
      * Returns all translations if filters are not specified
      *
      * @param array $filters An array with specified limitations for results
      *
      * @return DocumentIterator
      */
-    public function getAll(array $filters = null)
+    public function getTranslations(array $filters = null)
     {
         $search = $this->repository->createSearch();
         $search->addQuery(new MatchAllQuery());
@@ -92,7 +133,7 @@ class TranslationManager
 
         if ($filters) {
             foreach ($filters as $field => $value) {
-                $search->addQuery(new TermsQuery($field, $value), BoolQuery::FILTER);
+                $search->addQuery(new TermsQuery($field, $value));
             }
         }
 
@@ -100,45 +141,9 @@ class TranslationManager
     }
 
     /**
-     * Edits object from translation.
-     *
-     * @param string $id
-     * @param Request $request Http request object.
-     */
-    public function update($id, Request $request)
-    {
-        $content = json_decode($request->getContent(), true);
-
-        if (empty($content)) {
-            return;
-        }
-
-        $document = $this->get($id);
-
-        if (isset($content['messages'])) {
-            $this->updateMessages($document, $content['messages']);
-            unset($content['messages']);
-        }
-
-        foreach ($content as $key => $value) {
-            $method = 'set' . ucfirst($key);
-
-            if (!method_exists($document, $method)) {
-                throw new \LogicException('Illegal variable provided for translation');
-            }
-
-            $document->$method($value);
-        }
-
-        $document->setUpdatedAt(new \DateTime());
-        $this->repository->getManager()->persist($document);
-        $this->repository->getManager()->commit();
-    }
-
-    /**
      * @param Translation[] $translations
      */
-    public function save($translations)
+    public function saveTranslations($translations)
     {
         foreach ($translations as $translation) {
             $this->repository->getManager()->persist($translation);
@@ -158,12 +163,18 @@ class TranslationManager
 
         foreach ($messages as $locale => $messageText) {
             if (!empty($messageText) && is_string($messageText)) {
-                if (in_array($locale, $setMessagesLocales)) {
-                    $message = $document->getMessageByLocale($locale);
+                $this->dispatcher->dispatch(
+                    Events::ADD_HISTORY,
+                    new TranslationEditMessageEvent($document, $locale)
+                );
 
-                    if ($message && $message->getMessage() != $messageText) {
-                        $this->dispatcher->dispatch(Events::ADD_HISTORY, new MessageUpdateEvent($document, $message));
-                        $this->updateMessageData($message, $locale, $messages[$locale]);
+                if (in_array($locale, $setMessagesLocales)) {
+                    foreach ($documentMessages as $message) {
+                        if ($message->getLocale() == $locale && $message->getMessage() != $messageText) {
+                            $this->historyManager->addHistory($message, $document);
+                            $this->updateMessageData($message, $locale, $messages[$locale], new \DateTime());
+                            break;
+                        }
                     }
                 } else {
                     $documentMessages[] = $this->updateMessageData(new Message(), $locale, $messageText);
@@ -178,15 +189,19 @@ class TranslationManager
      * @param Message   $message
      * @param string    $locale
      * @param string    $text
+     * @param \DateTime $updatedAt
      *
      * @return Message
      */
-    private function updateMessageData(Message $message, $locale, $text)
+    private function updateMessageData(Message $message, $locale, $text, $updatedAt = null)
     {
         $message->setLocale($locale);
         $message->setStatus(Message::DIRTY);
         $message->setMessage($text);
-        $message->setUpdatedAt(new \DateTime());
+
+        if ($updatedAt) {
+            $message->setUpdatedAt($updatedAt);
+        }
 
         return $message;
     }

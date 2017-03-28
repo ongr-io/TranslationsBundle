@@ -33,14 +33,9 @@ class ExportManager
     private $exporter;
 
     /**
-     * @var ParameterBag
-     */
-    private $loadersContainer;
-
-    /**
      * @var array
      */
-    private $managedLocales = [];
+    private $locales;
 
     /**
      * @var Translation[]
@@ -63,21 +58,19 @@ class ExportManager
     }
 
     /**
-     * Sets managed locales.
-     *
-     * @param array $managedLocales
+     * @return array
      */
-    public function setManagedLocales($managedLocales)
+    public function getLocales()
     {
-        $this->managedLocales = $managedLocales;
+        return $this->locales;
     }
 
     /**
-     * @return array
+     * @param array $locales
      */
-    public function getManagedLocales()
+    public function setLocales($locales)
     {
-        return $this->managedLocales;
+        $this->locales = $locales;
     }
 
     /**
@@ -115,9 +108,9 @@ class ExportManager
      */
     private function formExportList($domains, $force)
     {
-        $data = [];
+        $output = [];
         $filters = array_filter([
-            'messages.locale' => $this->getManagedLocales(),
+            'messages.locale' => $this->getLocales(),
             'domain' => $domains
         ]);
 
@@ -132,7 +125,7 @@ class ExportManager
                     $path = sprintf(
                         '%s' . DIRECTORY_SEPARATOR . '%s.%s.%s',
                         $translation->getPath(),
-                        $translation->getDomain(),
+                        'messages',
                         $message->getLocale(),
                         $translation->getFormat()
                     );
@@ -144,6 +137,6 @@ class ExportManager
             }
         }
 
-        return $data;
+        return $output;
     }
 }

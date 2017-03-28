@@ -12,7 +12,6 @@
 namespace ONGR\TranslationsBundle\Service;
 
 use ONGR\ElasticsearchBundle\Result\DocumentIterator;
-use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use ONGR\ElasticsearchDSL\Sort\FieldSort;
 use ONGR\ElasticsearchBundle\Service\Repository;
@@ -45,14 +44,10 @@ class HistoryManager
      *
      * @return array
      */
-    public function get(Translation $translation)
+    public function getHistory(Translation $translation)
     {
         $ordered = [];
-        $search = $this->repository->createSearch();
-        $search->addQuery(new TermQuery('key', $translation->getKey()), BoolQuery::FILTER);
-        $search->addQuery(new TermQuery('domain', $translation->getDomain()), BoolQuery::FILTER);
-        $search->addSort(new FieldSort('created_at', FieldSort::DESC));
-        $histories = $this->repository->findDocuments($search);
+        $histories = $this->getUnorderedHistory($translation);
 
         /** @var History $history */
         foreach ($histories as $history) {
@@ -66,7 +61,7 @@ class HistoryManager
      * @param Message $message
      * @param Translation $translation
      */
-    public function add(Message $message, Translation $translation)
+    public function addHistory(Message $message, Translation $translation)
     {
         $history = new History();
         $history->setLocale($message->getLocale());
@@ -88,8 +83,8 @@ class HistoryManager
     private function getUnorderedHistory(Translation $translation)
     {
         $search = $this->repository->createSearch();
-        $search->addQuery(new TermQuery('key', $translation->getKey()), BoolQuery::FILTER);
-        $search->addQuery(new TermQuery('domain', $translation->getDomain()), BoolQuery::FILTER);
+        $search->addQuery(new TermQuery('key', $translation->getKey()));
+        $search->addQuery(new TermQuery('domain', $translation->getDomain()));
         $search->addSort(new FieldSort('created_at', FieldSort::DESC));
 
         return $this->repository->findDocuments($search);
