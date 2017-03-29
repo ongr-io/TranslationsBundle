@@ -35,7 +35,7 @@ class ApiController extends Controller
         $response = ['error' => false];
 
         try {
-            $this->get('ongr_translations.translation_manager')->update($id, $request);
+            $this->get('ongr_translations.translation_manager')->edit($id, $request);
         } catch (\LogicException $e) {
             $response = ['error' => true];
         }

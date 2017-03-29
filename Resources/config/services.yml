@@ -29,3 +29,8 @@ services:
 
     ongr_translations.export.yaml:
         class: ONGR\TranslationsBundle\Service\Export\YmlExport
+
+    ongr_translations.command.export:
+        class: ONGR\TranslationsBundle\Command\ExportCommand
+        calls:
+            - [setContainer, ["@service_container"]]

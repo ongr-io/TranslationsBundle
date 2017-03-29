@@ -50,7 +50,7 @@ class ListController extends Controller
         return $this->render(
             'ONGRTranslationsBundle:List:list.html.twig',
             [
-                'locales' => $this->getParameter('ongr_translations.managed_locales'),
+                'locales' => $this->getParameter('ongr_translations.locales'),
                 'tags' => $manager->getTags(),
                 'domains' => $manager->getDomains(),
             ]
