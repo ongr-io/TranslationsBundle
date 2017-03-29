@@ -141,8 +141,8 @@ class ImportManager
     {
         if (!$directories) {
             $directories = [
-                $path . 'Resources/translations',
-                $this->kernelRoot . DIRECTORY_SEPARATOR . $domain . DIRECTORY_SEPARATOR . 'translations',
+                $path . 'Resources' . DIRECTORY_SEPARATOR . 'translations',
+                $this->kernelRoot . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $domain . DIRECTORY_SEPARATOR . 'translations',
             ];
         }
 

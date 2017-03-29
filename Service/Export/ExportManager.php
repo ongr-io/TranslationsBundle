@@ -16,7 +16,7 @@ use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\TranslationsBundle\Service\TranslationManager;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\ParameterBag;
-
+use Symfony\Component\Yaml\Parser as YamlParser;
 /**
  * Class Export.
  */
@@ -43,16 +43,20 @@ class ExportManager
     private $refresh = [];
 
     /**
+     * @var YamlParser
+     */
+    private $parser;
+
+    /**
      * @param ParameterBag   $loadersContainer
      * @param TranslationManager $translationManager
      * @param YmlExport          $exporter
      */
     public function __construct(
-        ParameterBag $loadersContainer,
         TranslationManager $translationManager,
         YmlExport $exporter
     ) {
-        $this->loadersContainer = $loadersContainer;
+        $this->parser = new YamlParser();
         $this->translationManager = $translationManager;
         $this->exporter = $exporter;
     }
@@ -85,11 +89,10 @@ class ExportManager
             if (!file_exists($file)) {
                 (new Filesystem())->touch($file);
             }
-            list($domain, $locale, $extension) = explode('.', $file);
-            if ($this->loadersContainer && $this->loadersContainer->has($extension)) {
-                $messageCatalogue = $this->loadersContainer->get($extension)->load($file, $locale, $domain);
-                $translations = array_merge($messageCatalogue->all($domain), $translations);
-            }
+
+            $currentTranslations = $this->parser->parse(file_get_contents($file)) ?? [];
+
+            $translations = array_merge_recursive($currentTranslations, $translations);
 
             $this->exporter->export($file, $translations);
         }
@@ -129,7 +132,7 @@ class ExportManager
                         $message->getLocale(),
                         $translation->getFormat()
                     );
-                    $data[$path][$translation->getKey()] = $message->getMessage();
+                    $output[$path][$translation->getKey()] = $message->getMessage();
 
                     $message->setStatus(Message::FRESH);
                     $this->refresh[] = $translation;
