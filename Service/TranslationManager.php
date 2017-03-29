@@ -163,11 +163,6 @@ class TranslationManager
 
         foreach ($messages as $locale => $messageText) {
             if (!empty($messageText) && is_string($messageText)) {
-                $this->dispatcher->dispatch(
-                    Events::ADD_HISTORY,
-                    new MessageUpdateEvent($document, $locale)
-                );
-
                 if (in_array($locale, $setMessagesLocales)) {
                     foreach ($documentMessages as $message) {
                         if ($message->getLocale() == $locale && $message->getMessage() != $messageText) {
