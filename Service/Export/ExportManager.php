@@ -92,7 +92,7 @@ class ExportManager
 
             $currentTranslations = $this->parser->parse(file_get_contents($file)) ?? [];
 
-            $translations = array_merge_recursive($currentTranslations, $translations);
+            $translations = array_replace_recursive($currentTranslations, $translations);
 
             $this->exporter->export($file, $translations);
         }
