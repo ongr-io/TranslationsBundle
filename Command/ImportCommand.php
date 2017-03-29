@@ -58,9 +58,9 @@ class ImportCommand extends ContainerAwareCommand
             $locales = $this->getContainer()->getParameter('ongr_translations.locales');
         }
 
-        $bundleNames = $input->getArgument('bundle');
-
         $import->setLocales($locales);
+
+        $bundleNames = $input->getArgument('bundle');
 
         if ($bundleNames) {
 //            $output->writeln("<info>*** Importing {$bundleName} translation files ***</info>");
@@ -76,7 +76,7 @@ class ImportCommand extends ContainerAwareCommand
             $translations = $import->getTranslationsFromFiles(
                 $domain,
                 null,
-                [$this->getContainer()->getParameter('kernel.root_dir') . 'translations']
+                [$this->getContainer()->getParameter('kernel.root_dir') . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . 'translations']
             );
             $import->writeToStorage($domain, $translations);
             $output->writeln('<info>*** Importing bundles translation files ***</info>');

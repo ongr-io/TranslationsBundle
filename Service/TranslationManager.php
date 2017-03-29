@@ -19,7 +19,7 @@ use ONGR\ElasticsearchBundle\Service\Repository;
 use ONGR\TranslationsBundle\Document\Message;
 use ONGR\TranslationsBundle\Document\Translation;
 use ONGR\TranslationsBundle\Event\Events;
-use ONGR\TranslationsBundle\Event\TranslationEditMessageEvent;
+use ONGR\TranslationsBundle\Event\MessageUpdateEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -69,7 +69,7 @@ class TranslationManager
             return;
         }
 
-        $document = $this->getTranslation($id);
+        $document = $this->get($id);
 
         if (isset($content['messages'])) {
             $this->updateMessages($document, $content['messages']);
@@ -96,7 +96,7 @@ class TranslationManager
      */
     public function getTags()
     {
-        return $this->getItems('tags');
+        return $this->getGroupTypeInfo('tags');
     }
 
     /**
@@ -105,7 +105,7 @@ class TranslationManager
      */
     public function getDomains()
     {
-        return $this->getItems('domain');
+        return $this->getGroupTypeInfo('domain');
     }
 
     /**
@@ -113,7 +113,7 @@ class TranslationManager
      *
      * @return Translation|object
      */
-    public function getTranslation($id)
+    public function get($id)
     {
         return $this->repository->find($id);
     }
@@ -125,7 +125,7 @@ class TranslationManager
      *
      * @return DocumentIterator
      */
-    public function getTranslations(array $filters = null)
+    public function getAll(array $filters = null)
     {
         $search = $this->repository->createSearch();
         $search->addQuery(new MatchAllQuery());
@@ -143,7 +143,7 @@ class TranslationManager
     /**
      * @param Translation[] $translations
      */
-    public function saveTranslations($translations)
+    public function save($translations)
     {
         foreach ($translations as $translation) {
             $this->repository->getManager()->persist($translation);
@@ -165,7 +165,7 @@ class TranslationManager
             if (!empty($messageText) && is_string($messageText)) {
                 $this->dispatcher->dispatch(
                     Events::ADD_HISTORY,
-                    new TranslationEditMessageEvent($document, $locale)
+                    new MessageUpdateEvent($document, $locale)
                 );
 
                 if (in_array($locale, $setMessagesLocales)) {
@@ -207,12 +207,13 @@ class TranslationManager
     }
 
     /**
-     * Returns a list of available tags or domains
+     * Returns a list of available tags or domains.
      *
      * @param string $type
+     *
      * @return array
      */
-    private function getItems($type)
+    private function getGroupTypeInfo($type)
     {
         $search = $this->repository->createSearch();
         $search->addAggregation(new TermsAggregation($type, $type));

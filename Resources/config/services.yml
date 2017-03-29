@@ -19,14 +19,13 @@ services:
         calls:
             - ["setLocales", ["%ongr_translations.locales%"]]
 
-#    ongr_translations.export:
-#        class: ONGR\TranslationsBundle\Service\Export\ExportManager
-#        arguments:
-#            - "@ongr_translations.loaders_container"
-#            - "@ongr_translations.translation_manager"
-#            - "@ongr_translations.export.yaml"
-#        calls:
-#            - ["setManagedLocales", ["%ongr_translations.locales%"]]
+    ongr_translations.export:
+        class: ONGR\TranslationsBundle\Service\Export\ExportManager
+        arguments:
+            - "@ongr_translations.translation_manager"
+            - "@ongr_translations.export.yaml"
+        calls:
+            - ["setLocales", ["%ongr_translations.locales%"]]
 
     ongr_translations.export.yaml:
         class: ONGR\TranslationsBundle\Service\Export\YmlExport

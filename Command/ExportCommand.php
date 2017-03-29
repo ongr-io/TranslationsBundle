@@ -13,6 +13,7 @@ namespace ONGR\TranslationsBundle\Command;
 
 use ONGR\TranslationsBundle\Service\Export\ExportManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -41,6 +42,11 @@ class ExportCommand extends ContainerAwareCommand
             InputOption::VALUE_NONE,
             'If set, the bundle will export all translations, regardless of status'
         );
+        $this->addArgument(
+            'bundle',
+            InputArgument::OPTIONAL,
+            'Import translations for the specific bundle.'
+        );
     }
 
     /**
@@ -50,14 +56,23 @@ class ExportCommand extends ContainerAwareCommand
     {
         /** @var ExportManager $export */
         $export = $this->getContainer()->get('ongr_translations.export');
+        $bundle = $input->getArgument('bundle');
 
-        $locales = $input->getOption('locales');
-        if (!empty($locales)) {
-            $export->setManagedLocales($locales);
+        $locales = $input->getOption('locales', $this->getContainer()->getParameter('ongr_translations.locales'));
+        $export->setLocales($locales);
+
+        if ($bundle) {
+//            $output->writeln("<info>*** Importing {$bundleName} translation files ***</info>");
+//            $bundle = $this->getContainer()->get('kernel')->getBundle($bundleNames);
+//
+//            foreach ($bundleNames as $bundleName) {
+//                $dir = $this->getContainer()->get('kernel')->getBundle($bundleName);
+//                $import->importTranslationFiles($bundle);
+//            }
+        } else {
+            $export->export(['messages'], $input->getOption('force'));
+            $export->export($this->getContainer()->getParameter('ongr_translations.bundles'), $input->getOption('force'));
         }
-
-        $domains = $input->getOption('domains');
-        $export->export($domains, $input->getOption('force'));
 
         $prettify = function ($array) {
             return !empty($array) ? implode('</comment><info>`, `</info><comment>', $array) : 'all';
@@ -66,10 +81,8 @@ class ExportCommand extends ContainerAwareCommand
         $output->writeln(
             sprintf(
                 '<info>Successfully exported translations in `</info>'
-                . '<comment>%s</comment><info>` locale(s) for `</info>'
-                . '<comment>%s</comment><info>` domain(s).</info>',
-                $prettify($locales),
-                $prettify($domains)
+                . '<comment>%s</comment><info>` locale(s) for `</info>',
+                $prettify($locales)
             )
         );
     }
