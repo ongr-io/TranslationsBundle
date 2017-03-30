@@ -35,8 +35,14 @@ class ImportCommand extends ContainerAwareCommand
             'l',
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
             'Import only the specific locales, leave blank to import all configured.'
-        );
-        $this->addArgument(
+        )
+        ->addOption(
+            'clean',
+            null,
+            InputOption::VALUE_NONE,
+            'Clean not found translations keys'
+        )
+        ->addArgument(
             'bundle',
             InputArgument::OPTIONAL,
             'Import translations for the specific bundle.'
@@ -58,6 +64,8 @@ class ImportCommand extends ContainerAwareCommand
             $locales = $this->getContainer()->getParameter('ongr_translations.locales');
         }
 
+        $clean = $input->getOption('clean');
+
         $import->setLocales($locales);
 
         $bundleNames = $input->getArgument('bundle');
@@ -78,8 +86,14 @@ class ImportCommand extends ContainerAwareCommand
                 null,
                 [$this->getContainer()->getParameter('kernel.root_dir') . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . 'translations']
             );
+
             $import->writeToStorage($domain, $translations);
             $output->writeln('<info>*** Importing bundles translation files ***</info>');
+
+            if (true === $clean) {
+                $output->writeln('<info>*** Cleaning old translation keys from elasticsearch ***</info>');
+                $import->cleanTranslations($translations);
+            }
 
             foreach ($configBundles as $configBundle) {
                 $import->importTranslationFiles(
@@ -87,7 +101,6 @@ class ImportCommand extends ContainerAwareCommand
                     $this->getContainer()->get('kernel')->locateResource('@'.$configBundle)
                 );
             }
-
 //            $output->writeln('<info>*** Importing component translation files ***</info>');
 //            $import->importBundlesTranslationFiles(
 //                $this->getContainer()->getParameter('ongr_translations.component_directories')
