@@ -204,7 +204,7 @@ class ImportManager
         $regex = sprintf(
             '/(.*\.(%s)\.(%s))/',
             implode('|', $this->getLocales()),
-            'yml'
+            'yml$'
         );
         return $regex;
     }
