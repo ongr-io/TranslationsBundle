@@ -92,7 +92,6 @@ class ImportManager
     {
         foreach ($translations as $keys) {
             foreach ($keys as $key => $transMeta) {
-
                 $search = $this->repository->createSearch();
                 $search->addQuery(new MatchQuery('key', $key));
                 $results = $this->repository->findDocuments($search);
@@ -116,6 +115,21 @@ class ImportManager
         }
 
         $this->manager->commit();
+    }
+
+    /**
+     * @param array $translations
+     */
+    public function cleanTranslations(array $translations)
+    {
+        $translationKeys    = array_keys($translations);
+        $storedTranslations = $this->repository->findBy([]);
+
+        foreach ($storedTranslations as $document) {
+            if (!in_array($document->getKey(), $translationKeys)) {
+                $this->repository->remove($document->getId());
+            }
+        }
     }
 
     /**
