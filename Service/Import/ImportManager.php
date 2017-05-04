@@ -201,6 +201,9 @@ class ImportManager
         }
 
         $path = substr(pathinfo($file->getPathname(), PATHINFO_DIRNAME), strlen(getcwd()) + 1);
+
+        $domainMessages = $this->flatten($domainMessages);
+
         foreach ($domainMessages as $key => $content) {
             $translations[$domain][$key]['messages'][$locale] = $content;
             $translations[$domain][$key]['path'] = $path;
@@ -208,6 +211,25 @@ class ImportManager
         }
 
         return $translations;
+    }
+
+    /**
+     * Flatten multidimensional array and concatenating keys
+     *
+     * @param $array
+     * @return array
+     */
+    private function flatten($array, $prefix = '') {
+        $result = [];
+        foreach($array as $key=>$value) {
+            if(is_array($value)) {
+                $result = $result + $this->flatten($value, $prefix . $key . '.');
+            }
+            else {
+                $result[$prefix . $key] = $value;
+            }
+        }
+        return $result;
     }
 
     /**
