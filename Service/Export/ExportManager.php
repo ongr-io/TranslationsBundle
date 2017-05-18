@@ -92,6 +92,8 @@ class ExportManager
 
             $currentTranslations = $this->parser->parse(file_get_contents($file)) ?? [];
 
+            $currentTranslations = $this->flatten($currentTranslations);
+
             $translations = array_replace_recursive($currentTranslations, $translations);
 
             $this->exporter->export($file, $translations);
@@ -99,6 +101,26 @@ class ExportManager
 
         $this->translationManager->save($this->refresh);
         $this->refresh = [];
+    }
+
+
+    /**
+     * Flatten multidimensional array and concatenating keys
+     *
+     * @param $array
+     * @return array
+     */
+    private function flatten($array, $prefix = '') {
+        $result = [];
+        foreach($array as $key=>$value) {
+            if(is_array($value)) {
+                $result = $result + $this->flatten($value, $prefix . $key . '.');
+            }
+            else {
+                $result[$prefix . $key] = $value;
+            }
+        }
+        return $result;
     }
 
     /**
